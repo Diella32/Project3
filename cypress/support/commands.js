@@ -45,7 +45,7 @@ Cypress.Commands.add("loginByGoogleApi", () => {
     let url =
       (Cypress.env("clientUrl").includes("localhost")
         ? "http://localhost"
-        : Cypress.env("clientUrl")) + "/tutorial/login";
+        : Cypress.env("clientUrl")) + "/resume/login";
     cy.request({
       method: "POST",
       url: url,
@@ -53,7 +53,7 @@ Cypress.Commands.add("loginByGoogleApi", () => {
     }).then(({ body }) => {
       cy.log(body);
       window.localStorage.setItem("user", JSON.stringify(body));
-      cy.visit("/tutorials");
+      cy.visit("/resumes");
     });
   });
 });
@@ -63,7 +63,7 @@ Cypress.Commands.add("logout", () => {
   let url =
     (Cypress.env("clientUrl").includes("localhost")
       ? "http://localhost"
-      : Cypress.env("clientUrl")) + "/tutorial/logout";
+      : Cypress.env("clientUrl")) + "/resume/logout";
   cy.request({
     method: "POST",
     url: url,
