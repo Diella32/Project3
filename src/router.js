@@ -5,7 +5,6 @@ import ResumeList from "./views/ResumeList.vue";
 import EditResume from "./views/EditResume.vue";
 import AddResume from "./views/AddResume.vue";
 import ViewResume from "./views/ViewResume.vue";
-import selectTemplate from "./views/selectTemplate.vue"; // Make sure the import path matches your folder structure
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,11 +36,6 @@ const router = createRouter({
       name: "view",
       component: ViewResume,
       props: true,
-    },
-    {
-      path: "/select-template",  // New path for selecting a template
-      name: "select-template",
-      component: selectTemplate,
     },
   ],
 });

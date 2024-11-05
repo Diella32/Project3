@@ -1,161 +1,305 @@
 <template>
   <div class="create-resume">
-    <v-container>
-      <v-toolbar>
-        <v-toolbar-title>Create Resume</v-toolbar-title>
-      </v-toolbar>
+    <v-container fluid class="pa-0">
+      <v-card class="mb-4">
+        <v-toolbar color="primary" dark>
+          <v-toolbar-title>Create Resume</v-toolbar-title>
+        </v-toolbar>
+      </v-card>
 
       <div class="resume-layout">
-        <!-- Template Selection Section -->
-        <div class="template-selection">
-          <h5>Select a Template</h5>
-          <div class="templates">
-            <img
+        <!-- Template Selection Sidebar -->
+        <v-card class="template-sidebar">
+          <v-card-title class="text-h6">Select a Template</v-card-title>
+          <div class="templates-grid">
+            <v-card
               v-for="template in templates"
               :key="template.id"
-              :src="template.image"
-              :alt="template.name"
-              @click="selectTemplate(template.id)"
-              class="template-image"
-            />
+              :class="{'template-card': true, 'selected': selectedTemplate && selectedTemplate.id === template.id}"
+              @click="selectTemplate(template)"
+              elevation="2"
+              hover
+            >
+              <img
+                :src="template.image"
+                :alt="template.name"
+                class="template-thumbnail"
+              />
+              <v-card-text class="template-info">
+                <div class="text-subtitle-2 font-weight-bold">{{ template.name }}</div>
+              </v-card-text>
+            </v-card>
           </div>
+        </v-card>
+
+        <!-- Main Content Area -->
+        <div class="main-content" :class="{'has-template': selectedTemplate}">
+          <template v-if="selectedTemplate">
+            <!-- Selected Template Preview -->
+            <v-card class="preview-card mb-4">
+              <v-card-title class="text-h6">Template Preview</v-card-title>
+              <div class="template-preview">
+                <img
+                  :src="selectedTemplate.image"
+                  :alt="selectedTemplate.name"
+                  class="preview-image"
+                />
+              </div>
+            </v-card>
+
+            <!-- Resume Details Form -->
+            <v-card class="form-card">
+              <v-card-title class="text-h6">Enter Resume Details</v-card-title>
+              <v-card-text>
+                <v-form
+                  ref="form"
+                  v-model="valid"
+                  lazy-validation
+                >
+                  <v-text-field
+                    v-model="resume.name"
+                    label="Resume Name"
+                    required
+                    :rules="[v => !!v || 'Resume name is required']"
+                    :placeholder="`E.g., ${selectedTemplate.name} - John Doe`"
+                    class="mb-4"
+                  ></v-text-field>
+
+                  <v-textarea
+                    v-model="resume.introduction"
+                    label="Introduction"
+                    :placeholder="selectedTemplateHints.introduction"
+                    rows="5"
+                    auto-grow
+                    class="mb-6"
+                  ></v-textarea>
+
+                  <div class="d-flex">
+                    <v-btn
+                      color="primary"
+                      size="large"
+                      class="me-4"
+                      :disabled="!valid"
+                      @click="saveResume"
+                    >
+                      Save and Continue
+                    </v-btn>
+
+                    <v-btn
+                      color="error"
+                      size="large"
+                      variant="outlined"
+                      @click="cancel"
+                    >
+                      Cancel
+                    </v-btn>
+                  </div>
+                </v-form>
+              </v-card-text>
+            </v-card>
+          </template>
+
+          <v-card v-else class="select-prompt">
+            <v-card-text class="text-center pa-8">
+              <v-icon size="64" color="primary" class="mb-4">mdi-file-document-outline</v-icon>
+              <h3 class="text-h5 mb-2">Select a Template</h3>
+              <p class="text-body-1">Choose a template from the left to get started</p>
+            </v-card-text>
+          </v-card>
         </div>
-
-        <!-- Resume Details Section -->
-        <v-form ref="form" v-model="valid" lazy validation class="resume-details">
-          <br />
-          <h4>{{ message }}</h4>
-          <br />
-          <v-text-field
-            v-model="resume.resume_name"
-            id="resume_name"
-            :counter="50"
-            label="Resume Name"
-            required
-          ></v-text-field>
-
-          <v-textarea
-            v-model="resume.introduction"
-            id="introduction"
-            label="Introduction"
-            rows="3"
-          ></v-textarea>
-
-          <v-btn
-            :disabled="!valid"
-            color="success"
-            class="mr-4"
-            @click="saveResume"
-          >
-            Save
-          </v-btn>
-
-          <v-btn color="error" class="mr-4" @click="cancel">Cancel</v-btn>
-        </v-form>
       </div>
     </v-container>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import ResumeService from '../services/ResumeServices.js'; // Ensure this service exists
-import Utils from '../config/utils.js';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import ResumeServices from '../services/ResumeServices.js';
+import Utils from '../config/utils.js';
 
 const router = useRouter();
 const valid = ref(false);
-const user = Utils.getStore('user'); // Get the user data from local storage
+const user = Utils.getStore('user');
 const resume = ref({
   id: null,
-  resume_name: '',
+  name: '',
   introduction: '',
-  template: null, // Initially null until a template is selected
-  user_id: user.userId, // Assuming the user object has userId
+  template: null,
+  user_id: user.userId,
 });
-const message = ref('Enter resume details and click save');
+const selectedTemplate = ref(null);
+const selectedTemplateHints = ref({
+  introduction: 'Write a brief introduction that highlights your key qualifications and career objectives...'
+});
 
-// Define available templates
 const templates = ref([
-  { id: 1, name: 'Template 1', image: 'template1.png' },
-  { id: 2, name: 'Template 2', image: 'template2.png' },
-  { id: 3, name: 'Template 3', image: 'template3.png' },
-  { id: 4, name: 'Template 4', image: 'template4.png' },
+  { 
+    id: 1, 
+    name: 'Professional Classic', 
+    image: '/template1.png', 
+    hint: 'Traditional layout perfect for corporate roles' 
+  },
+  { 
+    id: 2, 
+    name: 'Modern Minimal', 
+    image: '/template2.png', 
+    hint: 'Clean design with emphasis on skills and achievements' 
+  },
+  { 
+    id: 3, 
+    name: 'Creative Portfolio', 
+    image: '/template1.png', 
+    hint: 'Visually striking layout for creative professionals' 
+  },
+  { 
+    id: 4, 
+    name: 'Executive Brief', 
+    image: '/template1.png', 
+    hint: 'Sophisticated design for senior positions' 
+  },
 ]);
 
-// Function to select a template
-const selectTemplate = (id) => {
-  resume.value.template = id;
-};
-
-// Function to save the resume
-const saveResume = () => {
-  const data = {
-    resume_name: resume.value.resume_name,
-    introduction: resume.value.introduction,
-    template: resume.value.template,
-    user_id: user.userId,
+const selectTemplate = (template) => {
+  selectedTemplate.value = template;
+  resume.value.template = template.id;
+  selectedTemplateHints.value = {
+    introduction: `Pro tip for ${template.name}: ${template.hint}`
   };
-
-  ResumeService.create(data)
-    .then((response) => {
-      console.log('API Response:', response);
-      if (response && response.data) {
-        resume.value.id = response.data.id;
-        router.push({ name: 'add-personal-links', params: { resumeId: resume.value.id } });
-      } else {
-        console.error('Unexpected response structure:', response);
-        message.value = 'Failed to create resume. Please try again.';
-      }
-    })
-    .catch((e) => {
-      console.error('Error occurred while creating resume:', e);
-      message.value = e.response?.data?.message || 'An error occurred while creating the resume.';
-    });
 };
 
-// Function to handle cancel action
+const saveResume = async () => {
+  try {
+    const data = {
+      name: resume.value.name,
+      introduction: resume.value.introduction,
+      template: resume.value.template,
+      user_id: user.userId,
+    };
+
+    const response = await ResumeServices.create(data);
+    
+    if (response?.data?.id) {
+      router.push({ 
+        name: 'add-contact-info', 
+        params: { resumeId: response.data.id }
+      });
+    } else {
+      throw new Error('Failed to create resume');
+    }
+  } catch (e) {
+    console.error('Error creating resume:', e);
+  }
+};
+
 const cancel = () => {
-  router.push({ name: 'ResumeList' }); // Adjust the route as necessary
+  router.push({ name: 'ResumeList' });
 };
-
-// onMounted hook for any initialization
-onMounted(() => {
-  // Load user data if needed
-});
 </script>
 
 <style scoped>
 .create-resume {
-  display: flex;
-  justify-content: space-between;
+  min-height: 100vh;
+  background-color: #f5f5f5;
 }
 
 .resume-layout {
   display: flex;
-  flex-direction: row;
-  width: 100%;
+  gap: 24px;
+  padding: 0 16px;
 }
 
-.template-selection {
-  width: 300px; /* Adjust width as needed */
-  margin-right: 20px; /* Space between template and details */
+.template-sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 16px;
 }
 
-.templates {
+.templates-grid {
   display: flex;
-  flex-wrap: wrap; /* Allows for wrapping if needed */
-  justify-content: space-between; /* Evenly distributes items */
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 16px;
 }
 
-.template-image {
-  margin: 10px;
+.template-card {
   cursor: pointer;
-  width: 100px; /* Adjust size as needed */
-  height: auto; /* Maintain aspect ratio */
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
 }
 
-.resume-details {
-  flex: 1; /* Takes the remaining space */
+.template-card:hover {
+  transform: translateY(-2px);
+}
+
+.template-card.selected {
+  border-color: var(--v-primary-base);
+  background-color: rgba(var(--v-primary-base), 0.05);
+}
+
+.template-thumbnail {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.template-info {
+  padding: 8px;
+}
+
+.main-content {
+  flex-grow: 1;
+  transition: all 0.3s ease;
+  max-width: calc(100% - 324px);
+}
+
+.preview-card {
+  margin-bottom: 24px;
+}
+
+.template-preview {
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+  background-color: #f5f5f5;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+}
+
+.select-prompt {
+  margin-top: 64px;
+}
+
+@media (max-width: 960px) {
+  .resume-layout {
+    flex-direction: column;
+  }
+
+  .template-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+  }
+
+  .templates-grid {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 16px;
+  }
+
+  .template-card {
+    min-width: 200px;
+  }
+
+  .main-content {
+    max-width: 100%;
+  }
 }
 </style>

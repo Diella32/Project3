@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import ResumeService from '../services/ResumeServices'
+import ResumeServices from '../services/ResumeServices'
 import { useRouter, useRoute } from 'vue-router'
 
 const resume = ref({
@@ -14,7 +14,7 @@ const resumeId = route.params.id
 
 const fetchResume = async () => {
   try {
-    const response = await ResumeService.get(resumeId)
+    const response = await ResumeServices.get(resumeId)
     resume.value = response.data
   } catch (error) {
     message.value = 'Failed to load resume.'
@@ -24,7 +24,7 @@ const fetchResume = async () => {
 
 const saveResume = async () => {
   try {
-    await ResumeService.update(resumeId, resume.value)
+    await ResumeServices.update(resumeId, resume.value)
     message.value = 'Resume updated successfully.'
     router.push({ name: 'resumeList' }) // Redirect to resume list after saving
   } catch (error) {
