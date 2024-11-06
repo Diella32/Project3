@@ -29,20 +29,20 @@ const loginWithGoogle = () => {
 };
 
 const handleCredentialResponse = async (response) => {
+  try{
   let token = {
     credential: response.credential,
   };
-  await AuthServices.loginUser(token)
-    .then((response) => {
-      user.value = response.data;
+      const loginresponse = await AuthServices.loginUser(token)
+      user.value = loginresponse.data;
       Utils.setStore("user", user.value);
       fName.value = user.value.fName;
       lName.value = user.value.lName;
-      router.push({ name: "tutorials" });
-    })
-    .catch((error) => {
+      router.push({ name: "home" });
+    }
+    catch(error){
       console.log("error", error);
-    });
+    };
 };
 
 onMounted(() => {

@@ -1,5 +1,5 @@
 {
-  "name": "tutorial-frontend-vue3",
+  "name": "resume-frontend-vue3",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -17,6 +17,8 @@
     "dotenv": "^16.0.3",
     "eslint": "^8.28.0",
     "eslint-plugin-vue": "^9.7.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.2",
     "vite-plugin-vuetify": "^1.0.0",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
