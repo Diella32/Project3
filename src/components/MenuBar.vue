@@ -8,7 +8,7 @@ import { useRouter } from "vue-router";
 const router = useRouter();
 
 const user = ref(null);
-const title = ref("Resumes");
+const title = ref("ResumeApp");
 const initials = ref("");
 const name = ref("");
 const logoURL = ref("");
@@ -44,7 +44,7 @@ onMounted(() => {
 <template>
   <div>
     <v-app-bar app>
-      <router-link :to="{ name: 'resumes' }">
+      <router-link :to="{ name: 'home' }">
         <v-img
           class="mx-2"
           :src="logoURL"
@@ -58,8 +58,8 @@ onMounted(() => {
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <div v-if="user">
-        <v-btn class="mx-2" :to="{ name: 'resumes' }"> List </v-btn>
-        <v-btn class="mx-2" :to="{ name: 'add' }"> Add Resume </v-btn>
+        <v-btn class="mx-2" :to="{ name: 'home' }"> Home </v-btn>
+        <v-btn class="mx-2" :to="{ name: 'resumes' }"> My Resumes </v-btn>
       </div>
       <v-menu bottom min-width="200px" rounded offset-y v-if="user">
         <template v-slot:activator="{ props }">
@@ -73,9 +73,7 @@ onMounted(() => {
           <v-card-text>
             <div class="mx-auto text-center">
               <v-avatar color="secondary" class="mt-2 mb-2">
-                <span class="accent--text font-weight-bold">{{
-                  initials
-                }}</span>
+                <span class="accent--text font-weight-bold">{{ initials }}</span>
               </v-avatar>
               <h3>{{ name }}</h3>
               <p class="text-caption mt-1">

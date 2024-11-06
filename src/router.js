@@ -5,6 +5,7 @@ import ResumeList from "./views/ResumeList.vue";
 import EditResume from "./views/EditResume.vue";
 import AddResume from "./views/AddResume.vue";
 import ViewResume from "./views/ViewResume.vue";
+import home from "./views/home.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +16,19 @@ const router = createRouter({
       name: "login",
       component: Login,
     },
+
+    {
+      path: '/',
+      name: 'home',
+      component: home,
+    },
+
+    {
+      path: "/add",  // Path for adding a resume
+      name: "add",
+      component: AddResume,
+    },
+
     {
       path: "/resumes",  // Path for the resume list
       name: "resumes",  // Name for this route
@@ -26,11 +40,7 @@ const router = createRouter({
       component: EditResume,
       props: true,
     },
-    {
-      path: "/add",  // Path for adding a resume
-      name: "add",
-      component: AddResume,
-    },
+    
     {
       path: "/view/:id",  // View resume path with dynamic id
       name: "view",
