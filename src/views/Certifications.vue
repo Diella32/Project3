@@ -235,11 +235,11 @@
     }
     
     .text-h3 {
-      font-size: 1.75rem !important;
+      font-size: 1.50rem !important;
     }
     
     .text-h6 {
-      font-size: 1rem !important;
+      font-size: 0.5rem !important;
     }
   }
   </style>
