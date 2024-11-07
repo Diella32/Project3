@@ -5,6 +5,7 @@ import ResumeList from "./views/ResumeList.vue";
 import EditResume from "./views/EditResume.vue";
 import AddResume from "./views/AddResume.vue";
 import ViewResume from "./views/ViewResume.vue";
+import CertificationsPage from "../src/views/Certifications.vue"
 import home from "./views/home.vue";
 
 const router = createRouter({
@@ -46,6 +47,11 @@ const router = createRouter({
       name: "view",
       component: ViewResume,
       props: true,
+    },
+    {
+      path: '/certifications',
+      name: 'enterCertifications',
+      component: CertificationsPage
     },
   ],
 });
