@@ -131,7 +131,7 @@ const sections = [
     title: 'Projects',
     subtitle: 'Personal and professional projects',
     icon: 'mdi-lightbulb',
-    route: 'enterProjects'
+    route: 'AddProjects'
   },
   {
     title: 'Skills',
