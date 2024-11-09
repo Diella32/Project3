@@ -7,6 +7,7 @@ import AddResume from "./views/AddResume.vue";
 import ViewResume from "./views/ViewResume.vue";
 import home from "./views/home.vue";
 import AddProjects from "./views/AddProjects.vue";
+import PersonalLinks from "./views/PersonalLinks.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,6 +42,12 @@ const router = createRouter({
       path: '/projects',
       name: 'AddProjects',
       component: AddProjects,
+    },
+
+    {
+      path: '/PersonalLinks',
+      name: 'PersonalLinks',
+      component: PersonalLinks,
     },
 
     {
