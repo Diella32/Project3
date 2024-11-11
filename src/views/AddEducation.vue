@@ -65,7 +65,7 @@
     </v-container>
   </div>
 </template>
-
+//the script
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
