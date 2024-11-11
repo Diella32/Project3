@@ -6,8 +6,8 @@ import EditResume from "./views/EditResume.vue";
 import AddResume from "./views/AddResume.vue";
 import ViewResume from "./views/ViewResume.vue";
 import home from "./views/home.vue";
-// import AddProjects from "./views/AddProjects.vue";
-// import PersonalLinks from "./views/PersonalLinks.vue";
+ import AddProjects from "./views/AddProjects.vue";
+ import PersonalLinks from "./views/PersonalLinks.vue";
 import personalInterests from "./views/personalInterests.vue";
 
 const router = createRouter({
@@ -39,17 +39,17 @@ const router = createRouter({
     },
 
 
-    // {
-    //   path: '/projects',
-    //   name: 'AddProjects',
-    //   component: AddProjects,
-    // },
+    {
+      path: '/projects',
+      name: 'AddProjects',
+      component: AddProjects,
+    },
 
-    // {
-    //   path: '/PersonalLinks',
-    //   name: 'PersonalLinks',
-    //   component: PersonalLinks,
-    // },
+    {
+      path: '/PersonalLinks',
+      name: 'PersonalLinks',
+      component: PersonalLinks,
+    },
 
     {
       path: '/interest',
