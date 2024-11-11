@@ -113,7 +113,7 @@ const sections = [
     title: 'Personal Links',
     subtitle: 'Social, GitHub, and Portfolio links',
     icon: 'mdi-link',
-    route: 'enterLinks'
+    route: 'PersonalLinks'
   },
   {
     title: 'Education',
@@ -131,7 +131,7 @@ const sections = [
     title: 'Projects',
     subtitle: 'Personal and professional projects',
     icon: 'mdi-lightbulb',
-    route: 'enterProjects'
+    route: 'AddProjects'
   },
   {
     title: 'Skills',
