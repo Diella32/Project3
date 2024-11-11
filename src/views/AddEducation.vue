@@ -1,3 +1,4 @@
+
 <template>
   <div>
     <v-container>
@@ -92,8 +93,17 @@ const rules = {
   required: (value) => !!value || "This field is required",
 };
 
+// Fetch the userId from localStorage (assuming it is stored after login)
+const currentUserId = localStorage.getItem('userId');
+
 // Save or Add new education
 const saveEducation = () => {
+  if (!currentUserId) {
+    message.value = "User is not authenticated or user ID is missing!";
+    messageType.value = "error";
+    return;
+  }
+
   const data = {
     degree: education.value.degree,
     fieldOfStudy: education.value.fieldOfStudy,
@@ -101,6 +111,7 @@ const saveEducation = () => {
     startDate: education.value.startDate,
     endDate: education.value.endDate,
     gpa: education.value.gpa,
+    userId: currentUserId, // Use the retrieved userId
   };
 
   EducationServices.createEducation(data)
@@ -125,13 +136,13 @@ const saveEducation = () => {
 
 // Cancel action
 const cancel = () => {
-  router.push({ name: "view" });
+  router.push({ name: "view" }); // Go back to the view page
 };
 </script>
 
 <style scoped>
 .v-toolbar {
-  background-color: #1976d2;
+  background-color: #1976d2; /* Blue background */
 }
 
 .v-btn {

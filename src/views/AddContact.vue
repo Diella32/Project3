@@ -41,6 +41,7 @@
           id="address"
           label="Address"
           :counter="150"
+          :rules="[rules.optionalAddress]"
         />
         <v-btn
           :disabled="!valid"
@@ -69,8 +70,7 @@
 <script setup>
 import { ref, watch } from "vue"; // Import ref and watch together here
 import { useRouter } from "vue-router";
-import ContactServices from "../services/ContactServices";
-
+import ContactServices from '../services/ContactServices.js';
 // Router
 const router = useRouter();
 
@@ -99,7 +99,9 @@ const rules = {
     const pattern = /^[0-9]{10}$/;
     return pattern.test(value) || "Please enter a valid phone number";
   },
+  optionalAddress: (value) => !value || value.length >= 5 || "Address must be at least 5 characters long",
 };
+
 watch(valid, (newValue) => {
   console.log("Form valid status:", newValue); // Should log `true` if form is valid
 });
@@ -132,7 +134,7 @@ const saveContact = () => {
     phone_number: contact.value.phone_number,
     address: contact.value.address,
   };
-  
+
   console.log('Data to be saved:', data); // Log the data being sent
   
   // Check if `data` fields are empty
@@ -141,7 +143,7 @@ const saveContact = () => {
     messageType.value = "error";
     return;
   }
-  
+
   if (contact.value.id) {
     // Update existing contact...
   } else {
@@ -152,7 +154,9 @@ const saveContact = () => {
           contact.value.id = response.data.id;
           message.value = "Contact saved successfully!";
           messageType.value = "success";
-          router.push({ name: "view" });
+
+          // Here, push to the contact-view route with the id of the newly created contact
+          router.push({ name: "contact-view", params: { id: contact.value.id } });
         } else {
           message.value = "Failed to save contact. No data returned.";
           messageType.value = "error";
@@ -167,7 +171,6 @@ const saveContact = () => {
       });
   }
 };
-
 
 // Delete contact
 const deleteContact = (contactId) => {
@@ -188,8 +191,9 @@ const deleteContact = (contactId) => {
 
 // Cancel action
 const cancel = () => {
-  router.push({ name: "view" });
+  router.push({ name: 'home' });  // This navigates to the homepage
 };
+
 </script>
 
 <style scoped>

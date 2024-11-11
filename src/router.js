@@ -6,6 +6,12 @@ import EditResume from "./views/EditResume.vue";
 import AddResume from "./views/AddResume.vue";
 import ViewResume from "./views/ViewResume.vue";
 import home from "./views/home.vue";
+import AddProjects from "./views/AddProjects.vue"; 
+import PersonalLinks from "./views/PersonalLinks.vue";  
+import ContactView from "./views/ContactView.vue";  
+import AddContact from "./views/AddContact.vue";  
+import AddEducation from "./views/AddEducation.vue";
+import ContactForm from "./views/ContactForm.vue";  
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -31,10 +37,9 @@ const router = createRouter({
 
     {
       path: "/resumes",  // Path for the resume list
-      name: "resumes",  // Name for this route
+      name: "resumes",  
       component: ResumeList,
     },
-
 
     {
       path: '/projects',
@@ -49,47 +54,50 @@ const router = createRouter({
     },
 
     {
-      path: "/edit/:id",  // Edit resume path with dynamic id
+      path: "/edit/:id",  
       name: "edit",
       component: EditResume,
       props: true,
     },
+
     {
       path: '/contact/:id?',
       name: 'contact-view',
       component: ContactView,
-      props: true,  // Allows you to pass `id` as a prop
+      props: true,  
     },
+
     {
-      path: "/enterContactInfo",  // New route for AddContact
-      name: "enterContactInfo",  // Name for the route
-      component: AddContact,  // The component that will be shown for this route
+      path: '/enterContactInfo',
+      name: 'enterContactInfo',
+      component: AddContact,
     },
+
     {
-      path: '/view',
-      name: 'view',
-      component: ContactView,  // The view page after saving
-    },
-    {
-      path: "/view/:id",  // View resume path with dynamic id
-      name: "view",
-      component: ViewResume,
+      path: '/contact-form/:id?',
+      name: 'contact-form',
+      component: ContactForm,  
       props: true,
     },
-  
-      {
-        path: '/enterEducation',
-        name: 'enterEducation',
-        component: AddEducation,
-      },
 
-    // Add Education route
     {
-      path: "/education/add",  // Path for adding education
-      name: "addEducation",
-      component: AddEducation,  // Component for adding a new education entry
+      path: '/view/:id',
+      name: 'view-contact',
+      component: ContactView,
+      props: true,  
+    },
+
+    {
+      path: '/enterEducation',
+      name: 'enterEducation',
+      component: AddEducation,
     },
     
+    {
+      path: "/education/add",  
+      name: "addEducation",
+      component: AddEducation,
+    },
   ],
 });
 
