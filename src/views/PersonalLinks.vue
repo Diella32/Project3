@@ -112,6 +112,15 @@ const editLink = (link) => {
 const showNotification = (text, color = 'success') => {
   snackbar.value = { show: true, text, color, timeout: 3000 };
 };
+
+// Navigation Methods
+const goToPrevious = () => {
+  router.push({ name: 'contactInfo' });
+};
+
+const goToNext = () => {
+  router.push({ name: 'AddProjects' });
+};
 </script>
 
 <template>
@@ -213,6 +222,18 @@ const showNotification = (text, color = 'success') => {
         </v-row>
       </v-container>
     </v-card-text>
+
+    <!-- Navigation Buttons -->
+    <v-card-actions class="d-flex justify-space-between">
+      <v-btn color="primary" @click="goToPrevious">
+        <v-icon left>mdi-arrow-left</v-icon>
+        Previous: Contact Info
+      </v-btn>
+      <v-btn color="primary" @click="goToNext">
+        Next: Education
+        <v-icon right>mdi-arrow-right</v-icon>
+      </v-btn>
+    </v-card-actions>
   </v-card>
 
   <!-- Notifications -->
