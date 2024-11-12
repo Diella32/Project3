@@ -6,9 +6,12 @@ import EditResume from "./views/EditResume.vue";
 import AddResume from "./views/AddResume.vue";
 import ViewResume from "./views/ViewResume.vue";
 import home from "./views/home.vue";
+import AddProjects from "./views/AddProjects.vue";
+import PersonalLinks from "./views/PersonalLinks.vue";
 import ContactView from "./views/ContactView.vue"; 
 import AddContact from "./views/AddContact.vue"; 
 import AddEducation from "./views/AddEducation.vue";  // To add a new education entry
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,6 +40,20 @@ const router = createRouter({
       name: "resumes",  // Name for this route
       component: ResumeList,
     },
+
+
+    {
+      path: '/projects',
+      name: 'AddProjects',
+      component: AddProjects,
+    },
+
+    {
+      path: '/PersonalLinks',
+      name: 'PersonalLinks',
+      component: PersonalLinks,
+    },
+
     {
       path: "/edit/:id",  // Edit resume path with dynamic id
       name: "edit",
