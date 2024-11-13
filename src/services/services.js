@@ -4,7 +4,7 @@ import AuthServices from './authServices.js'
 import Router from '../router.js'
 var baseurl = ''
 if (import.meta.env.DEV) {
-  baseurl = "http://localhost:3029/api/resume/";
+  baseurl = "http://localhost:3029/resume";
 } else {
   baseurl = "/resume-t9/";
 }
