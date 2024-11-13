@@ -5,7 +5,7 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 const valid = ref(true);
-
+// CHANGES
 // Contact object to hold current contact information
 const contact = ref({
   id: null,
