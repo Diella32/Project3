@@ -1,0 +1,23 @@
+import apiClient from "./services.js";
+
+export default {
+  // Get all certifications for a resume
+  getCertificationsForResume(resumeId) {
+    return apiClient.get(`award-certifications/resume/${resumeId}`);
+  },
+
+  // Create a new certification
+  createCertification(certification) {
+    return apiClient.post("award-certifications", certification);
+  },
+
+  // Update an existing certification
+  updateCertification(id, certification) {
+    return apiClient.put(`award-certifications/${id}`, certification);
+  },
+
+  // Delete a certification
+  deleteCertification(id) {
+    return apiClient.delete(`award-certifications/${id}`);
+  }
+};
