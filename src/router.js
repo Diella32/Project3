@@ -5,13 +5,11 @@ import ResumeList from "./views/ResumeList.vue";
 import EditResume from "./views/EditResume.vue";
 import AddResume from "./views/AddResume.vue";
 import ViewResume from "./views/ViewResume.vue";
-import home from "./views/home.vue";
+import Home from "./views/Home.vue";
 import AddProjects from "./views/AddProjects.vue"; 
 import PersonalLinks from "./views/PersonalLinks.vue";  
-import ContactView from "./views/ContactView.vue";  
 import AddContact from "./views/AddContact.vue";  
-import AddEducation from "./views/AddEducation.vue";
-import ContactForm from "./views/ContactForm.vue";  
+import AddEducation from "./views/AddEducation.vue";  
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,79 +20,50 @@ const router = createRouter({
       name: "login",
       component: Login,
     },
-
     {
       path: '/',
       name: 'home',
-      component: home,
+      component: Home,
     },
-
     {
-      path: "/add",  // Path for adding a resume
+      path: "/add",
       name: "add",
       component: AddResume,
     },
-
     {
-      path: "/resumes",  // Path for the resume list
-      name: "resumes",  
+      path: "/resumes",
+      name: "resumes",
       component: ResumeList,
     },
-
     {
       path: '/projects',
       name: 'AddProjects',
       component: AddProjects,
     },
-
     {
       path: '/PersonalLinks',
       name: 'PersonalLinks',
       component: PersonalLinks,
     },
-
     {
-      path: "/edit/:id",  
+      path: "/edit/:id",
       name: "edit",
       component: EditResume,
       props: true,
     },
-
     {
-      path: '/contact/:id?',
-      name: 'contact-view',
-      component: ContactView,
-      props: true,  
-    },
-
-    {
-      path: '/enterContactInfo',
-      name: 'enterContactInfo',
+      path: '/Contact',
+      name: 'Contact',
       component: AddContact,
-    },
-
-    {
-      path: '/contact-form/:id?',
-      name: 'contact-form',
-      component: ContactForm,  
       props: true,
     },
-
-    {
-      path: '/view/:id',
-      name: 'view-contact',
-      component: ContactView,
-      props: true,  
-    },
-
     {
       path: '/enterEducation',
       name: 'enterEducation',
       component: AddEducation,
     },
-    
     {
-      path: "/education/add",  
+      path: "/education/add",
       name: "addEducation",
       component: AddEducation,
     },

@@ -1,214 +1,238 @@
-<template>
-  <div>
-    <v-container>
-      <v-toolbar>
-        <v-toolbar-title>Contact Information</v-toolbar-title>
-      </v-toolbar>
-      <br />
-      <v-alert v-if="message" :type="messageType" dense>
-        {{ message }}
-      </v-alert>
-      <br />
-      <v-form ref="form" v-model="valid" lazy validation>
-        <v-text-field
-          v-model="contact.fname"
-          id="fname"
-          label="First Name"
-          :counter="50"
-          :rules="[rules.required]"
-        />
-        <v-text-field
-          v-model="contact.lname"
-          id="lname"
-          label="Last Name"
-          :counter="50"
-          :rules="[rules.required]"
-        />
-        <v-text-field
-          v-model="contact.email"
-          id="email"
-          label="Email"
-          :rules="[rules.required, rules.email]"
-        />
-        <v-text-field
-          v-model="contact.phone_number"
-          id="phone_number"
-          label="Phone Number"
-          :rules="[rules.required, rules.phoneNumber]"
-        />
-        <v-textarea
-          v-model="contact.address"
-          id="address"
-          label="Address"
-          :counter="150"
-          :rules="[rules.optionalAddress]"
-        />
-        <v-btn
-          :disabled="!valid"
-          color="success"
-          class="mr-4"
-          @click="saveContact"
-        >
-          Save
-        </v-btn>
-
-        <v-btn
-          v-if="contact.id"
-          color="error"
-          class="mr-4"
-          @click="() => deleteContact(contact.id)"
-        >
-          Delete
-        </v-btn>
-
-        <v-btn color="error" class="mr-4" @click="cancel">Cancel</v-btn>
-      </v-form>
-    </v-container>
-  </div>
-</template>
-
 <script setup>
-import { ref, watch } from "vue"; // Import ref and watch together here
-import { useRouter } from "vue-router";
-import ContactServices from '../services/ContactServices.js';
-// Router
-const router = useRouter();
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import ContactServices from '../services/ContactServices';
+import store from '../store/store'
 
-// Contact object to hold current contact information
-const valid = ref(true);
-const message = ref("Enter contact data and click save");
-const messageType = ref("info");
+const route = useRoute();
+const contacts = ref([]);
+const isLoading = ref(false);
+const expandedPanel = ref(null);
+const editingContact = ref(null);
 
-const contact = ref({
-  id: null,
-  fname: "",
-  lname: "",
-  email: "",
-  phone_number: "",
-  address: "",
+// Snackbar state
+const snackbar = ref({
+  show: false,
+  text: '',
+  color: 'success',
+  timeout: 3000,
 });
 
-// Validation rules for form fields
+// Form validation rules
 const rules = {
-  required: (value) => !!value || "This field is required",
-  email: (value) => {
-    const pattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
-    return pattern.test(value) || "Please enter a valid email";
-  },
-  phoneNumber: (value) => {
-    const pattern = /^[0-9]{10}$/;
-    return pattern.test(value) || "Please enter a valid phone number";
-  },
-  optionalAddress: (value) => !value || value.length >= 5 || "Address must be at least 5 characters long",
+  required: v => !!v || 'Field is required',
+  email: v => /.+@.+\..+/.test(v) || 'Please enter a valid email',
 };
 
-watch(valid, (newValue) => {
-  console.log("Form valid status:", newValue); // Should log `true` if form is valid
+// New contact template (updated with firstName, lastName, and address)
+const newContactTemplate = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '',
+  address: '',
+  userId: store.getters.getLoginUserInfo.user_id, // Automatically get user ID from the store
+};
+
+const fetchContacts = async () => {
+  const userId = store.getters.getLoginUserInfo.user_id; // Get userId from the store
+  try {
+    const response = await ContactServices.getAllContacts(userId);
+    contacts.value = response.data;
+  } catch (error) {
+    console.error('Error fetching contacts:', error);
+    showNotification('Failed to load contacts', 'error');
+  }
+};
+
+onMounted(async () => {
+  await fetchContacts();
 });
 
-// Fetch existing contact information
-const fetchContact = (contactId) => {
-  ContactServices.getContact(contactId)
-    .then((response) => {
-      if (response && response.data) {
-        contact.value = response.data;
-      } else {
-        message.value = "Failed to load contact data.";
-        messageType.value = "error";
-      }
-    })
-    .catch((e) => {
-      message.value =
-        e.response && e.response.data && e.response.data.message
-          ? e.response.data.message
-          : "Error loading contact data. Please try again.";
-      messageType.value = "error";
-    });
+// Methods for CRUD operations
+const addNewContact = () => {
+  // Push a new contact to the array instead of replacing it
+  contacts.value.push({ ...newContactTemplate });
+  expandedPanel.value = contacts.value.length - 1;
+  editingContact.value = contacts.value[contacts.value.length - 1];
 };
 
-const saveContact = () => {
-  const data = {
-    fname: contact.value.fname,
-    lname: contact.value.lname,
-    email: contact.value.email,
-    phone_number: contact.value.phone_number,
-    address: contact.value.address,
-  };
+const saveContact = async () => {
+  if (!editingContact.value) return;
 
-  console.log('Data to be saved:', data); // Log the data being sent
-  
-  // Check if `data` fields are empty
-  if (!data.fname || !data.lname || !data.email || !data.phone_number || !data.address) {
-    message.value = "All fields must be filled out!";
-    messageType.value = "error";
-    return;
-  }
+  isLoading.value = true;
+  try {
+    const userId = store.getters.getLoginUserInfo.user_id; // Get userId from the store
+    const contactData = {
+      ...editingContact.value,
+      user_id: userId,
+    };
 
-  if (contact.value.id) {
-    // Update existing contact...
-  } else {
-    // Add new contact
-    ContactServices.createContact(data)
-      .then((response) => {
-        if (response && response.data) {
-          contact.value.id = response.data.id;
-          message.value = "Contact saved successfully!";
-          messageType.value = "success";
+    if (editingContact.value.id) {
+      await ContactServices.updateContact(editingContact.value.id, contactData);
+    } else {
+      await ContactServices.createContact(contactData);
+    }
 
-          // Here, push to the contact-view route with the id of the newly created contact
-          router.push({ name: "contact-view", params: { id: contact.value.id } });
-        } else {
-          message.value = "Failed to save contact. No data returned.";
-          messageType.value = "error";
-        }
-      })
-      .catch((e) => {
-        message.value =
-          e.response && e.response.data && e.response.data.message
-            ? e.response.data.message
-            : "Error saving contact. Please try again.";
-        messageType.value = "error";
-      });
+    await fetchContacts();
+    showNotification('Contact saved successfully');
+    expandedPanel.value = null;
+    editingContact.value = null;
+  } catch (error) {
+    console.error('Error saving contact:', error);
+    showNotification('Failed to save contact', 'error');
+  } finally {
+    isLoading.value = false;
   }
 };
 
-// Delete contact
-const deleteContact = (contactId) => {
-  ContactServices.deleteContact(contactId)
-    .then(() => {
-      message.value = "Contact deleted successfully!";
-      messageType.value = "success";
-      router.push({ name: "view" });
-    })
-    .catch((e) => {
-      message.value =
-        e.response && e.response.data && e.response.data.message
-          ? e.response.data.message
-          : "Error deleting contact. Please try again.";
-      messageType.value = "error";
-    });
+const deleteContact = async (id) => {
+  try {
+    await ContactServices.deleteContact(id);
+    await fetchContacts();
+    showNotification('Contact deleted successfully');
+  } catch (error) {
+    console.error('Error deleting contact:', error);
+    showNotification('Failed to delete contact', 'error');
+  }
 };
 
-// Cancel action
-const cancel = () => {
-  router.push({ name: 'home' });  // This navigates to the homepage
+const editContact = (contact) => {
+  editingContact.value = { ...contact };
+  expandedPanel.value = contacts.value.findIndex(c => c.id === contact.id);
 };
 
+const showNotification = (text, color = 'success') => {
+  snackbar.value = { show: true, text, color, timeout: 3000 };
+};
 </script>
+<template>
+  <v-card class="contacts-card">
+    <v-card-item class="text-center">
+      <v-icon icon="mdi-account" size="72" color="primary" class="mb-6"></v-icon>
+      <v-card-title class="text-h2 font-weight-bold mb-4">Contacts</v-card-title>
+    </v-card-item>
 
-<style scoped>
-/* Add custom styles here */
-.v-toolbar {
-  background-color: #1976d2;
-}
+    <v-divider></v-divider>
 
-.v-btn {
-  margin-top: 16px;
-}
+    <v-card-text class="py-6">
+      <v-container>
+        <!-- Add New Contact Button -->
+        <v-row justify="center" class="mb-6">
+          <v-col cols="12" sm="8">
+            <v-btn
+              color="primary"
+              block
+              @click="addNewContact"
+              size="large"
+              prepend-icon="mdi-plus"
+            >
+              Add New Contact
+            </v-btn>
+          </v-col>
+        </v-row>
 
-.v-alert {
-  margin-bottom: 16px;
-  font-weight: bold;
-}
-</style>
-// we need to adopt to similar styles!
+        <!-- Contacts List -->
+        <v-row justify="center">
+          <v-col cols="12" sm="8">
+            <v-expansion-panels v-model="expandedPanel">
+              <v-expansion-panel
+                v-for="(contact, index) in contacts"
+                :key="contact.id || index"
+              >
+                <v-expansion-panel-title>
+                  <v-row no-gutters>
+                    <v-col cols="auto" class="mr-4">
+                      <v-icon>mdi-account-circle</v-icon>
+                    </v-col>
+                    <v-col>
+                      {{ contact.firstName && contact.lastName ? `${contact.firstName} ${contact.lastName}` : "New Contact" }}
+                    </v-col>
+                  </v-row>
+                </v-expansion-panel-title>
+
+                <v-expansion-panel-text>
+                  <v-form @submit.prevent="saveContact">
+                    <!-- First Name -->
+                    <v-text-field
+                      v-model="contact.firstName"
+                      label="First Name"
+                      :rules="[rules.required]"
+                      variant="outlined"
+                      class="mt-4"
+                    ></v-text-field>
+
+                    <!-- Last Name -->
+                    <v-text-field
+                      v-model="contact.lastName"
+                      label="Last Name"
+                      :rules="[rules.required]"
+                      variant="outlined"
+                      class="mt-4"
+                    ></v-text-field>
+
+                    <!-- Email -->
+                    <v-text-field
+                      v-model="contact.email"
+                      label="Email"
+                      :rules="[rules.required, rules.email]"
+                      variant="outlined"
+                      class="mt-4"
+                    ></v-text-field>
+
+                    <!-- Phone -->
+                    <v-text-field
+                      v-model="contact.phone"
+                      label="Phone"
+                      variant="outlined"
+                      class="mt-4"
+                    ></v-text-field>
+
+                    <!-- Address -->
+                    <v-textarea
+                      v-model="contact.address"
+                      label="Address"
+                      variant="outlined"
+                      class="mt-4"
+                    ></v-textarea>
+
+                    <!-- Save Button -->
+                    <v-btn
+                      color="success"
+                      block
+                      class="mt-4"
+                      @click="saveContact"
+                      :loading="isLoading"
+                    >
+                      Save Contact
+                    </v-btn>
+
+                    <!-- Delete Button -->
+                    <v-btn
+                      v-if="contact.id"
+                      color="error"
+                      block
+                      class="mt-2"
+                      @click="deleteContact(contact.id)"
+                      :disabled="isLoading"
+                    >
+                      Delete Contact
+                    </v-btn>
+                  </v-form>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-card-text>
+  </v-card>
+
+  <!-- Notifications -->
+  <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
+    {{ snackbar.text }}
+    <template v-slot:actions>
+      <v-btn variant="text" @click="snackbar.show = false">Close</v-btn>
+    </template>
+  </v-snackbar>
+</template>

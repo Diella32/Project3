@@ -1,29 +1,40 @@
-// contactServices.js
-
-import apiClient from './services';
+import apiClient from './services';  // Import your configured axios instance
 
 export default {
-  getAllContacts() {
-    return apiClient.get("/contactInfo");
+  getAllContacts(userId) {
+    return apiClient.get(`/user/${userId}/contactInfo`).catch(error => {
+      console.error("Error fetching contacts:", error.response || error.message);
+      throw error;
+    });
   },
-
-  getContact(id) {
-    return apiClient.get(`/contactInfo/${id}`);
+  getContact(userId, id) {
+    return apiClient.get(`/user/${userId}/contactInfo/${id}`).catch(error => {
+      console.error("Error fetching contact:", error.response || error.message);
+      throw error;
+    });
   },
-
   createContact(data) {
-    return apiClient.post("/contactInfo", data); 
+    return apiClient.post(`/contactInfo`, data).catch(error => {
+      console.error("Error creating contact:", error.response || error.message);
+      throw error;
+    });
   },
-
-  updateContact(id, data) {
-    return apiClient.put(`/contactInfo/${id}`, data);  // Use the correct URL
+  updateContact(userId, id, data) {
+    return apiClient.put(`/user/${userId}/contactInfo/${id}`, data).catch(error => {
+      console.error("Error updating contact:", error.response || error.message);
+      throw error;
+    });
   },
-
-  deleteContact(id) {
-    return apiClient.delete(`/contactInfo/${id}`);  // Use the correct URL
+  deleteContact(userId, id) {
+    return apiClient.delete(`/user/${userId}/contactInfo/${id}`).catch(error => {
+      console.error("Error deleting contact:", error.response || error.message);
+      throw error;
+    });
   },
-
-  deleteAllContacts() {
-    return apiClient.delete("/contactInfo");  // Use the correct URL
+  deleteAllContacts(userId) {
+    return apiClient.delete(`/user/${userId}/contactInfo`).catch(error => {
+      console.error("Error deleting all contacts:", error.response || error.message);
+      throw error;
+    });
   }
 };

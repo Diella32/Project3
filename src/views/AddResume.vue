@@ -107,7 +107,7 @@ const sections = [
     title: 'Contact Info',
     subtitle: 'Personal details and contact information',
     icon: 'mdi-account',
-    route: 'enterContactInfo'
+    route: 'Contact'
   },
   {
     title: 'Personal Links',
