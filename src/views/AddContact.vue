@@ -1,121 +1,47 @@
-<script setup>
-import ContactServices from "../services/contactServices"; 
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
-const valid = ref(true);
-
-// Contact object to hold current contact information
-const contact = ref({
-  id: null,
-  name: "",
-  email: "",
-  phone: "",
-  address: "",
-});
-const message = ref("Enter contact data and click save");
-
-// Function to fetch existing contact information
-const fetchContact = (contactId) => {
-  ContactServices.getContact(contactId)
-    .then((response) => {
-      contact.value = response.data;
-    })
-    .catch((e) => {
-      message.value = e.response.data.message;
-    });
-};
-
-// Save or Add new contact
-const saveContact = () => {
-  const data = {
-    name: contact.value.name,
-    email: contact.value.email,
-    phone: contact.value.phone,
-    address: contact.value.address,
-  };
-
-  if (contact.value.id) {
-    // Update existing contact
-    ContactServices.updateContact(contact.value.id, data)
-      .then(() => {
-        router.push({ name: "view" });
-      })
-      .catch((e) => {
-        message.value = e.response.data.message;
-      });
-  } else {
-    // Add new contact
-    ContactServices.createContact(data)
-      .then((response) => {
-        contact.value.id = response.data.id;
-        router.push({ name: "view" });
-      })
-      .catch((e) => {
-        message.value = e.response.data.message;
-      });
-  }
-};
-
-// Delete contact
-const deleteContact = (contactId) => {
-  ContactServices.deleteContact(contactId)
-    .then(() => {
-      router.push({ name: "view" });
-    })
-    .catch((e) => {
-      message.value = e.response.data.message;
-    });
-};
-
-// Cancel action
-const cancel = () => {
-  router.push({ name: "view" });
-};
-</script>
-
 <template>
   <div>
     <v-container>
-     
       <v-toolbar>
         <v-toolbar-title>Contact Information</v-toolbar-title>
       </v-toolbar>
       <br />
-      <h4>{{ message }}</h4>
+      <v-alert v-if="message" :type="messageType" dense>
+        {{ message }}
+      </v-alert>
       <br />
       <v-form ref="form" v-model="valid" lazy validation>
-       
         <v-text-field
-          v-model="contact.name"
-          id="name"
+          v-model="contact.fname"
+          id="fname"
+          label="First Name"
           :counter="50"
-          label="Name"
-          required
-        ></v-text-field>
+          :rules="[rules.required]"
+        />
+        <v-text-field
+          v-model="contact.lname"
+          id="lname"
+          label="Last Name"
+          :counter="50"
+          :rules="[rules.required]"
+        />
         <v-text-field
           v-model="contact.email"
           id="email"
-          :counter="50"
           label="Email"
-          required
-        ></v-text-field>
+          :rules="[rules.required, rules.email]"
+        />
         <v-text-field
-          v-model="contact.phone"
-          id="phone"
-          :counter="15"
-          label="Phone"
-          required
-        ></v-text-field>
-        <v-text-field
+          v-model="contact.phone_number"
+          id="phone_number"
+          label="Phone Number"
+          :rules="[rules.required, rules.phoneNumber]"
+        />
+        <v-textarea
           v-model="contact.address"
           id="address"
-          :counter="100"
           label="Address"
-          required
-        ></v-text-field>
-
+          :counter="150"
+        />
         <v-btn
           :disabled="!valid"
           color="success"
@@ -125,7 +51,6 @@ const cancel = () => {
           Save
         </v-btn>
 
-       
         <v-btn
           v-if="contact.id"
           color="error"
@@ -135,13 +60,150 @@ const cancel = () => {
           Delete
         </v-btn>
 
-        
-        <v-btn color="error" class="mr-4" @click="cancel"> Cancel </v-btn>
+        <v-btn color="error" class="mr-4" @click="cancel">Cancel</v-btn>
       </v-form>
     </v-container>
   </div>
 </template>
 
+<script setup>
+import { ref, watch } from "vue"; // Import ref and watch together here
+import { useRouter } from "vue-router";
+import ContactServices from "../services/ContactServices";
+
+// Router
+const router = useRouter();
+
+// Contact object to hold current contact information
+const valid = ref(true);
+const message = ref("Enter contact data and click save");
+const messageType = ref("info");
+
+const contact = ref({
+  id: null,
+  fname: "",
+  lname: "",
+  email: "",
+  phone_number: "",
+  address: "",
+});
+
+// Validation rules for form fields
+const rules = {
+  required: (value) => !!value || "This field is required",
+  email: (value) => {
+    const pattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
+    return pattern.test(value) || "Please enter a valid email";
+  },
+  phoneNumber: (value) => {
+    const pattern = /^[0-9]{10}$/;
+    return pattern.test(value) || "Please enter a valid phone number";
+  },
+};
+watch(valid, (newValue) => {
+  console.log("Form valid status:", newValue); // Should log `true` if form is valid
+});
+
+// Fetch existing contact information
+const fetchContact = (contactId) => {
+  ContactServices.getContact(contactId)
+    .then((response) => {
+      if (response && response.data) {
+        contact.value = response.data;
+      } else {
+        message.value = "Failed to load contact data.";
+        messageType.value = "error";
+      }
+    })
+    .catch((e) => {
+      message.value =
+        e.response && e.response.data && e.response.data.message
+          ? e.response.data.message
+          : "Error loading contact data. Please try again.";
+      messageType.value = "error";
+    });
+};
+
+const saveContact = () => {
+  const data = {
+    fname: contact.value.fname,
+    lname: contact.value.lname,
+    email: contact.value.email,
+    phone_number: contact.value.phone_number,
+    address: contact.value.address,
+  };
+  
+  console.log('Data to be saved:', data); // Log the data being sent
+  
+  // Check if `data` fields are empty
+  if (!data.fname || !data.lname || !data.email || !data.phone_number || !data.address) {
+    message.value = "All fields must be filled out!";
+    messageType.value = "error";
+    return;
+  }
+  
+  if (contact.value.id) {
+    // Update existing contact...
+  } else {
+    // Add new contact
+    ContactServices.createContact(data)
+      .then((response) => {
+        if (response && response.data) {
+          contact.value.id = response.data.id;
+          message.value = "Contact saved successfully!";
+          messageType.value = "success";
+          router.push({ name: "view" });
+        } else {
+          message.value = "Failed to save contact. No data returned.";
+          messageType.value = "error";
+        }
+      })
+      .catch((e) => {
+        message.value =
+          e.response && e.response.data && e.response.data.message
+            ? e.response.data.message
+            : "Error saving contact. Please try again.";
+        messageType.value = "error";
+      });
+  }
+};
 
 
+// Delete contact
+const deleteContact = (contactId) => {
+  ContactServices.deleteContact(contactId)
+    .then(() => {
+      message.value = "Contact deleted successfully!";
+      messageType.value = "success";
+      router.push({ name: "view" });
+    })
+    .catch((e) => {
+      message.value =
+        e.response && e.response.data && e.response.data.message
+          ? e.response.data.message
+          : "Error deleting contact. Please try again.";
+      messageType.value = "error";
+    });
+};
 
+// Cancel action
+const cancel = () => {
+  router.push({ name: "view" });
+};
+</script>
+
+<style scoped>
+/* Add custom styles here */
+.v-toolbar {
+  background-color: #1976d2;
+}
+
+.v-btn {
+  margin-top: 16px;
+}
+
+.v-alert {
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+</style>
