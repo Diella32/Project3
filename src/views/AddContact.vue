@@ -59,6 +59,8 @@ const fetchContacts = async () => {
 };
 
 onMounted(() => {
+  store.dispatch("fetchContacts", userId);
+  contacts.value = store.getters.getContacts;
   fetchContacts();
 });
 
