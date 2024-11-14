@@ -8,7 +8,7 @@ export default {
   },
 
   // Get a single PersonalLinks by ID for a specific resume
-  getPersonalLinks(userId, projectId) {
+  getPersonalLinks(userId, PersonalLinksId) {
     return apiClient.get(`/user/${userId}/PersonalLinks/${PersonalLinksId}`);
   },
 
@@ -19,11 +19,11 @@ export default {
 
   // Update an existing PersonalLinks by ID for a specific resume
   updatePersonalLinks(userId, PersonalLinksId, data) {
-    return apiClient.put(`/user/${userId}/PersonalLinks/${PersonalLinksId}`, data);
+    return apiClient.put(`/PersonalLinks/${PersonalLinksId}`, data);
   },
 
   // Delete a PersonalLinks by ID for a specific resume
   deletePersonalLinks(userId, PersonalLinksId) {
-    return apiClient.delete(`/user/${userId}/PersonalLinks/${PersonalLinksId}`);
+    return apiClient.delete(`/PersonalLinks/${PersonalLinksId}`);
   }
 };

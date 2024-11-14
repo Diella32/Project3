@@ -1,145 +1,295 @@
-<template>
-  <div>
-    <v-container>
-      <v-toolbar>
-        <v-toolbar-title>Add Education</v-toolbar-title>
-      </v-toolbar>
-      <br />
-      <v-alert v-if="message" :type="messageType" dense>
-        {{ message }}
-      </v-alert>
-      <br />
-      <v-form ref="form" v-model="valid" lazy validation>
-        <v-text-field
-          v-model="education.degree"
-          id="degree"
-          label="Degree"
-          :rules="[rules.required]"
-        />
-        <v-text-field
-          v-model="education.fieldOfStudy"
-          id="fieldOfStudy"
-          label="Field of Study"
-          :rules="[rules.required]"
-        />
-        <v-text-field
-          v-model="education.institution"
-          id="institution"
-          label="Institution"
-          :rules="[rules.required]"
-        />
-        <v-text-field
-          v-model="education.startDate"
-          id="startDate"
-          label="Start Date"
-          type="date"
-          :rules="[rules.required]"
-        />
-        <v-text-field
-          v-model="education.endDate"
-          id="endDate"
-          label="End Date"
-          type="date"
-          :rules="[rules.required]"
-        />
-        <v-text-field
-          v-model="education.gpa"
-          id="gpa"
-          label="GPA"
-          type="number"
-          :rules="[rules.required]"
-        />
-
-        <v-btn
-          :disabled="!valid"
-          color="success"
-          class="mr-4"
-          @click="saveEducation"
-        >
-          Save
-        </v-btn>
-
-        <v-btn color="error" class="mr-4" @click="cancel">Cancel</v-btn>
-      </v-form>
-    </v-container>
-  </div>
-</template>
-
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-import EducationServices from "../services/ EducationServices";
+import { ref, onMounted, computed } from "vue";
+import EducationServices from '../services/ EducationServices'
+import store from '../store/store';
 
-// Router
-const router = useRouter();
+const user = store.getters.getLoginUserInfo;
+const educations = ref([]);
+const expandedPanel = ref(null);
+const isValidating = ref(false);
+const educationForms = ref([]);
+const userId = store.getters.getLoginUserInfo.user_id;
 
-// Education object to hold current education information
-const valid = ref(true);
-const message = ref("Enter education data and click save");
-const messageType = ref("info");
-
-const education = ref({
-  degree: "",
-  fieldOfStudy: "",
-  institution: "",
-  startDate: "",
-  endDate: "",
-  gpa: null,
+// Snackbar state
+const snackbar = ref({
+  show: false,
+  text: "",
+  color: "success",
+  timeout: 3000,
 });
 
-// Validation rules for form fields
+// Validation rules
 const rules = {
   required: (value) => !!value || "This field is required",
 };
 
-// Save or Add new education
-const saveEducation = () => {
-  const data = {
-    degree: education.value.degree,
-    fieldOfStudy: education.value.fieldOfStudy,
-    institution: education.value.institution,
-    startDate: education.value.startDate,
-    endDate: education.value.endDate,
-    gpa: education.value.gpa,
-  };
+// Computed property for overall validity
+const isValid = computed(() => educations.value.every(education => education.valid));
 
-  EducationServices.createEducation(data)
-    .then((response) => {
-      if (response && response.data) {
-        message.value = "Education saved successfully!";
-        messageType.value = "success";
-        router.push({ name: "view" });
-      } else {
-        message.value = "Failed to save education. No data returned.";
-        messageType.value = "error";
-      }
-    })
-    .catch((e) => {
-      message.value =
-        e.response && e.response.data && e.response.data.message
-          ? e.response.data.message
-          : "Error saving education. Please try again.";
-      messageType.value = "error";
-    });
+// New education template
+const newEducationTemplate = {
+  //id: null,
+  degree: "",
+  FieldOfStudy: "",
+  institution: "",
+  startDate: "",
+  endDate: "",
+  gpa: null,
+  userId: user.user_id,
+  //valid: false,
 };
 
-// Cancel action
-const cancel = () => {
-  router.push({ name: "view" });
+// Fetch all educations
+const fetchEducations = async () => {
+  try {
+    const response = await EducationServices.getAllEducations(user.user_id);
+    educations.value = response.data;
+  } catch (error) {
+    console.error("Error fetching educations:", error);
+    showNotification("Failed to load educations", "error");
+  }
+};
+
+onMounted(() => {
+  fetchEducations();
+});
+
+// Methods
+const addNewEducation = () => {
+  educations.value.push({ ...newEducationTemplate });
+  expandedPanel.value = educations.value.length - 1;
+};
+
+const deleteEducation = async (id) => {
+  isValidating.value = true;
+  try {
+    await EducationServices.deleteEducation(userId, id);
+    await fetchEducations();
+    showNotification("Education deleted successfully");
+  } catch (error) {
+    console.error("Error deleting education:", error);
+    showNotification("Failed to delete education", "error");
+  } finally {
+    isValidating.value = false;
+  }
+};
+
+const saveEducation = async (index) => {
+  isValidating.value = true;
+  try {
+    const education = educations.value[index];
+
+    if (!education.education_id) {
+      // New education: Create on backend
+      const response = await EducationServices.createEducation(education);
+      education.id = response.data.id;
+    } else {
+      // Existing education: Update on backend
+      await EducationServices.updateEducation(education.education_id, education);
+    }
+    showNotification("Education saved successfully", "success");
+    expandedPanel.value = null;
+  } catch (error) {
+    console.error("Error saving education:", error);
+    showNotification("Failed to save education", "error");
+  } finally {
+    isValidating.value = false;
+  }
+};
+
+const showNotification = (text, color = "success", timeout = 3000) => {
+  snackbar.value = { show: true, text, color, timeout };
 };
 </script>
 
+
+<template>
+  <div class="education-wrapper">
+    <div class="education-container">
+      <v-row class="fill-height ma-0" align="start" justify="center">
+        <v-col cols="12" class="pa-0">
+          <v-card class="education-card" elevation="0">
+            <!-- Header -->
+            <v-card-item class="text-center header-section">
+              <v-icon icon="mdi-school" size="72" color="primary" class="mb-6"></v-icon>
+              <v-card-title class="text-h2 font-weight-bold mb-4">Add Education</v-card-title>
+              <v-card-subtitle class="text-h5 mb-6">Manage your education details</v-card-subtitle>
+            </v-card-item>
+
+            <v-divider></v-divider>
+
+            <!-- Education List -->
+            <v-card-text class="education-content py-6">
+              <v-container>
+                <!-- Add New Education Button -->
+                <v-row justify="center" class="mb-6">
+                  <v-col cols="12" md="8">
+                    <v-btn color="primary" block @click="addNewEducation" size="large" prepend-icon="mdi-plus">
+                      Add New Education
+                    </v-btn>
+                  </v-col>
+                </v-row>
+
+                <!-- Education List -->
+                <v-row justify="center">
+                  <v-col cols="12" md="8">
+                    <v-expansion-panels v-model="expandedPanel">
+                      <v-expansion-panel v-for="(education, index) in educations" :key="education.id || index" :disabled="isValidating">
+                        <v-expansion-panel-title>
+                          <span class="text-h6">{{ education.degree || 'New Education' }}</span>
+                        </v-expansion-panel-title>
+
+                        <v-expansion-panel-text>
+                          <v-form ref="educationForms" v-model="education.valid" @submit.prevent>
+                            <!-- Degree -->
+                            <v-text-field
+                              v-model="education.degree"
+                              label="Degree"
+                              :rules="[rules.required]"
+                              variant="outlined"
+                              density="comfortable"
+                              class="mb-4"
+                            ></v-text-field>
+
+                            <!-- Field of Study -->
+                            <v-text-field
+                              v-model="education.FieldOfStudy"
+                              label="Field of Study"
+                              :rules="[rules.required]"
+                              variant="outlined"
+                              density="comfortable"
+                              class="mb-4"
+                            ></v-text-field>
+
+                            <!-- Institution -->
+                            <v-text-field
+                              v-model="education.institution"
+                              label="Institution"
+                              :rules="[rules.required]"
+                              variant="outlined"
+                              density="comfortable"
+                              class="mb-4"
+                            ></v-text-field>
+
+                            <!-- Start Date -->
+                            <v-text-field
+                              v-model="education.startDate"
+                              label="Start Date"
+                              type="date"
+                              :rules="[rules.required]"
+                              variant="outlined"
+                              density="comfortable"
+                              class="mb-4"
+                            ></v-text-field>
+
+                            <!-- End Date -->
+                            <v-text-field
+                              v-model="education.endDate"
+                              label="End Date"
+                              type="date"
+                              :rules="[rules.required]"
+                              variant="outlined"
+                              density="comfortable"
+                              class="mb-4"
+                            ></v-text-field>
+
+                            <!-- GPA -->
+                            <v-text-field
+                              v-model="education.gpa"
+                              label="GPA"
+                              type="number"
+                              :rules="[rules.required]"
+                              variant="outlined"
+                              density="comfortable"
+                              class="mb-4"
+                            ></v-text-field>
+
+                            <!-- Action Buttons -->
+                            <v-row class="mt-4">
+                              <v-col cols="6">
+                                <v-btn 
+                                  color="error" 
+                                  block 
+                                  @click="deleteEducation(education.id)"
+                                  :disabled="isValidating"
+                                >
+                                  Delete Education
+                                </v-btn>
+                              </v-col>
+                              <v-col cols="6">
+                                <v-btn 
+                                  color="success" 
+                                  block 
+                                  @click="saveEducation(index)"
+                                  :loading="isValidating"
+                                >
+                                  Save Education
+                                </v-btn>
+                              </v-col>
+                            </v-row>
+                          </v-form>
+                        </v-expansion-panel-text>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
+
+    <!-- Notifications -->
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
+      {{ snackbar.text }}
+      <template v-slot:actions>
+        <v-btn variant="text" @click="snackbar.show = false">Close</v-btn>
+      </template>
+    </v-snackbar>
+  </div>
+</template>
 <style scoped>
-.v-toolbar {
-  background-color: #1976d2;
+.education-wrapper {
+  min-height: 100vh;
+  width: 100vw;
+  background-color: rgb(var(--v-theme-background));
+  display: flex;
+  flex-direction: column;
 }
 
-.v-btn {
-  margin-top: 16px;
+.education-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
 }
 
-.v-alert {
-  margin-bottom: 16px;
-  font-weight: bold;
+.education-card {
+  min-height: 100vh;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-section {
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+}
+
+.education-content {
+  flex: 1;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-space-between {
+  justify-content: space-between;
 }
 </style>

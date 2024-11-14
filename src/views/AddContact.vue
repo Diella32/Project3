@@ -1,94 +1,25 @@
-<template>
-  <div>
-    <v-container>
-      <v-toolbar>
-        <v-toolbar-title>Contact Information</v-toolbar-title>
-      </v-toolbar>
-      <br />
-      <v-alert v-if="message" :type="messageType" dense>
-        {{ message }}
-      </v-alert>
-      <br />
-      <v-form ref="form" v-model="valid" lazy validation>
-        <v-text-field
-          v-model="contact.fname"
-          id="fname"
-          label="First Name"
-          :counter="50"
-          :rules="[rules.required]"
-        />
-        <v-text-field
-          v-model="contact.lname"
-          id="lname"
-          label="Last Name"
-          :counter="50"
-          :rules="[rules.required]"
-        />
-        <v-text-field
-          v-model="contact.email"
-          id="email"
-          label="Email"
-          :rules="[rules.required, rules.email]"
-        />
-        <v-text-field
-          v-model="contact.phone_number"
-          id="phone_number"
-          label="Phone Number"
-          :rules="[rules.required, rules.phoneNumber]"
-        />
-        <v-textarea
-          v-model="contact.address"
-          id="address"
-          label="Address"
-          :counter="150"
-        />
-        <v-btn
-          :disabled="!valid"
-          color="success"
-          class="mr-4"
-          @click="saveContact"
-        >
-          Save
-        </v-btn>
-
-        <v-btn
-          v-if="contact.id"
-          color="error"
-          class="mr-4"
-          @click="() => deleteContact(contact.id)"
-        >
-          Delete
-        </v-btn>
-
-        <v-btn color="error" class="mr-4" @click="cancel">Cancel</v-btn>
-      </v-form>
-    </v-container>
-  </div>
-</template>
-
 <script setup>
-import { ref, watch } from "vue"; // Import ref and watch together here
-import { useRouter } from "vue-router";
+import { ref, onMounted, computed } from "vue";
 import ContactServices from "../services/ContactServices";
+import store from '../store/store';
 
-// Router
-const router = useRouter();
+//const user = store.getters.getLoginUserInfo;
+const contacts = ref([]);
+const expandedPanel = ref(null);
+const isValidating = ref(false);
+const contactForms = ref([]);
+const user = store.getters.getLoginUserInfo;
+const userId = user.user_id;
 
-// Contact object to hold current contact information
-const valid = ref(true);
-const message = ref("Enter contact data and click save");
-const messageType = ref("info");
-
-const contact = ref({
-  id: null,
-  fname: "",
-  lname: "",
-  email: "",
-  phone_number: "",
-  address: "",
+// Snackbar state
+const snackbar = ref({
+  show: false,
+  text: "",
+  color: "success",
+  timeout: 3000,
 });
 
-// Validation rules for form fields
+// Validation rules
 const rules = {
   required: (value) => !!value || "This field is required",
   email: (value) => {
@@ -100,110 +31,263 @@ const rules = {
     return pattern.test(value) || "Please enter a valid phone number";
   },
 };
-watch(valid, (newValue) => {
-  console.log("Form valid status:", newValue); // Should log `true` if form is valid
+
+// Computed property for overall validity
+const isValid = computed(() => contacts.value.every(contact => contact.valid));
+
+// New contact template
+const newContactTemplate = {
+  fName: "",
+  lName: "",
+  email: "",
+  phone_number: "",
+  address: "",
+  //valid: false,
+  userId: user.user_id,
+
+};
+
+// Fetch all contacts
+const fetchContacts = async () => {
+  try {
+    const response = await ContactServices.getAllContacts(user.user_id);
+    contacts.value = response.data;
+  } catch (error) {
+    console.error("Error fetching contacts:", error);
+    showNotification("Failed to load contacts", "error");
+  }
+};
+
+onMounted(() => {
+  store.dispatch("fetchContacts", userId);
+  contacts.value = store.getters.getContacts;
+  fetchContacts();
 });
 
-// Fetch existing contact information
-const fetchContact = (contactId) => {
-  ContactServices.getContact(contactId)
-    .then((response) => {
-      if (response && response.data) {
-        contact.value = response.data;
-      } else {
-        message.value = "Failed to load contact data.";
-        messageType.value = "error";
-      }
-    })
-    .catch((e) => {
-      message.value =
-        e.response && e.response.data && e.response.data.message
-          ? e.response.data.message
-          : "Error loading contact data. Please try again.";
-      messageType.value = "error";
-    });
+// Methods
+const addNewContact = () => {
+  contacts.value.push({ 
+    ...newContactTemplate});
+  expandedPanel.value = contacts.value.length - 1;
 };
 
-const saveContact = () => {
-  const data = {
-    fname: contact.value.fname,
-    lname: contact.value.lname,
-    email: contact.value.email,
-    phone_number: contact.value.phone_number,
-    address: contact.value.address,
-  };
-  
-  console.log('Data to be saved:', data); // Log the data being sent
-  
-  // Check if `data` fields are empty
-  if (!data.fname || !data.lname || !data.email || !data.phone_number || !data.address) {
-    message.value = "All fields must be filled out!";
-    messageType.value = "error";
-    return;
-  }
-  
-  if (contact.value.id) {
-    // Update existing contact...
-  } else {
-    // Add new contact
-    ContactServices.createContact(data)
-      .then((response) => {
-        if (response && response.data) {
-          contact.value.id = response.data.id;
-          message.value = "Contact saved successfully!";
-          messageType.value = "success";
-          router.push({ name: "view" });
-        } else {
-          message.value = "Failed to save contact. No data returned.";
-          messageType.value = "error";
-        }
-      })
-      .catch((e) => {
-        message.value =
-          e.response && e.response.data && e.response.data.message
-            ? e.response.data.message
-            : "Error saving contact. Please try again.";
-        messageType.value = "error";
-      });
+const deleteContact = async (id) => {
+  isValidating.value = true;
+  try {
+    await ContactServices.deleteContact(userId, id);
+    await fetchContacts();
+    showNotification("Contact deleted successfully");
+  } catch (error) {
+    console.error("Error deleting contact:", error);
+    showNotification("Failed to delete contact", "error");
+  } finally {
+    isValidating.value = false;
   }
 };
 
+const saveContact = async (index) => {
+  isValidating.value = true;
+  try {
+    const contact = contacts.value[index];
 
-// Delete contact
-const deleteContact = (contactId) => {
-  ContactServices.deleteContact(contactId)
-    .then(() => {
-      message.value = "Contact deleted successfully!";
-      messageType.value = "success";
-      router.push({ name: "view" });
-    })
-    .catch((e) => {
-      message.value =
-        e.response && e.response.data && e.response.data.message
-          ? e.response.data.message
-          : "Error deleting contact. Please try again.";
-      messageType.value = "error";
-    });
+    if (!contact.id) {
+      // New contact: Create on backend
+      const response = await ContactServices.createContact(contact);
+      contact.id = response.data.id;
+    } else {
+      // Existing contact: Update on backend
+      await ContactServices.updateContact(contact.id, contact);
+    }
+    showNotification("Contact saved successfully", "success");
+    expandedPanel.value = null;
+  } catch (error) {
+    console.error("Error saving contact:", error);
+    showNotification("Failed to save contact", "error");
+  } finally {
+    isValidating.value = false;
+  }
 };
 
-// Cancel action
-const cancel = () => {
-  router.push({ name: "view" });
+const showNotification = (text, color = "success", timeout = 3000) => {
+  snackbar.value = { show: true, text, color, timeout };
 };
 </script>
 
+
+<template>
+  <div class="contacts-wrapper">
+    <div class="contacts-container">
+      <v-row class="fill-height ma-0" align="start" justify="center">
+        <v-col cols="12" class="pa-0">
+          <v-card class="contacts-card" elevation="0">
+            <!-- Header -->
+            <v-card-item class="text-center header-section">
+              <v-icon icon="mdi-account-box" size="72" color="primary" class="mb-6"></v-icon>
+              <v-card-title class="text-h2 font-weight-bold mb-4">Contact Information</v-card-title>
+              <v-card-subtitle class="text-h5 mb-6">Manage your contact details</v-card-subtitle>
+            </v-card-item>
+
+            <v-divider></v-divider>
+
+            <!-- Contacts List -->
+            <v-card-text class="contacts-content py-6">
+              <v-container>
+                <!-- Add New Contact Button -->
+                <v-row justify="center" class="mb-6">
+                  <v-col cols="12" md="8">
+                    <v-btn color="primary" block @click="addNewContact" size="large" prepend-icon="mdi-plus">
+                      Add New Contact
+                    </v-btn>
+                  </v-col>
+                </v-row>
+
+                <!-- Contacts List -->
+                <v-row justify="center">
+                  <v-col cols="12" md="8">
+                    <v-expansion-panels v-model="expandedPanel">
+                      <v-expansion-panel v-for="(contact, index) in contacts" :key="contact.id || index" :disabled="isValidating">
+                        <v-expansion-panel-title>
+                          <span class="text-h6">{{ contact.fName || 'New Contact' }}</span>
+                        </v-expansion-panel-title>
+
+                        <v-expansion-panel-text>
+                          <v-form ref="contactForms" v-model="contact.valid" @submit.prevent>
+                            <!-- First Name -->
+                            <v-text-field
+                              v-model="contact.fName"
+                              label="First Name"
+                              :rules="[rules.required]"
+                              variant="outlined"
+                              density="comfortable"
+                              class="mb-4"
+                            ></v-text-field>
+
+                            <!-- Last Name -->
+                            <v-text-field
+                              v-model="contact.lName"
+                              label="Last Name"
+                              :rules="[rules.required]"
+                              variant="outlined"
+                              density="comfortable"
+                              class="mb-4"
+                            ></v-text-field>
+
+                            <!-- Email -->
+                            <v-text-field
+                              v-model="contact.email"
+                              label="Email"
+                              :rules="[rules.required, rules.email]"
+                              variant="outlined"
+                              density="comfortable"
+                              class="mb-4"
+                            ></v-text-field>
+
+                            <!-- Phone Number -->
+                            <v-text-field
+                              v-model="contact.phone_number"
+                              label="Phone Number"
+                              :rules="[rules.required, rules.phoneNumber]"
+                              variant="outlined"
+                              density="comfortable"
+                              class="mb-4"
+                            ></v-text-field>
+
+                            <!-- Address -->
+                            <v-textarea
+                              v-model="contact.address"
+                              label="Address"
+                              variant="outlined"
+                              density="comfortable"
+                              auto-grow
+                              class="mb-4"
+                            ></v-textarea>
+
+                            <!-- Action Buttons -->
+                            <v-row class="mt-4">
+                              <v-col cols="6">
+                                <v-btn 
+                                  color="error" 
+                                  block 
+                                  @click="deleteContact(contact.id)"
+                                  :disabled="isValidating"
+                                >
+                                  Delete Contact
+                                </v-btn>
+                              </v-col>
+                              <v-col cols="6">
+                                <v-btn 
+                                  color="success" 
+                                  block 
+                                  @click="saveContact(index)"
+                                  :loading="isValidating"
+                                >
+                                  Save Contact
+                                </v-btn>
+                              </v-col>
+                            </v-row>
+                          </v-form>
+                        </v-expansion-panel-text>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
+
+    <!-- Notifications -->
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
+      {{ snackbar.text }}
+      <template v-slot:actions>
+        <v-btn variant="text" @click="snackbar.show = false">Close</v-btn>
+      </template>
+    </v-snackbar>
+  </div>
+</template>
 <style scoped>
-/* Add custom styles here */
-.v-toolbar {
-  background-color: #1976d2;
+.contacts-wrapper {
+  min-height: 100vh;
+  width: 100vw;
+  background-color: rgb(var(--v-theme-background));
+  display: flex;
+  flex-direction: column;
 }
 
-.v-btn {
-  margin-top: 16px;
+.contacts-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
 }
 
-.v-alert {
-  margin-bottom: 16px;
-  font-weight: bold;
+.contacts-card {
+  min-height: 100vh;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-section {
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+}
+
+.contacts-content {
+  flex: 1;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.d-flex {
+  display: flex;
+}
+
+.justify-space-between {
+  justify-content: space-between;
 }
 </style>
