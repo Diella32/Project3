@@ -1,3 +1,4 @@
+
 import { createRouter, createWebHistory } from "vue-router";
 
 import Login from "./views/Login.vue";
@@ -63,7 +64,7 @@ const router = createRouter({
     },
     {
       path: '/interest', // 
-      name: 'personalInterests',
+      name: 'enterInterests',
       component: personalInterests,
     },
     {
