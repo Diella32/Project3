@@ -5,6 +5,7 @@ import ResumeList from "./views/ResumeList.vue";
 import EditResume from "./views/EditResume.vue";
 import AddResume from "./views/AddResume.vue";
 import ViewResume from "./views/ViewResume.vue";
+import CertificationsPage from "../src/views/Certifications.vue"
 import home from "./views/home.vue";
 import AddProjects from "./views/AddProjects.vue";
 import PersonalLinks from "./views/PersonalLinks.vue";
@@ -96,6 +97,11 @@ const router = createRouter({
       component: AddEducation,  // Component for adding a new education entry
     },
     
+    {
+      path: '/certifications',
+      name: 'enterCertifications',
+      component: CertificationsPage
+    },
   ],
 });
 
