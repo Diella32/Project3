@@ -12,6 +12,7 @@
               Add your professional certifications and achievements
             </v-card-subtitle>
           </v-card-item>
+          
 
           <v-divider></v-divider>
 
@@ -177,8 +178,8 @@ const showNotification = (text, color) => {
   snackbar.value = { show: true, text, color };
 };
 
-//const goBack = () => router.push('/previous-route');
-//const goNext = () => router.push('/next-route');
+const goBack = () => router.push('./personalInterests');
+const goNext = () => router.push('/next-route');
 </script>
 
 <style scoped>
