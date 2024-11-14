@@ -52,7 +52,7 @@ const router = createRouter({
     },
 
     {
-      path: '/interest',
+      path: '/interest', // 
       name: 'personalInterests',
       component: personalInterests,
     },
