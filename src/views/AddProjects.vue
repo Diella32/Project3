@@ -5,14 +5,13 @@ import ProjectServices from '../services/ProjectServices';
 import store from '../store/store'
 
 const user = store.getters.getLoginUserInfo
-//console.log(user);
-
 const router = useRouter();
 const route = useRoute();
 const projects = ref([]);
 const expandedPanel = ref(null);
 const isValidating = ref(false);
 const projectForms = ref([]);
+const userId = store.getters.getLoginUserInfo.user_id;
 
 // Snackbar state
 const snackbar = ref({
@@ -25,7 +24,7 @@ const snackbar = ref({
 // Validation rules
 const rules = {
   required: v => !!v || 'Field is required',
-  url: v => !v || /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(v) || 'Please enter a valid URL',
+  project_link: v => !v || /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(v) || 'Please enter a valid URL',
 };
 
 // Computed property for overall validity
@@ -36,21 +35,24 @@ const newProjectTemplate = {
   project_name: '',
   description: '',
   technologies_used: '',
-  url: '',
+  project_link: '',
   userId: user.user_id,
   valid: false,
 };
 
-// Fetch all projects on component load
-onMounted(async () => {
-  const userId = user.user_id;
+// Fetch all projects
+const fetchProjects = async () => {
   try {
-    const response = await ProjectServices.getAllProjects(userId);
+    const response = await ProjectServices.getAllProjects(user.user_id);
     projects.value = response.data;
   } catch (error) {
     console.error('Error fetching projects:', error);
     showNotification('Failed to load projects', 'error');
   }
+};
+
+onMounted(() => {
+  fetchProjects();
 });
 
 // Methods
@@ -59,25 +61,35 @@ const addNewProject = () => {
   expandedPanel.value = projects.value.length - 1;
 };
 
-const removeProject = (index) => {
-  projects.value.splice(index, 1);
-  showNotification('Project removed', 'info');
+const deleteProject = async (id) => {
+  isValidating.value = true;
+  try {
+    await ProjectServices.deleteProject(userId, id);
+    await fetchProjects();
+    showNotification('Project deleted successfully');
+  } catch (error) {
+    console.error('Error deleting project:', error);
+    showNotification('Failed to delete project', 'error');
+  } finally {
+    isValidating.value = false;
+  }
 };
 
 const validateProject = async (index) => {
   isValidating.value = true;
   try {
-      const project = projects.value[index];
-      if (!project.id) {
-        // New project: Create on backend
-        const response = await ProjectServices.createProject(project);
-        project.id = response.data.id;
-      } else {
-        // Existing project: Update on backend
-        await ProjectServices.updateProject(project.id, project);
-      }
-      showNotification('Project saved successfully', 'success');
-      expandedPanel.value = null;
+    const project = projects.value[index];
+
+    if (!project.project_id) {
+      // New project: Create on backend
+      const response = await ProjectServices.createProject(project);
+      project.id = response.data.id;
+    } else {
+      // Existing project: Update on backend
+      await ProjectServices.updateProject(project.project_id, project);
+    }
+    showNotification('Project saved successfully', 'success');
+    expandedPanel.value = null;
   } catch (error) {
     console.error('Error saving project:', error);
     showNotification('Failed to save project', 'error');
@@ -141,19 +153,29 @@ const showNotification = (text, color = 'success', timeout = 3000) => {
                             <!-- GitHub Link -->
                             <v-row>
                               <v-col cols="12" md="6">
-                                <v-text-field v-model="project.githubLink" label="GitHub Link" :rules="[rules.url]" variant="outlined" density="comfortable" prepend-inner-icon="mdi-github"></v-text-field>
+                                <v-text-field v-model="project.project_link" label="GitHub Link" :rules="[rules.project_link]" variant="outlined" density="comfortable" prepend-inner-icon="mdi-github"></v-text-field>
                               </v-col>
                             </v-row>
 
                             <!-- Action Buttons -->
                             <v-row class="mt-4">
                               <v-col cols="6">
-                                <v-btn color="error" variant="outlined" block @click="removeProject(index)" :disabled="isValidating">
+                                <v-btn 
+                                  color="error" 
+                                  block 
+                                  @click="deleteProject(project.project_id)"
+                                  :disabled="isValidating"
+                                >
                                   Delete Project
                                 </v-btn>
                               </v-col>
                               <v-col cols="6">
-                                <v-btn color="success" block @click="validateProject(index)" :loading="isValidating">
+                                <v-btn 
+                                  color="success" 
+                                  block 
+                                  @click="validateProject(index)"
+                                  :loading="isValidating"
+                                >
                                   Save Project
                                 </v-btn>
                               </v-col>
@@ -170,6 +192,18 @@ const showNotification = (text, color = 'success', timeout = 3000) => {
         </v-col>
       </v-row>
     </div>
+
+    <!-- Navigation Buttons -->
+    <v-card-actions class="d-flex justify-space-between">
+      <v-btn color="primary" @click="router.push({ name: 'PersonalLinks' })">
+        <v-icon left>mdi-arrow-left</v-icon>
+        Previous
+      </v-btn>
+      <v-btn color="primary" @click="router.push({ name: 'Contacts' })">
+        Next
+        <v-icon right>mdi-arrow-right</v-icon>
+      </v-btn>
+    </v-card-actions>
 
     <!-- Notifications -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
