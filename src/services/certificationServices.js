@@ -3,7 +3,7 @@ import apiClient from '../services/services';
 export default {
   // Create a new AwardCertifications
   createCertification(data) {
-    return apiClient.post(`/awardCertification/${id}`, data);
+    return apiClient.post(`/AwardCertificatios/${id}`, data);
   },
 
   // Get all AwardCertificationss for a specific resume

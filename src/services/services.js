@@ -35,12 +35,12 @@ const apiClient = axios.create({
     //   localStorage.deleteItem("user");
     // }
     if (data.message !== undefined && data.message.includes('Unauthorized')) {
-        AuthServices.logoutUser(Utils.getStore('user'))
+      AuthServices.logoutUser(Utils.getStore('user'))
         .then(response => {
           console.log(response)
           Utils.removeItem('user')
           Router.push({ name: 'login' })
-          })
+        })
         .catch(error => {
           console.log('error', error)
         })
