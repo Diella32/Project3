@@ -2,9 +2,6 @@ import { createStore } from "vuex";
 // import Utils from "./config/utils";
 import Utils from "../config/utils";
 
-// "./config/utils";
-// C:\xampp\htdocs\s.engrIV\Project3-Frontend\src\config\utils.js
-// Vue.use(Vuex);
 
 const user = Utils.getStore("user");
 
