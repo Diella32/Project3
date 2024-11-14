@@ -7,6 +7,7 @@ import AddResume from "./views/AddResume.vue";
 import ViewResume from "./views/ViewResume.vue";
 import CertificationsPage from "../src/views/Certifications.vue"
 import home from "./views/home.vue";
+import personalInterests from "./views/personalInterests.vue";
 import AddProjects from "./views/AddProjects.vue";
 import PersonalLinks from "./views/PersonalLinks.vue";
 import ContactView from "./views/ContactView.vue"; 
@@ -54,7 +55,11 @@ const router = createRouter({
       name: 'PersonalLinks',
       component: PersonalLinks,
     },
-
+    {
+      path: '/interest', // 
+      name: 'personalInterests',
+      component: personalInterests,
+    },
     {
       path: "/edit/:id",  // Edit resume path with dynamic id
       name: "edit",
