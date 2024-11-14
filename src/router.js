@@ -77,7 +77,7 @@ const router = createRouter({
       name: "AddContact",  // Name for the route
       component: AddContact,  // The component that will be shown for this route
       props: true,
-
+    },
 
     {
       path: "/GenerateResume",
