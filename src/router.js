@@ -6,14 +6,13 @@ import AddResume from "./views/AddResume.vue";
 import ResumeList from "./views/ResumeList.vue";
 import EditResume from "./views/EditResume.vue";
 import ViewResume from "./views/ViewResume.vue";
+import CertificationsPage from "../src/views/Certifications.vue"
+import personalInterests from "./views/personalInterests.vue";
 import AddProjects from "./views/AddProjects.vue";
 import PersonalLinks from "./views/PersonalLinks.vue";
 import AddContact from "./views/AddContact.vue"; 
 import AddEducation from "./views/AddEducation.vue";  // To add a new education entry
 import GenerateResume from "./views/GenerateResume.vue"; // This is the component where you generate PDF
-
-//import Templates from "./views/Templates.vue";
-//import ResumeDisplay from "./views/ResumeDisplay.vue";
 
 
 const router = createRouter({
@@ -62,7 +61,11 @@ const router = createRouter({
       props: true,
 
     },
-
+    {
+      path: '/interest', // 
+      name: 'personalInterests',
+      component: personalInterests,
+    },
     {
       path: "/edit/:id",  // Edit resume path with dynamic id
       name: "edit",
@@ -74,21 +77,6 @@ const router = createRouter({
       name: "AddContact",  // Name for the route
       component: AddContact,  // The component that will be shown for this route
       props: true,
-
-    },
-
-    // {
-    //   path: '/templates',
-    //   name: 'Templates',
-    //   component: Templates, // Define the route for the TemplateSelectionPage
-    // },
-
-    // {
-    //   path: '/resumeDisplay/:resumeId', // Define the route with a dynamic parameter
-    //   name: 'Resume-display',
-    //   component: ResumeDisplay,
-    //   props: true, // Pass the route parameters as props to the component
-    // },
 
 
     {
@@ -115,6 +103,11 @@ const router = createRouter({
 
     },
     
+    {
+      path: '/certifications',
+      name: 'enterCertifications',
+      component: CertificationsPage
+    },
   ],
 });
 
