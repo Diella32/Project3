@@ -178,8 +178,8 @@ const showNotification = (text, color) => {
   snackbar.value = { show: true, text, color };
 };
 
-const goBack = () => router.push('./personalInterests');
-const goNext = () => router.push('/next-route');
+const goBack = () => router.push('/interest');
+const goNext = () => router.push('/interest');
 </script>
 
 <style scoped>
