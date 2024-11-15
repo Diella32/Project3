@@ -121,7 +121,7 @@ const userId = user.user_id;
 const certificationForm = ref({
   award_name: '',
   organization: '',
-  userId: userId
+  user_id: userId
 });
 
 const fetchCertifications = async () => {
@@ -138,12 +138,16 @@ onMounted(() => {
 });
 
 const saveCertification = async () => {
+  console.log('saving')
+  console.log(editMode.value)
   try {
     let response;
     if (editMode.value) {
       response = await certificationServices.updateCertificationById(certificationForm.value.id, certificationForm.value);
     } else {
+      console.log(certificationForm.value)
       response = await certificationServices.createCertification(certificationForm.value);
+      console.log(response)
       certifications.value.push(response.data);
     }
     showNotification('Certification saved successfully', 'success');
@@ -151,6 +155,7 @@ const saveCertification = async () => {
   } catch (error) {
     lastApiError.value = error.response?.data?.message || error.message;
     showNotification('Failed to save certification', 'error');
+    console.error(error)
   }
 };
 
