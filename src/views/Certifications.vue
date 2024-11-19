@@ -121,17 +121,8 @@ const userId = user.user_id;
 const certificationForm = ref({
   award_name: '',
   organization: '',
-  userId: userId
+  user_id: userId,
 });
-
-const fetchCertifications = async () => {
-  try {
-    const response = await certificationServices.getCertification(userId);
-    certifications.value = response.data;
-  } catch (error) {
-    lastApiError.value = error.response?.data?.message || error.message;
-  }
-};
 
 onMounted(() => {
   fetchCertifications();
@@ -139,29 +130,66 @@ onMounted(() => {
 
 const saveCertification = async () => {
   try {
+    // Ensure user_id is included in the form data
+    certificationForm.value.user_id = userId;
+    
     let response;
     if (editMode.value) {
-      response = await certificationServices.updateCertificationById(certificationForm.value.id, certificationForm.value);
+      await certificationServices.updateCertificationById(
+        certificationForm.value.id, 
+        certificationForm.value
+      );
     } else {
       response = await certificationServices.createCertification(certificationForm.value);
-      certifications.value.push(response.data);
     }
+    
+    // Refresh the list after saving
+    await fetchCertifications();
     showNotification('Certification saved successfully', 'success');
     resetForm();
   } catch (error) {
+    console.error('Save Error:', error);
     lastApiError.value = error.response?.data?.message || error.message;
     showNotification('Failed to save certification', 'error');
   }
 };
 
-const deleteCertification = async (id) => {
+const fetchCertifications = async () => {
   try {
-    await certificationServices.deleteCertificationById(id);
-    certifications.value = certifications.value.filter(cert => cert.id !== id);
+    console.log('Fetching certifications for userId:', userId);
+    const response = await certificationServices.getCertification(userId);
+    console.log('Fetch response:', response);
+    
+    // Backend always returns an array for findAllForUser
+    certifications.value = response.data;
+  } catch (error) {
+    console.error('Fetch Error:', error);
+    lastApiError.value = error.response?.data?.message || error.message;
+    certifications.value = [];
+  }
+};
+
+const deleteCertification = async (award_id) => {
+  try {
+    const response = await certificationServices.deleteCertificationById(award_id);
+    console.log('Delete response:', response);
+    
+    // Refresh the list after successful deletion
+    await fetchCertifications();
     showNotification('Certification deleted successfully', 'success');
   } catch (error) {
+    console.error('Delete Error:', error);
     showNotification('Failed to delete certification', 'error');
   }
+};
+
+const resetForm = () => {
+  certificationForm.value = {
+    award_name: '',
+    organization: '',
+    user_id: userId
+  };
+  editMode.value = false;
 };
 
 const editCertification = (cert) => {
@@ -169,17 +197,13 @@ const editCertification = (cert) => {
   editMode.value = true;
 };
 
-const resetForm = () => {
-  certificationForm.value = { title: '', organization: '', userId };
-  editMode.value = false;
-};
 
 const showNotification = (text, color) => {
   snackbar.value = { show: true, text, color };
 };
 
-const goBack = () => router.push('./personalInterests');
-const goNext = () => router.push('/next-route');
+//const goBack = () => router.push('/interest');
+const goNext = () => router.push('/interest');
 </script>
 
 <style scoped>
