@@ -122,7 +122,6 @@ const certificationForm = ref({
   award_name: '',
   organization: '',
   user_id: userId,
-  award_id: award_id,
 });
 
 onMounted(() => {
