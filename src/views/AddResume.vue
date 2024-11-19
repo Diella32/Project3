@@ -125,7 +125,7 @@ const sections = [
     title: 'Experience',
     subtitle: 'Work history and professional experience',
     icon: 'mdi-briefcase',
-    route: 'enterExperience'
+    route: 'Experience'
   },
   {
     title: 'Projects',
