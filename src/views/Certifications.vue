@@ -59,36 +59,36 @@
 
             <!-- Display existing certifications -->
             <v-row v-if="certifications.length > 0">
-              <v-col cols="12" v-for="cert in certifications" :key="cert.id" class="mb-6">
-                <v-card variant="outlined" class="mb-2">
-                  <v-card-item>
-                    <div class="d-flex justify-space-between align-center">
-                      <div>
-                        <v-card-title>{{ cert.award_name }}</v-card-title>
-                        <v-card-subtitle>{{ cert.organization }}</v-card-subtitle>
-                      </div>
-                      <div>
-                        <v-btn
-                          icon="mdi-pencil"
-                          variant="text"
-                          density="comfortable"
-                          @click="editCertification(cert)"
-                          class="mr-2"
-                        ></v-btn>
-                        <v-btn
-                          icon="mdi-delete"
-                          variant="text"
-                          color="error"
-                          density="comfortable"
-                          @click="deleteCertification(cert.id)"
-                        ></v-btn>
-                      </div>
-                    </div>
-                  </v-card-item>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card-text>
+  <v-col cols="12" v-for="cert in certifications" :key="cert.certification_id" class="mb-6">
+    <v-card variant="outlined" class="mb-2">
+      <v-card-item>
+        <div class="d-flex justify-space-between align-center">
+          <div>
+            <v-card-title>{{ cert.award_name }}</v-card-title>
+            <v-card-subtitle>{{ cert.organization }}</v-card-subtitle>
+          </div>
+          <div>
+            <v-btn
+              icon="mdi-pencil"
+              variant="text"
+              density="comfortable"
+              @click="editCertification(cert)"
+              class="mr-2"
+            ></v-btn>
+            <v-btn
+              icon="mdi-delete"
+              variant="text"
+              color="error"
+              density="comfortable"
+              @click="deleteCertification(cert.certification_id)"
+            ></v-btn>
+          </div>
+        </div>
+      </v-card-item>
+    </v-card>
+  </v-col>
+</v-row>
+</v-card-text>
 
           <!-- Navigation Buttons -->
           <v-card-actions class="px-4 pt-2 pb-4 d-flex justify-space-between">
@@ -119,32 +119,36 @@ const user = store.getters.getLoginUserInfo;
 const userId = user.user_id;
 
 const certificationForm = ref({
+  award_id: null,
   award_name: '',
   organization: '',
-  user_id: userId,
+  user_id: null
 });
 
 onMounted(() => {
   fetchCertifications();
 });
 
+
 const saveCertification = async () => {
   try {
-    // Ensure user_id is included in the form data
     certificationForm.value.user_id = userId;
     
-    let response;
     if (editMode.value) {
       await certificationServices.updateCertificationById(
-        certificationForm.value.id, 
-        certificationForm.value
+        certificationForm.value.award_id,
+        {
+          award_name: certificationForm.value.award_name,
+          organization: certificationForm.value.organization,
+          user_id: certificationForm.value.user_id
+        }
       );
     } else {
-      response = await certificationServices.createCertification(certificationForm.value);
+      await certificationServices.createCertification(certificationForm.value);
     }
     
-    // Refresh the list after saving
     await fetchCertifications();
+    console.log('Certification saved successfully');
     showNotification('Certification saved successfully', 'success');
     resetForm();
   } catch (error) {
@@ -171,29 +175,34 @@ const fetchCertifications = async () => {
 
 const deleteCertification = async (award_id) => {
   try {
-    const response = await certificationServices.deleteCertificationById(award_id);
-    console.log('Delete response:', response);
-    
-    // Refresh the list after successful deletion
+    await certificationServices.deleteCertificationById(award_id);
     await fetchCertifications();
     showNotification('Certification deleted successfully', 'success');
   } catch (error) {
     console.error('Delete Error:', error);
+    lastApiError.value = error.response?.data?.message || error.message;
     showNotification('Failed to delete certification', 'error');
   }
 };
 
+
+
 const resetForm = () => {
   certificationForm.value = {
+    award_id: null,
     award_name: '',
     organization: '',
     user_id: userId
   };
   editMode.value = false;
 };
-
 const editCertification = (cert) => {
-  certificationForm.value = { ...cert };
+  certificationForm.value = {
+    award_id: cert.award_id,
+    award_name: cert.award_name,
+    organization: cert.organization,
+    user_id: cert.user_id
+  };
   editMode.value = true;
 };
 
