@@ -1,31 +1,30 @@
-import apiClient from '../services/services';
+import apiClient from './services';
 
 export default {
-  // Create a new AwardCertifications
   createCertification(data) {
-    return apiClient.post(`/AwardCertificatios/${id}`, data);
+    return apiClient.post('/AwardCertification', data);
   },
 
-  // Get all AwardCertificationss for a specific resume
   getCertification(userId) {
-    return apiClient.get(`/AwardCertifications/${userId}`);
+    return apiClient.get(`/AwardCertification/user/${userId}`);
   },
 
-  // Get a single AwardCertifications by ID
-  getCertificationById(id) {
-    return apiClient.get(`/AwardCertifications/${id}`);
+  getCertificationById(award_id) {
+    return apiClient.get(`/AwardCertification/${award_id}`);
   },
 
-  // Update an AwardCertifications by ID
-  updateCertificationById(id, data) {
-    return apiClient.put(`/AwardCertifications/${id}`, data);
+  updateCertificationById(award_id, data) {
+    const updateData = {
+      ...data,
+      award_id: award_id 
+    };
+    return apiClient.put(`/AwardCertification/${award_id}`, updateData);
   },
 
-  // Delete an AwardCertifications by ID
-  deleteCertificationById(id) {
-    return apiClient.delete(`/AwardCertifications/${id}`);
+  deleteCertificationById(award_id) {
+    console.log('Sending delete request for award_id:', award_id);
+    return apiClient.delete(`/AwardCertification/${award_id}`);
   },
-
   // Delete all AwardCertificationss for a specific resume
   deleteAllCertifications(resumeId) {
     return apiClient.delete(`/resume/AwardCertifications/resume/${resumeId}`);
