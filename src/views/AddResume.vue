@@ -54,29 +54,18 @@
 
           <v-divider class="mb-6"></v-divider>
 
-          <!-- Template Selection and Generate Button -->
+          <!-- Button to Navigate to Template Selection Page -->
           <v-card-text class="pb-12">
             <v-container>
               <v-row align="center" justify="center">
-                <v-col cols="12" md="6" lg="4">
-                  <v-select
-                    v-model="selectedTemplate"
-                    :items="templates"
-                    label="Select Resume Template"
-                    variant="outlined"
-                    class="mb-4"
-                    density="comfortable"
-                  ></v-select>
-                </v-col>
                 <v-col cols="12" md="4" lg="3" class="text-center">
                   <v-btn
                     color="primary"
                     size="x-large"
                     block
-                    @click="generateResume"
-                    :disabled="!selectedTemplate"
+                    @click="GenerateResume"
                   >
-                    Generate PDF Resume
+                    Generate Resume
                   </v-btn>
                 </v-col>
               </v-row>
@@ -93,21 +82,13 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const selectedTemplate = ref('');
-
-const templates = [
-  { title: 'Professional', value: 'professional' },
-  { title: 'Modern', value: 'modern' },
-  { title: 'Creative', value: 'creative' },
-  { title: 'Minimalist', value: 'minimalist' }
-];
 
 const sections = [
   {
     title: 'Contact Info',
     subtitle: 'Personal details and contact information',
     icon: 'mdi-account',
-    route: 'enterContactInfo'
+    route: 'AddContact'
   },
   {
     title: 'Personal Links',
@@ -119,13 +100,13 @@ const sections = [
     title: 'Education',
     subtitle: 'Academic qualifications and achievements',
     icon: 'mdi-school',
-    route: 'enterEducation'
+    route: 'AddEducation'
   },
   {
     title: 'Experience',
     subtitle: 'Work history and professional experience',
     icon: 'mdi-briefcase',
-    route: 'enterExperience'
+    route: 'Experience'
   },
   {
     title: 'Projects',
@@ -153,15 +134,14 @@ const sections = [
   }
 ];
 
+// Function to navigate to a section
 const navigateTo = (route) => {
   router.push({ name: route });
 };
 
-const generateResume = () => {
-  if (selectedTemplate.value) {
-    // Add your PDF generation logic here
-    console.log('Generating PDF with template:', selectedTemplate.value);
-  }
+// Function to navigate to the Template Selection Page
+const GenerateResume = () => {
+  router.push({ name: 'GenerateResume' });
 };
 </script>
 

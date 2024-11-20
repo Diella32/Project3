@@ -1,18 +1,20 @@
 import { createRouter, createWebHistory } from "vue-router";
 
 import Login from "./views/Login.vue";
+import home from "./views/home.vue";
+import AddResume from "./views/AddResume.vue";
 import ResumeList from "./views/ResumeList.vue";
 import EditResume from "./views/EditResume.vue";
-import AddResume from "./views/AddResume.vue";
 import ViewResume from "./views/ViewResume.vue";
+import Experience from "./views/Experience.vue";
+import Skill from "./views/Skill.vue";
 import CertificationsPage from "../src/views/Certifications.vue"
-import home from "./views/home.vue";
+import personalInterests from "./views/personalInterests.vue";
 import AddProjects from "./views/AddProjects.vue";
 import PersonalLinks from "./views/PersonalLinks.vue";
-import ContactView from "./views/ContactView.vue"; 
 import AddContact from "./views/AddContact.vue"; 
-import AddEducation from "./views/AddEducation.vue";  // To add a new education entry
-
+import AddEducation from "./views/AddEducation.vue";
+import GenerateResume from "./views/GenerateResume.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,80 +25,79 @@ const router = createRouter({
       name: "login",
       component: Login,
     },
-
     {
       path: '/',
       name: 'home',
       component: home,
     },
-
     {
-      path: "/add",  // Path for adding a resume
+      path: "/add",
       name: "add",
       component: AddResume,
     },
-
     {
-      path: "/resumes",  // Path for the resume list
-      name: "resumes",  // Name for this route
+      path: "/resumes",
+      name: "resumes",
       component: ResumeList,
+      props: true,
     },
-
-
     {
       path: '/projects',
       name: 'AddProjects',
       component: AddProjects,
+      props: true,
     },
-
     {
       path: '/PersonalLinks',
       name: 'PersonalLinks',
       component: PersonalLinks,
+      props: true,
     },
-
     {
-      path: "/edit/:id",  // Edit resume path with dynamic id
+      path: '/interest',
+      name: 'enterInterests',
+      component: personalInterests,
+    },
+    {
+      path: "/edit/:id",
       name: "edit",
       component: EditResume,
       props: true,
     },
     {
-      path: '/contact/:id?',
-      name: 'contact-view',
-      component: ContactView,
-      props: true,  // Allows you to pass `id` as a prop
+      path: "/experience",
+      name: "Experience",
+      component: Experience,
     },
     {
-      path: "/enterContactInfo",  // New route for AddContact
-      name: "enterContactInfo",  // Name for the route
-      component: AddContact,  // The component that will be shown for this route
+      path: "/AddContact",
+      name: "AddContact",
+      component: AddContact,
+      props: true,
     },
     {
-      path: '/view',
-      name: 'view',
-      component: ContactView,  // The view page after saving
+      path: "/skills",
+      name: "Skill",
+      component: Skill,
+      props: true,
     },
     {
-      path: "/view/:id",  // View resume path with dynamic id
+      path: "/GenerateResume",
+      name: "GenerateResume",
+      component: GenerateResume,
+    },
+    {
+      path: "/view/:id",
       name: "view",
       component: ViewResume,
       props: true,
     },
-  
-      {
-        path: '/enterEducation',
-        name: 'enterEducation',
-        component: AddEducation,
-      },
-
-    // Add Education route
     {
-      path: "/education/add",  // Path for adding education
-      name: "addEducation",
-      component: AddEducation,  // Component for adding a new education entry
+      path: "/Education",
+      name: "AddEducation",
+      component: AddEducation,
+      props: true,
     },
-    
     {
       path: '/certifications',
       name: 'enterCertifications',

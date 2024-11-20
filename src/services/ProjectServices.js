@@ -19,11 +19,11 @@ export default {
 
   // Update an existing project by ID for a specific resume
   updateProject(userId, projectId, data) {
-    return apiClient.put(`/user/${userId}/projects/${projectId}`, data);
+    return apiClient.put(`/projects/${projectId}`, data);
   },
 
   // Delete a project by ID for a specific resume
   deleteProject(userId, projectId) {
-    return apiClient.delete(`/user/${userId}/projects/${projectId}`);
+    return apiClient.delete(`/projects/${projectId}`);
   }
 };
