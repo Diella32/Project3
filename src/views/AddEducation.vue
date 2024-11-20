@@ -1,15 +1,14 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
-import ContactServices from "../services/ContactServices";
+import EducationServices from '../services/ EducationServices'
 import store from '../store/store';
 
-//const user = store.getters.getLoginUserInfo;
-const contacts = ref([]);
+const user = store.getters.getLoginUserInfo;
+const educations = ref([]);
 const expandedPanel = ref(null);
 const isValidating = ref(false);
-const contactForms = ref([]);
-const user = store.getters.getLoginUserInfo;
-const userId = user.user_id;
+const educationForms = ref([]);
+const userId = store.getters.getLoginUserInfo.user_id;
 
 // Snackbar state
 const snackbar = ref({
@@ -22,87 +21,77 @@ const snackbar = ref({
 // Validation rules
 const rules = {
   required: (value) => !!value || "This field is required",
-  email: (value) => {
-    const pattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
-    return pattern.test(value) || "Please enter a valid email";
-  },
-  phoneNumber: (value) => {
-    const pattern = /^[0-9]{10}$/;
-    return pattern.test(value) || "Please enter a valid phone number";
-  },
 };
 
 // Computed property for overall validity
-const isValid = computed(() => contacts.value.every(contact => contact.valid));
+const isValid = computed(() => educations.value.every(education => education.valid));
 
-// New contact template
-const newContactTemplate = {
-  fName: "",
-  lName: "",
-  email: "",
-  phone_number: "",
-  address: "",
-  //valid: false,
+// New education template
+const newEducationTemplate = {
+  //id: null,
+  degree: "",
+  FieldOfStudy: "",
+  institution: "",
+  startDate: "",
+  endDate: "",
+  gpa: null,
   userId: user.user_id,
-
+  //valid: false,
 };
 
-// Fetch all contacts
-const fetchContacts = async () => {
+// Fetch all educations
+const fetchEducations = async () => {
   try {
-    const response = await ContactServices.getAllContacts(user.user_id);
-    contacts.value = response.data;
+    const response = await EducationServices.getAllEducations(user.user_id);
+    educations.value = response.data;
   } catch (error) {
-    console.error("Error fetching contacts:", error);
-    showNotification("Failed to load contacts", "error");
+    console.error("Error fetching educations:", error);
+    showNotification("Failed to load educations", "error");
   }
 };
 
 onMounted(() => {
-  store.dispatch("fetchContacts", userId);
-  contacts.value = store.getters.getContacts;
-  fetchContacts();
+  fetchEducations();
 });
 
 // Methods
-const addNewContact = () => {
-  contacts.value.push({ 
-    ...newContactTemplate});
-  expandedPanel.value = contacts.value.length - 1;
+const addNewEducation = () => {
+  educations.value.push({ ...newEducationTemplate });
+  expandedPanel.value = educations.value.length - 1;
 };
 
-const deleteContact = async (id) => {
+const deleteEducation = async (id) => {
   isValidating.value = true;
   try {
-    await ContactServices.deleteContact(userId, id);
-    await fetchContacts();
-    showNotification("Contact deleted successfully");
+    await EducationServices.deleteEducation(userId, id);
+    await fetchEducations();
+    showNotification("Education deleted successfully");
   } catch (error) {
-    console.error("Error deleting contact:", error);
-    showNotification("Failed to delete contact", "error");
+    console.error("Error deleting education:", error);
+    showNotification("Failed to delete education", "error");
   } finally {
     isValidating.value = false;
   }
 };
 
-const saveContact = async (index) => {
+const saveEducation = async (index) => {
   isValidating.value = true;
   try {
-    const contact = contacts.value[index];
+    const education = educations.value[index];
 
-    if (!contact.id) {
-      // New contact: Create on backend
-      const response = await ContactServices.createContact(contact);
-      contact.id = response.data.id;
+    if (!education.education_id) {
+      // New education: Create on backend
+      const response = await EducationServices.createEducation(education);
+      education.id = response.data.id;
     } else {
-      // Existing contact: Update on backend
-      await ContactServices.updateContact(contact.id, contact);
+      // Existing education: Update on backend
+      await EducationServices.updateEducation(education.education_id, education);
     }
-    showNotification("Contact saved successfully", "success");
+    showNotification("Education saved successfully", "success");
     expandedPanel.value = null;
   } catch (error) {
-    console.error("Error saving contact:", error);
-    showNotification("Failed to save contact", "error");
+    console.error("Error saving education:", error);
+    showNotification("Failed to save education", "error");
   } finally {
     isValidating.value = false;
   }
@@ -115,92 +104,105 @@ const showNotification = (text, color = "success", timeout = 3000) => {
 
 
 <template>
-  <div class="contacts-wrapper">
-    <div class="contacts-container">
+  <div class="education-wrapper">
+    <div class="education-container">
       <v-row class="fill-height ma-0" align="start" justify="center">
         <v-col cols="12" class="pa-0">
-          <v-card class="contacts-card" elevation="0">
+          <v-card class="education-card" elevation="0">
             <!-- Header -->
             <v-card-item class="text-center header-section">
-              <v-icon icon="mdi-account-box" size="72" color="primary" class="mb-6"></v-icon>
-              <v-card-title class="text-h2 font-weight-bold mb-4">Contact Information</v-card-title>
-              <v-card-subtitle class="text-h5 mb-6">Manage your contact details</v-card-subtitle>
+              <v-icon icon="mdi-school" size="72" color="primary" class="mb-6"></v-icon>
+              <v-card-title class="text-h2 font-weight-bold mb-4">Add Education</v-card-title>
+              <v-card-subtitle class="text-h5 mb-6">Manage your education details</v-card-subtitle>
             </v-card-item>
 
             <v-divider></v-divider>
 
-            <!-- Contacts List -->
-            <v-card-text class="contacts-content py-6">
+            <!-- Education List -->
+            <v-card-text class="education-content py-6">
               <v-container>
-                <!-- Add New Contact Button -->
+                <!-- Add New Education Button -->
                 <v-row justify="center" class="mb-6">
                   <v-col cols="12" md="8">
-                    <v-btn color="primary" block @click="addNewContact" size="large" prepend-icon="mdi-plus">
-                      Add New Contact
+                    <v-btn color="primary" block @click="addNewEducation" size="large" prepend-icon="mdi-plus">
+                      Add New Education
                     </v-btn>
                   </v-col>
                 </v-row>
 
-                <!-- Contacts List -->
+                <!-- Education List -->
                 <v-row justify="center">
                   <v-col cols="12" md="8">
                     <v-expansion-panels v-model="expandedPanel">
-                      <v-expansion-panel v-for="(contact, index) in contacts" :key="contact.id || index" :disabled="isValidating">
+                      <v-expansion-panel v-for="(education, index) in educations" :key="education.id || index" :disabled="isValidating">
                         <v-expansion-panel-title>
-                          <span class="text-h6">{{ contact.fName || 'New Contact' }}</span>
+                          <span class="text-h6">{{ education.degree || 'New Education' }}</span>
                         </v-expansion-panel-title>
 
                         <v-expansion-panel-text>
-                          <v-form ref="contactForms" v-model="contact.valid" @submit.prevent>
-                            <!-- First Name -->
+                          <v-form ref="educationForms" v-model="education.valid" @submit.prevent>
+                            <!-- Degree -->
                             <v-text-field
-                              v-model="contact.fName"
-                              label="First Name"
+                              v-model="education.degree"
+                              label="Degree"
                               :rules="[rules.required]"
                               variant="outlined"
                               density="comfortable"
                               class="mb-4"
                             ></v-text-field>
 
-                            <!-- Last Name -->
+                            <!-- Field of Study -->
                             <v-text-field
-                              v-model="contact.lName"
-                              label="Last Name"
+                              v-model="education.FieldOfStudy"
+                              label="Field of Study"
                               :rules="[rules.required]"
                               variant="outlined"
                               density="comfortable"
                               class="mb-4"
                             ></v-text-field>
 
-                            <!-- Email -->
+                            <!-- Institution -->
                             <v-text-field
-                              v-model="contact.email"
-                              label="Email"
-                              :rules="[rules.required, rules.email]"
+                              v-model="education.institution"
+                              label="Institution"
+                              :rules="[rules.required]"
                               variant="outlined"
                               density="comfortable"
                               class="mb-4"
                             ></v-text-field>
 
-                            <!-- Phone Number -->
+                            <!-- Start Date -->
                             <v-text-field
-                              v-model="contact.phone_number"
-                              label="Phone Number"
-                              :rules="[rules.required, rules.phoneNumber]"
+                              v-model="education.startDate"
+                              label="Start Date"
+                              type="date"
+                              :rules="[rules.required]"
                               variant="outlined"
                               density="comfortable"
                               class="mb-4"
                             ></v-text-field>
 
-                            <!-- Address -->
-                            <v-textarea
-                              v-model="contact.address"
-                              label="Address"
+                            <!-- End Date -->
+                            <v-text-field
+                              v-model="education.endDate"
+                              label="End Date"
+                              type="date"
+                              :rules="[rules.required]"
                               variant="outlined"
                               density="comfortable"
-                              auto-grow
                               class="mb-4"
-                            ></v-textarea>
+                            ></v-text-field>
+
+                            <!-- GPA -->
+                            <v-text-field
+                              v-model="education.gpa"
+                              label="GPA"
+                              type="number"
+                              :rules="[rules.required]"
+                              variant="outlined"
+                              density="comfortable"
+                              class="mb-4"
+                            ></v-text-field>
 
                             <!-- Action Buttons -->
                             <v-row class="mt-4">
@@ -208,20 +210,20 @@ const showNotification = (text, color = "success", timeout = 3000) => {
                                 <v-btn 
                                   color="error" 
                                   block 
-                                  @click="deleteContact(contact.id)"
+                                  @click="deleteEducation(education.id)"
                                   :disabled="isValidating"
                                 >
-                                  Delete Contact
+                                  Delete Education
                                 </v-btn>
                               </v-col>
                               <v-col cols="6">
                                 <v-btn 
                                   color="success" 
                                   block 
-                                  @click="saveContact(index)"
+                                  @click="saveEducation(index)"
                                   :loading="isValidating"
                                 >
-                                  Save Contact
+                                  Save Education
                                 </v-btn>
                               </v-col>
                             </v-row>
@@ -248,7 +250,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
   </div>
 </template>
 <style scoped>
-.contacts-wrapper {
+.education-wrapper {
   min-height: 100vh;
   width: 100vw;
   background-color: rgb(var(--v-theme-background));
@@ -256,14 +258,14 @@ const showNotification = (text, color = "success", timeout = 3000) => {
   flex-direction: column;
 }
 
-.contacts-container {
+.education-container {
   flex: 1;
   width: 100%;
   height: 100%;
   overflow-y: auto;
 }
 
-.contacts-card {
+.education-card {
   min-height: 100vh;
   border-radius: 0;
   display: flex;
@@ -275,7 +277,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
   padding-bottom: 2rem;
 }
 
-.contacts-content {
+.education-content {
   flex: 1;
 }
 

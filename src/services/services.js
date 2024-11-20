@@ -4,7 +4,8 @@ import AuthServices from './authServices.js'
 import Router from '../router.js'
 var baseurl = ''
 if (import.meta.env.DEV) {
-  baseurl = "http://localhost:3029/resume/";
+  baseurl = "http://localhost:3029/resume-t9";
+
 } else {
   baseurl = "/resume-t9/";
 }
@@ -17,6 +18,7 @@ const apiClient = axios.create({
     'Access-Control-Allow-Origin': '*',
     crossDomain: true,
   },
+  // Intercept the request to add the token if it exists
   transformRequest: (data, headers) => {
     let user = Utils.getStore('user')
     if (user != null) {
@@ -27,6 +29,7 @@ const apiClient = axios.create({
     }
     return JSON.stringify(data)
   },
+  // Handle response data and errors
   transformResponse: function (data) {
     data = JSON.parse(data)
     // if (!data.success && data.code == "expired-session") {
