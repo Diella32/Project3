@@ -62,29 +62,29 @@
   <v-col cols="12" v-for="cert in certifications" :key="cert.certification_id" class="mb-6">
     <v-card variant="outlined" class="mb-2">
       <v-card-item>
-        <div class="d-flex justify-space-between align-center">
-          <div>
-            <v-card-title>{{ cert.award_name }}</v-card-title>
-            <v-card-subtitle>{{ cert.organization }}</v-card-subtitle>
-          </div>
-          <div>
-            <v-btn
-              icon="mdi-pencil"
-              variant="text"
-              density="comfortable"
-              @click="editCertification(cert)"
-              class="mr-2"
-            ></v-btn>
-            <v-btn
-              icon="mdi-delete"
-              variant="text"
-              color="error"
-              density="comfortable"
-              @click="deleteCertification(cert.certification_id)"
-            ></v-btn>
-          </div>
-        </div>
-      </v-card-item>
+    <div class="d-flex justify-space-between align-center">
+      <div>
+        <v-card-title>{{ cert.award_name }}</v-card-title>
+        <v-card-subtitle>{{ cert.organization }}</v-card-subtitle>
+      </div>
+      <div>
+        <v-btn
+          icon="mdi-pencil"
+          variant="text"
+          density="comfortable"
+          @click="editCertification(cert)"
+          class="mr-2"
+        ></v-btn>
+        <v-btn
+          icon="mdi-delete"
+          variant="text"
+          color="error"
+          density="comfortable"
+          @click="deleteCertification(cert)"
+        ></v-btn>
+      </div>
+    </div>
+  </v-card-item>
     </v-card>
   </v-col>
 </v-row>
@@ -173,13 +173,22 @@ const fetchCertifications = async () => {
   }
 };
 
-const deleteCertification = async (award_id) => {
+const deleteCertification = async (cert) => {
   try {
-    await certificationServices.deleteCertificationById(award_id);
+    console.log('Attempting to delete certification:', cert);
+    
+    if (!cert.award_id) {
+      throw new Error('Invalid certification: missing award_id');
+    }
+
+    const response = await certificationServices.deleteCertificationById(cert.award_id);
+    console.log('Delete response:', response);
+    
     await fetchCertifications();
     showNotification('Certification deleted successfully', 'success');
   } catch (error) {
     console.error('Delete Error:', error);
+    console.error('Error response:', error.response?.data);
     lastApiError.value = error.response?.data?.message || error.message;
     showNotification('Failed to delete certification', 'error');
   }

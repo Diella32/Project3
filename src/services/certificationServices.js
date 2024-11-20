@@ -1,4 +1,4 @@
-import apiClient from '../services/services';
+import apiClient from './services';
 
 export default {
   createCertification(data) {
@@ -14,16 +14,19 @@ export default {
   },
 
   updateCertificationById(award_id, data) {
-    return apiClient.put(`/AwardCertification/${award_id}`, data);
+    const updateData = {
+      ...data,
+      award_id: award_id 
+    };
+    return apiClient.put(`/AwardCertification/${award_id}`, updateData);
   },
 
   deleteCertificationById(award_id) {
+    console.log('Sending delete request for award_id:', award_id);
     return apiClient.delete(`/AwardCertification/${award_id}`);
   },
-
-
-  // Delete all AwardCertifications for a specific resume
+  // Delete all AwardCertificationss for a specific resume
   deleteAllCertifications(resumeId) {
-    return apiClient.delete(`/resume/AwardCertification/resume/${resumeId}`);
+    return apiClient.delete(`/resume/AwardCertifications/resume/${resumeId}`);
   },
 };
