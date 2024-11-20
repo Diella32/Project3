@@ -96,7 +96,7 @@ const router = createRouter({
       component: Skill,
       props: true,
     },
-    
+    {
       path: "/GenerateResume",
       name: "GenerateResume",
       component: GenerateResume,
