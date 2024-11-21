@@ -2,6 +2,9 @@
 import { ref, onMounted, computed } from "vue";
 import EducationServices from '../services/ EducationServices'
 import store from '../store/store';
+import { useRouter } from "vue-router"; 
+const router = useRouter(); // Get router instance
+
 
 const user = store.getters.getLoginUserInfo;
 const educations = ref([]);
@@ -28,7 +31,6 @@ const isValid = computed(() => educations.value.every(education => education.val
 
 // New education template
 const newEducationTemplate = {
-  //id: null,
   degree: "",
   FieldOfStudy: "",
   institution: "",
@@ -36,7 +38,6 @@ const newEducationTemplate = {
   endDate: "",
   gpa: null,
   userId: user.user_id,
-  //valid: false,
 };
 
 // Fetch all educations
@@ -61,16 +62,18 @@ const addNewEducation = () => {
 };
 
 const deleteEducation = async (id) => {
-  isValidating.value = true;
+  if (isValidating.value) return; // Prevent multiple deletions
+  isValidating.value = true; // Start validation
+
   try {
-    await EducationServices.deleteEducation(userId, id);
-    await fetchEducations();
-    showNotification("Education deleted successfully");
+    await EducationServices.deleteEducation(userId, id); // Call API to delete
+    educations.value = educations.value.filter(education => education.id !== id); // Optimistic UI update
+    showNotification("Education deleted successfully", "success"); // Notify user
   } catch (error) {
-    console.error("Error deleting education:", error);
-    showNotification("Failed to delete education", "error");
+    console.error("Error deleting education:", error); // Log error
+    showNotification("Failed to delete education", "error"); // Notify user of failure
   } finally {
-    isValidating.value = false;
+    isValidating.value = false; // End validation
   }
 };
 
@@ -101,7 +104,6 @@ const showNotification = (text, color = "success", timeout = 3000) => {
   snackbar.value = { show: true, text, color, timeout };
 };
 </script>
-
 
 <template>
   <div class="education-wrapper">
@@ -240,6 +242,18 @@ const showNotification = (text, color = "success", timeout = 3000) => {
       </v-row>
     </div>
 
+    <!-- Navigation Buttons -->
+    <v-card-actions class="d-flex justify-space-between">
+      <v-btn color="primary" @click="router.push({ name: 'AddContact' })">
+        <v-icon left>mdi-arrow-left</v-icon>
+        Previous
+      </v-btn>
+      <v-btn color="primary" @click="router.push({ name: 'PersonalLinks' })">
+        Next
+        <v-icon right>mdi-arrow-right</v-icon>
+      </v-btn>
+    </v-card-actions>
+
     <!-- Notifications -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
       {{ snackbar.text }}
@@ -249,6 +263,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
     </v-snackbar>
   </div>
 </template>
+
 <style scoped>
 .education-wrapper {
   min-height: 100vh;
@@ -284,12 +299,6 @@ const showNotification = (text, color = "success", timeout = 3000) => {
 .text-center {
   text-align: center;
 }
-
-.d-flex {
-  display: flex;
-}
-
-.justify-space-between {
-  justify-content: space-between;
-}
 </style>
+
+

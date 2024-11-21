@@ -175,7 +175,7 @@ const showNotification = (text, color = 'success', timeout = 3000) => {
 
     <!-- Navigation Buttons -->
     <v-card-actions class="d-flex justify-space-between">
-      <v-btn color="primary" @click="router.push({ name: 'ContactView' })">
+      <v-btn color="primary" @click="router.push({ name: 'AddEducation' })">
         <v-icon left>mdi-arrow-left</v-icon>
         Previous
       </v-btn>
