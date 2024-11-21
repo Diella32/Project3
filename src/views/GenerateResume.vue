@@ -74,8 +74,23 @@
                       :disabled="!selectedContact"
                       size="large"
                       prepend-icon="mdi-file-pdf-box"
+                      class="mb-4"
                     >
                       Generate Complete Resume
+                    </v-btn>
+
+
+
+                       <!-- Delete Button -->
+                       <v-btn
+                      color="red"
+                      block
+                      @click="deleteResume"
+                      :disabled="!selectedContact"
+                      size="large"
+                      prepend-icon="mdi-delete"
+                    >
+                      Delete Resume
                     </v-btn>
 
                     <!-- Preview Card -->
@@ -283,6 +298,15 @@ const generateCompletePDF = async () => {
     isGenerating.value = false;
   }
 };
+
+const deleteResume = () => {
+  selectedContact.value = null;
+  selectedEducations.value = [];
+  selectedProjects.value = [];
+  selectedLinks.value = [];
+  showNotification("Resume deleted", "success");
+};
+
 
 const showNotification = (text, color = "success", timeout = 3000) => {
   snackbar.value = { show: true, text, color, timeout };
