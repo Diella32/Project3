@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-
 import Login from "./views/Login.vue";
 import home from "./views/home.vue";
 import AddResume from "./views/AddResume.vue";
@@ -13,6 +12,8 @@ import PersonalLinks from "./views/PersonalLinks.vue";
 import AddContact from "./views/AddContact.vue"; 
 import AddEducation from "./views/AddEducation.vue";  // To add a new education entry
 import GenerateResume from "./views/GenerateResume.vue"; // This is the component where you generate PDF
+import Experience from "./views/Experience.vue";
+import template1 from "./views/template1.vue";
 
 
 const router = createRouter({
@@ -63,11 +64,11 @@ const router = createRouter({
     },
     {
       path: '/interest', // 
-      name: 'personalInterests',
+      name: 'enterInterests',
       component: personalInterests,
     },
     {
-      path: "/edit/:id",  // Edit resume path with dynamic id
+      path: "/edit",  // Edit resume path with dynamic id
       name: "edit",
       component: EditResume,
       props: true,
@@ -83,6 +84,12 @@ const router = createRouter({
       path: "/GenerateResume",
       name: "GenerateResume",
       component: GenerateResume,
+    },
+
+    {
+      path: '/',
+      name: 'Template1',
+      component: template1,
     },
 
     {
@@ -108,6 +115,15 @@ const router = createRouter({
       name: 'enterCertifications',
       component: CertificationsPage
     },
+
+    {
+      path: "/Experiences",  // Path for adding education
+      name: "Experiences",
+      component: Experience,  // Component for adding a new education entry
+      props: true,
+
+    },
+
   ],
 });
 

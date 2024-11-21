@@ -90,13 +90,13 @@ const saveContact = async (index) => {
   try {
     const contact = contacts.value[index];
 
-    if (!contact.id) {
+    if (!contact.contact_id) {
       // New contact: Create on backend
       const response = await ContactServices.createContact(contact);
       contact.id = response.data.id;
     } else {
       // Existing contact: Update on backend
-      await ContactServices.updateContact(contact.id, contact);
+      await ContactServices.updateContact(contact.contact_id, contact);
     }
     showNotification("Contact saved successfully", "success");
     expandedPanel.value = null;
@@ -208,7 +208,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
                                 <v-btn 
                                   color="error" 
                                   block 
-                                  @click="deleteContact(contact.id)"
+                                  @click="deleteContact(contact.contact_id)"
                                   :disabled="isValidating"
                                 >
                                   Delete Contact
