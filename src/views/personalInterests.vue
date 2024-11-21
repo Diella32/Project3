@@ -172,7 +172,7 @@ export default {
   methods: {
     async saveInterest() {
       try {
-        await interestServices.createInterest({interest: this.interestName, user_id: store.getters.getLoginUserInfo.user_id});
+        await interestServices.createInterest({interest: this.interestName, userId: store.getters.getLoginUserInfo.userId});
         this.fetchInterests(); // Refresh interests after adding a new one
         this.interestName = ''; // Clear input field
       } catch (error) {
@@ -192,7 +192,7 @@ export default {
 
     async fetchInterests() {
       try {
-        const response = await interestServices.getAllInterests(store.getters.getLoginUserInfo.user_id);
+        const response = await interestServices.getAllInterests(store.getters.getLoginUserInfo.userId);
         this.interests = response.data;
       } catch (error) {
         console.error('Error fetching interests:', error.response?.data || error.message);
