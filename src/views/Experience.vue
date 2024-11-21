@@ -146,6 +146,7 @@ export default {
   },
   methods: {
     async loadExperiences() {
+      console.log(this.currentExperience);
       if (!this.currentExperience.userId) {
         console.error("User ID is not available.");
         return;
@@ -166,60 +167,90 @@ export default {
       }
     },
     async saveExperience() {
-      alert("Save button clicked!");
-      console.log("Save button clicked!");
+  
 
-      // Input validation for start_date and end_date
-      if (!/^\d{4}$/.test(this.currentExperience.start_date)) {
-        alert("Start Year must be a four-digit number (e.g., 2020).");
-        return;
+  // Input validation for start_date and end_date
+  if (!/^\d{4}$/.test(this.currentExperience.start_date)) {
+    alert("Start Year must be a four-digit number (e.g., 2020).");
+    return;
+  }
+  if (!this.currentExperience.currentlyWorking && !/^\d{4}$/.test(this.currentExperience.end_date)) {
+    alert("End Year must be a four-digit number (e.g., 2023).");
+    return;
+  }
+
+  try {
+    if (this.currentExperience.experience_id) {
+      // Update existing experience
+      console.log("Updating experience:", this.currentExperience);
+      const response = await ExperienceServices.updateExperience(this.currentExperience.experience_id, this.currentExperience);
+
+      console.log("Response from updateExperience:", response);
+
+      if (response.data.success) {
+        this.successMessage = 'Your experience was updated successfully.';
+        console.log("Success Message Set:", this.successMessage);
+        this.loadExperiences();
+        this.resetForm();
+        setTimeout(() => {
+          this.successMessage = "";
+        }, 3000);
+      } else {
+        console.error("Failed to update experience.");
+        alert("Failed to update experience. Please try again.");
       }
-      if (!this.currentExperience.currentlyWorking && !/^\d{4}$/.test(this.currentExperience.end_date)) {
-        alert("End Year must be a four-digit number (e.g., 2023).");
-        return;
-      }
+    } else {
+      // Create new experience
+      console.log("Saving new experience:", this.currentExperience);
+      const response = await ExperienceServices.createExperience(this.currentExperience);
 
-      try {
-        console.log("Saving experience:", this.currentExperience);
-        const response = await ExperienceServices.createExperience(this.currentExperience);
+      console.log("Response from createExperience:", response);
 
-        console.log("Response from saveExperience:", response);
-
-        if (response.data.experience_id) {
-          this.successMessage = 'Your experience was saved successfully.';
-          console.log("Success Message Set:", this.successMessage);
-          this.loadExperiences();
-          this.resetForm();
-          setTimeout(() => {
-            this.successMessage = "";
-          }, 3000);
-        } else {
-          console.error("Failed to save experience. No experience_id in response.");
-          alert("Failed to save experience. Please try again.");
-        }
-      } catch (error) {
-        console.error("Error saving experience:", error);
+      if (response.data.experience_id) {
+        this.successMessage = 'Your experience was saved successfully.';
+        console.log("Success Message Set:", this.successMessage);
+        this.loadExperiences();
+        this.resetForm();
+        setTimeout(() => {
+          this.successMessage = "";
+        }, 3000);
+      } else {
+        console.error("Failed to save experience. No experience_id in response.");
         alert("Failed to save experience. Please try again.");
       }
-    },
+    }
+  } catch (error) {
+    console.error("Error saving experience:", error);
+    alert("Failed to save experience. Please try again.");
+  }
+},
+
     editExperience(experience) {
       this.currentExperience = { ...experience };
     },
     async deleteExperience(id) {
-      try {
-        const response = await ExperienceServices.deleteExperience(id);
-        if (response.data.success) {
-          this.successMessage = 'Experience deleted successfully.';
-          this.loadExperiences();
-          setTimeout(() => {
-            this.successMessage = "";
-          }, 3000);
-        }
-      } catch (error) {
-        console.error("Error deleting experience:", error);
-        alert("Failed to delete experience. Please try again.");
-      }
-    },
+  try {
+    const response = await ExperienceServices.deleteExperience(id);
+
+    if (response.data.success) {
+      this.successMessage = 'Experience deleted successfully.';
+      this.loadExperiences();
+      // Remove the deleted experience from the local array
+      this.experiences = this.experiences.filter(experience => experience.experience_id !== id);
+
+      setTimeout(() => {
+        this.successMessage = "";
+      }, 3000);
+    } else {
+      this.loadExperiences();
+      console.log(response.data.message || "Failed to delete experience.");
+    }
+  } catch (error) {
+    console.error("Error deleting experience:", error);
+    alert("Failed to delete experience. Please try again.");
+  }
+},
+
     resetForm() {
       this.currentExperience = {
         job_title: "",

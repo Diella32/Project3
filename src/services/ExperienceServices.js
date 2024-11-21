@@ -20,6 +20,8 @@ export default {
   updateExperience(id, data) {
     return apiClient.put(`/experience/${id}`, data);
   },
+  
+  
 
   // Delete an experience by ID
   deleteExperience(id) {
