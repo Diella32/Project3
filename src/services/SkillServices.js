@@ -8,7 +8,7 @@ export default {
 
   // Get all skills for a specific user
   getSkills(userId) {
-    return apiClient.get(`/skills/${userId}`);
+    return apiClient.get(`/skills/user/${userId}`);
   },
 
   // Get a single skill by ID
