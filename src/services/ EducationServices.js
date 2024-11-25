@@ -8,7 +8,7 @@ export default {
   
   // Retrieve a specific education entry by ID
   getEducationById(userId, educationId) {
-    return apiClient.get(`/user/${userId}/education/${educationId}`);
+    return apiClient.get(`/education/${educationId}`);
   },
 
   // Create a new education entry

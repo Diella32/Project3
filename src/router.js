@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-
 import Login from "./views/Login.vue";
 import home from "./views/home.vue";
 import AddResume from "./views/AddResume.vue";
@@ -13,8 +12,11 @@ import personalInterests from "./views/personalInterests.vue";
 import AddProjects from "./views/AddProjects.vue";
 import PersonalLinks from "./views/PersonalLinks.vue";
 import AddContact from "./views/AddContact.vue"; 
-import AddEducation from "./views/AddEducation.vue";
-import GenerateResume from "./views/GenerateResume.vue";
+import AddEducation from "./views/AddEducation.vue";  // To add a new education entry
+import GenerateResume from "./views/GenerateResume.vue"; // This is the component where you generate PDF
+//import Experience from "./views/Experience.vue";
+import template1 from "./views/template1.vue";
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -54,12 +56,15 @@ const router = createRouter({
       props: true,
     },
     {
+
       path: '/interest',
       name: 'enterInterests',
       component: personalInterests,
     },
+
     {
-      path: "/edit/:id",
+      path: "/edit",  // Edit resume path with dynamic id
+     // path: "/edit/:id",
       name: "edit",
       component: EditResume,
       props: true,
@@ -87,7 +92,13 @@ const router = createRouter({
       component: GenerateResume,
     },
     {
-      path: "/view/:id",
+      path: '/',
+      name: 'Template1',
+      component: template1,
+    },
+
+    {
+      path: "/view/:id",  // View resume path with dynamic id
       name: "view",
       component: ViewResume,
       props: true,
@@ -103,6 +114,15 @@ const router = createRouter({
       name: 'enterCertifications',
       component: CertificationsPage
     },
+
+    {
+      path: "/Experiences",  // Path for adding education
+      name: "Experiences",
+      component: Experience,  // Component for adding a new education entry
+      props: true,
+
+    },
+
   ],
 });
 

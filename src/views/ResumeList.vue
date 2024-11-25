@@ -1,103 +1,71 @@
 <template>
   <v-container class="resume-list">
-    <v-row class="mb-6" align="center">
-      <v-col cols="12" md="6">
-        <h1 class="text-h4 font-weight-bold">My Resumes</h1>
+    <v-row class="mb-8" align="center">
+      <v-col cols="12" sm="6">
+        <h1 class="text-h4 font-weight-bold primary--text">My Resumes</h1>
       </v-col>
-      <v-col cols="12" md="6" class="text-md-right">
+      <v-col cols="12" sm="6" class="text-sm-right">
+        <v-btn color="primary" prepend-icon="mdi-plus" @click="router.push({ name: 'add' })" elevation="2">
+          Create New Resume
+        </v-btn>
       </v-col>
     </v-row>
 
     <!-- Alert for messages -->
-    <v-alert
-      v-if="message"
-      :color="message.includes('Failed') ? 'error' : 'success'"
-      variant="tonal"
-      closable
-      class="mb-4"
-    >
+    <v-alert v-if="message" :color="message.includes('Failed') ? 'error' : 'success'" variant="tonal" closable class="mb-6">
       {{ message }}
     </v-alert>
 
-    <!-- Empty state -->
-    <v-card
-      v-if="!resumes.length"
-      class="text-center pa-6"
-      variant="outlined"
-    >
-      <v-icon
-        icon="mdi-file-document-outline"
-        size="64"
-        color="grey-lighten-1"
-        class="mb-4"
-      ></v-icon>
-      <h3 class="text-h6 mb-2">No resumes yet</h3>
-      <p class="text-body-1 text-grey-darken-1 mb-4">
-        Create your first resume to get started
+    <!-- Display message when no resumes are available -->
+    <v-card v-if="!resumes.length" class="text-center pa-8" variant="outlined">
+      <v-icon icon="mdi-file-document-outline" size="72" color="grey-lighten-1" class="mb-4"></v-icon>
+      <h3 class="text-h5 mb-3">No resumes yet</h3>
+      <p class="text-body-1 text-grey-darken-1 mb-6">
+        Start building your professional profile by creating your first resume
       </p>
-      <v-btn
-        color="primary"
-        prepend-icon="mdi-plus"
-        @click="router.push({ name: 'add' })"
-      >
-        Create New Resume
+      <v-btn color="primary" prepend-icon="mdi-plus" @click="router.push({ name: 'add' })" size="large">
+        Create Your First Resume
       </v-btn>
     </v-card>
 
-    <!-- Resume list -->
+    <!-- List of resumes -->
     <v-row v-else>
-      <v-col v-for="resume in resumes" :key="resume.id" cols="12" md="6" lg="4">
-        <v-card
-          class="h-100"
-          elevation="2"
-          :loading="resume.isLoading"
-        >
-          <v-card-title class="d-flex align-center">
-            {{ resume.title }}
-            <v-chip
-              v-if="resume.status"
-              size="small"
-              class="ml-2"
-              :color="getStatusColor(resume.status)"
-            >
-              {{ resume.status }}
-            </v-chip>
-          </v-card-title>
-          
-          <v-card-subtitle>
-            Last updated: {{ new Date(resume.updatedAt).toLocaleDateString() }}
-          </v-card-subtitle>
+      <v-col v-for="(resume, index) in resumes" :key="resume.resume_id" cols="12" sm="6" lg="4">
+        <v-card class="resume-card" :loading="resume.isLoading">
+          <v-card-item>
+            <v-card-title class="text-h6 mb-2">{{ resume.title }}</v-card-title>
+            <v-card-subtitle>
+              Last updated: {{ new Date(resume.updatedAt).toLocaleDateString() }}
+            </v-card-subtitle>
+          </v-card-item>
 
           <v-card-text>
-            <p class="text-body-2">{{ resume.description || 'No description provided' }}</p>
+            <p class="text-truncate">{{ resume.introduction || 'No introduction provided' }}</p>
+            <v-chip class="mt-2" :color="getStatusColor(resume.status)" size="small">
+              {{ resume.status }}
+            </v-chip>
           </v-card-text>
 
           <v-divider></v-divider>
 
+          <!-- Actions for each resume -->
           <v-card-actions>
             <v-btn
               variant="text"
               color="primary"
-              @click="viewResume(resume.id)"
+              @click="viewResume(index)"
               :disabled="resume.isLoading"
             >
+              <v-icon start>mdi-eye</v-icon>
               View
             </v-btn>
-            <v-btn
-              variant="text"
-              color="warning"
-              @click="editResume(resume.id)"
-              :disabled="resume.isLoading"
-            >
+            <v-btn variant="text" color="warning" @click="editResume(resume.resume_id)" :disabled="resume.isLoading">
+              <v-icon start>mdi-pencil</v-icon>
               Edit
             </v-btn>
             <v-spacer></v-spacer>
-            <v-btn
-              variant="text"
-              color="error"
-              @click="confirmDelete(resume)"
-              :disabled="resume.isLoading"
-            >
+            <v-btn variant="text" color="error" @click="openDeleteDialog(resume)" :disabled="resume.isLoading">
+              <v-icon start>mdi-delete</v-icon>
               Delete
             </v-btn>
           </v-card-actions>
@@ -116,17 +84,13 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="grey-darken-1"
-            variant="text"
-            @click="showDeleteDialog = false"
-          >
+          <v-btn color="grey-darken-1" variant="text" @click="showDeleteDialog = false">
             Cancel
           </v-btn>
           <v-btn
             color="error"
             variant="elevated"
-            @click="deleteResume(selectedResume?.id)"
+            @click="deleteResume(selectedResume?.resume_id)"
             :loading="isDeleting"
           >
             Delete
@@ -138,92 +102,83 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import ResumeServices from '../services/ResumeServices'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import ResumeServices from '../services/ResumeServices';
+import store from '../store/store';
 
-const router = useRouter()
-const resumes = ref([])
-const message = ref('')
-const showDeleteDialog = ref(false)
-const selectedResume = ref(null)
-const isDeleting = ref(false)
+const router = useRouter();
+const resumes = ref([]);
+const message = ref('');
+const user = store.getters.getLoginUserInfo;
+const userId = user.user_id;
 
+const showDeleteDialog = ref(false);
+const selectedResume = ref(null);
+const isDeleting = ref(false);
+
+// Function to fetch resumes and assign them to resumes array
 const fetchResumes = async () => {
   try {
-    const response = await ResumeServices.getAllForUser()
-    resumes.value = response.data.map(resume => ({
+    const response = await ResumeServices.getAllForUser(user.user_id);
+    resumes.value = response.data.map((resume) => ({
       ...resume,
-      isLoading: false
-    }))
+      isLoading: false,
+    }));
   } catch (error) {
-    message.value = 'Failed to load resumes.'
-    console.error('Error fetching resumes:', error)
+    message.value = 'Failed to load resumes.';
+    console.error('Error fetching resumes:', error);
   }
-}
+};
 
-const viewResume = (resumeId) => {
-  router.push({ name: 'viewResume', params: { id: resumeId } })
-}
-
-const editResume = (resumeId) => {
-  router.push({ name: 'editResume', params: { id: resumeId } })
-}
-
-const confirmDelete = (resume) => {
-  selectedResume.value = resume
-  showDeleteDialog.value = true
-}
-
-const deleteResume = async (resumeId) => {
-  if (!resumeId) return
-  
-  isDeleting.value = true
-  const resumeIndex = resumes.value.findIndex(r => r.id === resumeId)
-  if (resumeIndex !== -1) {
-    resumes.value[resumeIndex].isLoading = true
-  }
-  
-  try {
-    await ResumeServices.delete(resumeId)
-    message.value = 'Resume deleted successfully.'
-    await fetchResumes() // Refresh the list after deletion
-  } catch (error) {
-    message.value = 'Failed to delete resume.'
-    console.error('Error deleting resume:', error)
-    if (resumeIndex !== -1) {
-      resumes.value[resumeIndex].isLoading = false
-    }
-  } finally {
-    isDeleting.value = false
-    showDeleteDialog.value = false
-    selectedResume.value = null
-  }
-}
-
+// Function to get the status color
 const getStatusColor = (status) => {
   const statusColors = {
-    draft: 'grey',
-    published: 'success',
-    archived: 'warning'
+    Draft: 'grey',
+    'In Progress': 'orange',
+    Complete: 'green',
+    Published: 'blue',
+  };
+  return statusColors[status] || 'grey'; // Default to grey if status is not found
+};
+
+// Function to view a selected resume
+const viewResume = (index) => {
+  const resume = resumes.value[index];
+  if (resume && resume.resume_id) {
+    router.push({ name: 'view', params: { userId, id: resume.resume_id } });
+  } else {
+    console.error("Resume ID is undefined or resume not found");
   }
-  return statusColors[status.toLowerCase()] || 'grey'
-}
+};
 
-onMounted(fetchResumes)
+// Function to edit a selected resume
+const editResume = (resumeId) => {
+  router.push({ name: 'edit', params: { id: resumeId } });
+};
+
+// Function to open the delete dialog
+const openDeleteDialog = (resume) => {
+  selectedResume.value = resume;
+  showDeleteDialog.value = true;
+};
+
+// Function to delete a selected resume
+const deleteResume = async (resumeId) => {
+  try {
+    isDeleting.value = true;
+    console.log(resumeId);
+    await ResumeServices.delete(resumeId);
+    resumes.value = resumes.value.filter((resume) => resume.resume_id !== resumeId);
+    message.value = 'Resume deleted successfully.';
+  } catch (error) {
+    message.value = 'Failed to delete resume.';
+    console.error('Error deleting resume:', error);
+  } finally {
+    isDeleting.value = false;
+    showDeleteDialog.value = false;
+  }
+};
+
+onMounted(fetchResumes);
 </script>
-
-<style scoped>
-.resume-list {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
-.v-card {
-  transition: transform 0.2s ease-in-out;
-}
-
-.v-card:hover {
-  transform: translateY(-4px);
-}
-</style>
