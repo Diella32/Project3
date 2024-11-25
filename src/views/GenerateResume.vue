@@ -97,6 +97,7 @@
                       :disabled="!selectedContacts"
                       size="large"
                       prepend-icon="mdi-file-pdf-box"
+                      class="mb-4"
                     >
                       Generate and Save Resume
                     </v-btn>
@@ -104,6 +105,7 @@
                 </v-row>
               </v-container>
             </v-card-text>
+
 
             <v-divider></v-divider>
 
@@ -113,6 +115,7 @@
                 <v-row justify="center">
                   <v-col cols="12" md="8">
                     <v-card class="mt-6" variant="outlined">
+
                       <v-card-title>Resume Preview</v-card-title>
                       <v-card-text>
                         <h3 class="text-h6 mb-2">Title: {{ resumeTitle }}</h3>
@@ -461,6 +464,15 @@ const generateAndSavePDF = async () => {
     isGenerating.value = false;
   }
 };
+
+const deleteResume = () => {
+  selectedContact.value = null;
+  selectedEducations.value = [];
+  selectedProjects.value = [];
+  selectedLinks.value = [];
+  showNotification("Resume deleted", "success");
+};
+
 
 const showNotification = (text, color = "success", timeout = 3000) => {
   snackbar.value = { show: true, text, color, timeout };
