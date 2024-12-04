@@ -17,8 +17,6 @@ import Experience from "./views/Experience.vue";
 import template1 from "./views/template1.vue";
 import AdminPage from "./views/adminPage.vue";
 
-
-
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -63,16 +61,16 @@ const router = createRouter({
       component: personalInterests,
     },
 
-
-    {
-      path: "/experience",
-      name: "Experience",
-      component: Experience,
-    },
     {
       path: "/AddContact",
       name: "AddContact",
       component: AddContact,
+      props: true,
+    },
+    {
+      path: '/certifications',
+      name: 'Certifications',
+      component: CertificationsPage,
       props: true,
     },
     {
@@ -121,6 +119,7 @@ const router = createRouter({
       props: true,
 
     },
+
 
   ],
 });
