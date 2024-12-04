@@ -22,6 +22,17 @@ const resetMenu = () => {
   }
 };
 
+const adminActions = [
+  {
+    title: "User Management",
+    component: "adminUserManager",
+  },
+  {
+    title: "Requests",
+    component: "adminRequests",
+  },
+];
+
 const logout = () => {
   AuthServices.logoutUser(user.value)
     .then((response) => {
@@ -33,6 +44,10 @@ const logout = () => {
     .catch((error) => {
       console.log("error", error);
     });
+};
+
+const navigateTo = (componentName) => {
+  router.push({ name: componentName });
 };
 
 onMounted(() => {
@@ -60,7 +75,18 @@ onMounted(() => {
       <div v-if="user">
         <v-btn class="mx-2" :to="{ name: 'home' }"> Home </v-btn>
         <v-btn class="mx-2" :to="{ name: 'resumes' }"> My Resumes </v-btn>
-        <v-btn class="mx-2" :to="{ name: 'admin' }"> Admin </v-btn>
+        <v-btn class="mx-2" :to="{ name: 'admin' }"> Admin <v-menu activator="parent" open-on-hover>
+            <v-list>
+              <v-list-item
+                v-for="(item, index) in adminActions"
+                :key="index"
+                :value="index"
+                @click="navigateTo(item.component)"
+              >
+                <v-list-item-title>{{ item.title }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu></v-btn>
       </div>
       <v-menu bottom min-width="200px" rounded offset-y v-if="user">
         <template v-slot:activator="{ props }">
