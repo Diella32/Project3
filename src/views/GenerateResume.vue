@@ -16,6 +16,7 @@
               <v-card-title class="text-h2 font-weight-bold mb-4">Resume Inputs</v-card-title>
               <v-divider></v-divider>
             </v-card-item>
+
             <v-card-text>
               <!-- Title and Introduction Inputs -->
               <v-text-field
@@ -136,9 +137,11 @@
               >
                 Generate and Save Resume
               </v-btn>
+
             </v-card-text>
           </v-card>
         </v-col>
+
 
         <!-- Right Column: Resume Preview -->
         <v-col cols="12" md="6" class="resume-preview">
@@ -220,6 +223,7 @@
                   </div>
                 </div>
               </div>
+
             </v-card-text>
           </v-card>
         </v-col>
@@ -549,6 +553,15 @@ const generateAndSavePDF = async () => {
   } finally {
     isGenerating.value = false;
   }
+};
+
+
+const deleteResume = () => {
+  selectedContact.value = null;
+  selectedEducations.value = [];
+  selectedProjects.value = [];
+  selectedLinks.value = [];
+  showNotification("Resume deleted", "success");
 };
 
 
