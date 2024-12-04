@@ -206,6 +206,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
     </div>
 
   
+  
     <!-- Navigation Buttons -->
     <v-card-actions class="d-flex justify-space-between">
       <v-btn color="primary" @click="router.push({ name: 'home' })">
@@ -213,15 +214,11 @@ const showNotification = (text, color = "success", timeout = 3000) => {
         Previous
       </v-btn>
       <v-btn color="primary" @click="router.push({ name: 'PersonalLinks' })">
-
-    <!-- Navigation Buttons -->
-   
-    <v-card-actions class="navigation-button">
-      <v-btn color="primary" @click="router.push({ name: 'AddEducation' })">
         Next
         <v-icon right>mdi-arrow-right</v-icon>
       </v-btn>
     </v-card-actions>
+
 
     <!-- Notifications -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
