@@ -15,7 +15,8 @@ import PersonalLinks from "./views/PersonalLinks.vue";
 import AddContact from "./views/AddContact.vue"; 
 import AddEducation from "./views/AddEducation.vue";
 import GenerateResume from "./views/GenerateResume.vue";
-import AdminPage from "./views/adminPage.vue";
+import AdminUserManager from "./views/adminUserManager.vue";
+import AdminRequests from "../src/views/adminRequests.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
