@@ -1,13 +1,26 @@
 <!-- src/views/AdminPage.vue -->
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import AdminServices from '../services/adminServices';
 
+const router = useRouter();
 const users = ref([]);
 const loading = ref(false);
 const errorMessage = ref('');
 
+const checkAdminAccess = () => {
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (!user || user.role !== 'admin') {
+    router.push('/');
+    return false;
+  }
+  return true;
+};
+
 const fetchUsers = async () => {
+  if (!checkAdminAccess()) return;
+  
   loading.value = true;
   try {
     const response = await AdminServices.getAllUsers();
@@ -21,7 +34,9 @@ const fetchUsers = async () => {
 };
 
 onMounted(() => {
-  fetchUsers();
+  if (checkAdminAccess()) {
+    fetchUsers();
+  }
 });
 </script>
 
@@ -61,7 +76,7 @@ onMounted(() => {
                 <tr>
                   <th>Name</th>
                   <th>Email</th>
-                  <th>Role</th>
+                  <th>Resumes</th>
                   <th>Actions</th>
                 </tr>
               </thead>
