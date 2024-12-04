@@ -12,9 +12,10 @@ import personalInterests from "./views/personalInterests.vue";
 import AddProjects from "./views/AddProjects.vue";
 import PersonalLinks from "./views/PersonalLinks.vue";
 import AddContact from "./views/AddContact.vue"; 
-import AddEducation from "./views/AddEducation.vue";  // To add a new education entry
-import GenerateResume from "./views/GenerateResume.vue"; // This is the component where you generate PDF
-//import Experience from "./views/Experience.vue";
+import AddEducation from "./views/AddEducation.vue";
+import GenerateResume from "./views/GenerateResume.vue";
+import AdminPage from "./views/adminPage.vue";
+
 
 
 const router = createRouter({
@@ -107,9 +108,9 @@ const router = createRouter({
     },
 
     {
-      path: '/certifications',
-      name: 'enterCertifications',
-      component: CertificationsPage
+        path: '/admin',
+        name: 'admin',
+        component: AdminPage
     },
 
     {
