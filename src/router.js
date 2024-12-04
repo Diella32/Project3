@@ -14,7 +14,6 @@ import AddContact from "./views/AddContact.vue";
 import AddEducation from "./views/AddEducation.vue";  // To add a new education entry
 import GenerateResume from "./views/GenerateResume.vue"; // This is the component where you generate PDF
 import Experience from "./views/Experience.vue";
-import template1 from "./views/template1.vue";
 import AdminPage from "./views/adminPage.vue";
 
 const router = createRouter({
