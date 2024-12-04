@@ -1,15 +1,21 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
+import { useRouter } from "vue-router"; // Import the router for navigation
 import ContactServices from "../services/ContactServices";
 import store from '../store/store';
+import { useRouter, useRoute } from 'vue-router';
 
-//const user = store.getters.getLoginUserInfo;
+
+
+const router = useRouter(); // Initialize the router
 const contacts = ref([]);
 const expandedPanel = ref(null);
 const isValidating = ref(false);
 const contactForms = ref([]);
 const user = store.getters.getLoginUserInfo;
 const userId = user.user_id;
+const router = useRouter();
+
 
 // Snackbar state
 const snackbar = ref({
@@ -42,9 +48,7 @@ const newContactTemplate = {
   email: "",
   phone_number: "",
   address: "",
-  //valid: false,
   userId: user.user_id,
-
 };
 
 // Fetch all contacts
@@ -58,9 +62,8 @@ const fetchContacts = async () => {
   }
 };
 
+
 onMounted(() => {
-  store.dispatch("fetchContacts", userId);
-  contacts.value = store.getters.getContacts;
   fetchContacts();
 });
 
@@ -90,13 +93,14 @@ const saveContact = async (index) => {
   try {
     const contact = contacts.value[index];
 
-    if (!contact.id) {
+    if (!contact.contact_id) {
       // New contact: Create on backend
       const response = await ContactServices.createContact(contact);
       contact.id = response.data.id;
     } else {
+      console.log("contact");
       // Existing contact: Update on backend
-      await ContactServices.updateContact(contact.id, contact);
+      await ContactServices.updateContact(contact.contact_id, contact);
     }
     showNotification("Contact saved successfully", "success");
     expandedPanel.value = null;
@@ -113,7 +117,6 @@ const showNotification = (text, color = "success", timeout = 3000) => {
 };
 </script>
 
-
 <template>
   <div class="contacts-wrapper">
     <div class="contacts-container">
@@ -122,9 +125,8 @@ const showNotification = (text, color = "success", timeout = 3000) => {
           <v-card class="contacts-card" elevation="0">
             <!-- Header -->
             <v-card-item class="text-center header-section">
-              <v-icon icon="mdi-account-box" size="72" color="primary" class="mb-6"></v-icon>
-              <v-card-title class="text-h2 font-weight-bold mb-4">Contact Information</v-card-title>
-              <v-card-subtitle class="text-h5 mb-6">Manage your contact details</v-card-subtitle>
+              <v-card-title class="text-h2 font-weight-bold mb-4">Contacts</v-card-title>
+              <v-card-subtitle class="text-h5 mb-6">Add your personal and professional contacts</v-card-subtitle>
             </v-card-item>
 
             <v-divider></v-divider>
@@ -152,55 +154,20 @@ const showNotification = (text, color = "success", timeout = 3000) => {
 
                         <v-expansion-panel-text>
                           <v-form ref="contactForms" v-model="contact.valid" @submit.prevent>
-                            <!-- First Name -->
-                            <v-text-field
-                              v-model="contact.fName"
-                              label="First Name"
-                              :rules="[rules.required]"
-                              variant="outlined"
-                              density="comfortable"
-                              class="mb-4"
-                            ></v-text-field>
+                            <!-- Contact First Name -->
+                            <v-text-field v-model="contact.fName" label="First Name" :rules="[rules.required]" variant="outlined" density="comfortable" class="mb-4"></v-text-field>
 
-                            <!-- Last Name -->
-                            <v-text-field
-                              v-model="contact.lName"
-                              label="Last Name"
-                              :rules="[rules.required]"
-                              variant="outlined"
-                              density="comfortable"
-                              class="mb-4"
-                            ></v-text-field>
+                            <!-- Contact Last Name -->
+                            <v-text-field v-model="contact.lName" label="Last Name" variant="outlined" density="comfortable" class="mb-4"></v-text-field>
 
-                            <!-- Email -->
-                            <v-text-field
-                              v-model="contact.email"
-                              label="Email"
-                              :rules="[rules.required, rules.email]"
-                              variant="outlined"
-                              density="comfortable"
-                              class="mb-4"
-                            ></v-text-field>
+                            <!-- Contact Email -->
+                            <v-text-field v-model="contact.email" label="Email" :rules="[rules.required, rules.email]" variant="outlined" density="comfortable" class="mb-4"></v-text-field>
 
-                            <!-- Phone Number -->
-                            <v-text-field
-                              v-model="contact.phone_number"
-                              label="Phone Number"
-                              :rules="[rules.required, rules.phoneNumber]"
-                              variant="outlined"
-                              density="comfortable"
-                              class="mb-4"
-                            ></v-text-field>
+                            <!-- Contact Phone -->
+                            <v-text-field v-model="contact.phone_number" label="Phone Number" :rules="[rules.required, rules.phoneNumber]" variant="outlined" density="comfortable" class="mb-4"></v-text-field>
 
-                            <!-- Address -->
-                            <v-textarea
-                              v-model="contact.address"
-                              label="Address"
-                              variant="outlined"
-                              density="comfortable"
-                              auto-grow
-                              class="mb-4"
-                            ></v-textarea>
+                            <!-- Contact Address -->
+                            <v-textarea v-model="contact.address" label="Address" variant="outlined" density="comfortable" auto-grow class="mb-4"></v-textarea>
 
                             <!-- Action Buttons -->
                             <v-row class="mt-4">
@@ -208,7 +175,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
                                 <v-btn 
                                   color="error" 
                                   block 
-                                  @click="deleteContact(contact.id)"
+                                  @click="deleteContact(contact.contact_id)"
                                   :disabled="isValidating"
                                 >
                                   Delete Contact
@@ -238,6 +205,24 @@ const showNotification = (text, color = "success", timeout = 3000) => {
       </v-row>
     </div>
 
+  
+    <!-- Navigation Buttons -->
+    <v-card-actions class="d-flex justify-space-between">
+      <v-btn color="primary" @click="router.push({ name: 'home' })">
+        <v-icon left>mdi-arrow-left</v-icon>
+        Previous
+      </v-btn>
+      <v-btn color="primary" @click="router.push({ name: 'PersonalLinks' })">
+
+    <!-- Navigation Buttons -->
+   
+    <v-card-actions class="navigation-button">
+      <v-btn color="primary" @click="router.push({ name: 'AddEducation' })">
+        Next
+        <v-icon right>mdi-arrow-right</v-icon>
+      </v-btn>
+    </v-card-actions>
+
     <!-- Notifications -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
       {{ snackbar.text }}
@@ -247,6 +232,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
     </v-snackbar>
   </div>
 </template>
+
 <style scoped>
 .contacts-wrapper {
   min-height: 100vh;
@@ -279,15 +265,17 @@ const showNotification = (text, color = "success", timeout = 3000) => {
   flex: 1;
 }
 
-.text-center {
-  text-align: center;
-}
-
 .d-flex {
   display: flex;
 }
 
 .justify-space-between {
   justify-content: space-between;
+}
+.navigation-button {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 1000;
 }
 </style>

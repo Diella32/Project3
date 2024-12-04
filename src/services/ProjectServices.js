@@ -18,7 +18,7 @@ export default {
   },
 
   // Update an existing project by ID for a specific resume
-  updateProject(userId, projectId, data) {
+  updateProject(projectId, data) {
     return apiClient.put(`/projects/${projectId}`, data);
   },
 

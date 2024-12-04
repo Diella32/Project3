@@ -47,7 +47,7 @@ const apiClient = axios.create({
         })
       // Utils.removeItem("user")
     }
-    console.log(Utils.getStore("user"))
+    // console.log(Utils.getStore("user"))
     return data
   },
 })

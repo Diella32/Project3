@@ -1,33 +1,49 @@
 import apiClient from './services.js';
 
 export default {
-  // Create a new experience
-  createExperience(data) {
-    return apiClient.post('/experience/', data);
-  },
+    // Create a new experience
+    createExperience(data) {
 
-  // Get all experiences for a specific resume
-  getExperiences(userId) {
-    return apiClient.get(`/experience/user/${userId}`);
-  },
+        return apiClient.post('/experiences', data);
+    },
 
-  // Get a single experience by ID
-  getExperience(id) {
-    return apiClient.get(`/experience/${id}`);
-  },
+    // Get all experiences for a specific resume
+    getExperiences(userId) {
+        return apiClient.get(`/experiences/${userId}`);
+    },
 
-  // Update an experience by ID
-  updateExperience(id, data) {
-    return apiClient.put(`/experience/${id}`, data);
-  },
+    // Get a single experience
+    getExperienceById(userId, id) {
+        return apiClient.get(`user/${userId}/experiences/${id}`);
 
-  // Delete an experience by ID
-  deleteExperience(id) {
-    return apiClient.delete(`/experience/${id}`);
-  },
+        return apiClient.post('/experience/', data);
+    },
 
-  // Delete all experiences for a specific resume
-  deleteAllExperiences(resumeId) {
-    return apiClient.delete(`/resume/experiences/resume/${resumeId}`);
-  },
-};
+    // Get all experiences for a specific resume
+    getExperiencesForResume(resumeId) {
+        return apiClient.get(`resume/experience/resume/${resumeId}`);
+    },
+
+    getExperiencesForUser(userId) {
+        return apiClient.get(`/experience/user/${userId}`);
+    },
+
+    },
+
+    // Update an experience
+    updateExperience(id, data) {
+        return apiClient.put(`/experience/${id}`, data);
+    },
+
+    // Delete an experience
+    deleteExperience(id) {
+        return apiClient.delete(`/experience/${id}`);
+    },
+
+    // Delete all experiences for a resume
+    deleteAllExperiences(resumeId) {
+
+        return apiClient.delete(`/experiences/resume/${resumeId}`);
+
+    },
+}

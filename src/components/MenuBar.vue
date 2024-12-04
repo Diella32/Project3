@@ -60,6 +60,7 @@ onMounted(() => {
       <div v-if="user">
         <v-btn class="mx-2" :to="{ name: 'home' }"> Home </v-btn>
         <v-btn class="mx-2" :to="{ name: 'resumes' }"> My Resumes </v-btn>
+        <v-btn class="mx-2" :to="{ name: 'admin' }"> Admin </v-btn>
       </div>
       <v-menu bottom min-width="200px" rounded offset-y v-if="user">
         <template v-slot:activator="{ props }">

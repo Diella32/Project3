@@ -1,100 +1,168 @@
 <template>
-  <div class="experience-container">
-    <h1>Work Experience</h1>
-    <h2>Let's work on your experience</h2>
-    <h3>Start with your most recent job first and work backward.</h3>
+  <div class="experience-wrapper">
+    <div class="experience-container">
+      <v-row class="fill-height ma-0" align="start" justify="center">
+        <v-col cols="12" class="pa-0">
+          <v-card class="experience-card" elevation="0">
+            <!-- Header -->
+            <v-card-item class="text-center header-section">
+              <v-icon icon="mdi-briefcase" size="72" color="primary" class="mb-6"></v-icon>
+              <v-card-title class="text-h2 font-weight-bold mb-4">Work Experience</v-card-title>
+              <v-card-subtitle class="text-h5 mb-6">
+                Start with your most recent job first and work backward.
+              </v-card-subtitle>
+            </v-card-item>
 
-    <div class="form-box">
-      <form @submit.prevent="saveExperience">
-        <div class="form-group">
-          <label>Job Title:</label>
-          <input
-            type="text"
-            v-model="currentExperience.job_title"
-            placeholder="Enter job title"
-            required
-          />
-        </div>
+            <v-divider></v-divider>
 
-        <div class="form-group">
-          <label>Employer:</label>
-          <input
-            type="text"
-            v-model="currentExperience.company"
-            placeholder="Enter employer"
-            required
-          />
-        </div>
+            <!-- Add New Experience Button -->
+            <v-card-text class="experience-content py-6">
+              <v-container>
+                <v-row justify="center" class="mb-6">
+                  <v-col cols="12" md="8">
+                    <v-btn
+                      color="primary"
+                      block
+                      @click="addNewExperience"
+                      size="large"
+                      prepend-icon="mdi-plus"
+                    >
+                      Add New Experience
+                    </v-btn>
+                  </v-col>
+                </v-row>
 
-        <div class="form-group">
-          <label>Description:</label>
-          <input
-            type="text"
-            v-model="currentExperience.description"
-            placeholder="Enter description"
-            required
-          />
-        </div>
+                <!-- Experiences List -->
+                <v-row justify="center">
+                  <v-col cols="12" md="8">
+                    <v-expansion-panels v-model="expandedPanel">
+                      <v-expansion-panel
+                        v-for="(experience, index) in experiences"
+                        :key="experience.experience_id || index"
+                      >
+                        <v-expansion-panel-title>
+                          <span class="text-h6">
+                            {{ experience.job_title || 'New Experience' }} at
+                            {{ experience.company || 'Unknown' }}
+                          </span>
+                        </v-expansion-panel-title>
 
-        <div class="form-group">
-          <label>Start Year:</label>
-          <input
-            type="text"
-            v-model="currentExperience.start_date"
-            placeholder="Enter start year (e.g., 2020)"
-            required
-          />
-        </div>
+                        <v-expansion-panel-text>
+                          <form @submit.prevent="saveExperience(experience)">
+                            <!-- Job Title -->
+                            <v-text-field
+                              v-model="experience.job_title"
+                              label="Job Title"
+                              outlined
+                              dense
+                              class="mb-4"
+                              required
+                            ></v-text-field>
 
-        <div class="form-group">
-          <label>End Year:</label>
-          <input
-            type="text"
-            v-model="currentExperience.end_date"
-            placeholder="Enter end year (e.g., 2023)"
-            :disabled="currentExperience.currentlyWorking"
-          />
-        </div>
+                            <!-- Employer -->
+                            <v-text-field
+                              v-model="experience.company"
+                              label="Employer"
+                              outlined
+                              dense
+                              class="mb-4"
+                              required
+                            ></v-text-field>
 
-        <div class="form-group checkbox-group">
-          <label>
-            <input
-              type="checkbox"
-              v-model="currentExperience.currentlyWorking"
-            />
-            I currently work here
-          </label>
-        </div>
+                            <!-- Description -->
+                            <v-textarea
+                              v-model="experience.description"
+                              label="Description"
+                              outlined
+                              dense
+                              auto-grow
+                              class="mb-4"
+                            ></v-textarea>
 
-        <div class="button-group">
-          <button class="btn-back" type="button" @click="goBack">Back</button>
-          <button class="btn-save" type="submit">Save</button>
-          <button class="btn-next" type="button" @click="goNext">Next</button>
-        </div>
-      </form>
+                            <!-- Start Year -->
+                            <v-text-field
+                              v-model="experience.start_date"
+                              label="Start Year"
+                              outlined
+                              dense
+                              class="mb-4"
+                              placeholder="Enter start year (e.g., 2020)"
+                              required
+                            ></v-text-field>
+
+                            <!-- End Year -->
+                            <v-text-field
+                              v-model="experience.end_date"
+                              label="End Year"
+                              outlined
+                              dense
+                              class="mb-4"
+                              placeholder="Enter end year (e.g., 2023)"
+                              :disabled="experience.currentlyWorking"
+                            ></v-text-field>
+
+                            <!-- Currently Working Checkbox -->
+                            <v-checkbox
+                              v-model="experience.currentlyWorking"
+                              label="I currently work here"
+                              dense
+                              class="mb-4"
+                            ></v-checkbox>
+
+                            <!-- Action Buttons -->
+                            <v-row>
+                              <v-col cols="6">
+                                <v-btn
+                                  color="error"
+                                  block
+                                  @click="deleteExperience(experience.experience_id)"
+                                >
+                                  Delete
+                                </v-btn>
+                              </v-col>
+                              <v-col cols="6">
+                                <v-btn
+                                  color="success"
+                                  block
+                                  type="submit"
+                                >
+                                  Save
+                                </v-btn>
+                              </v-col>
+                            </v-row>
+                          </form>
+                        </v-expansion-panel-text>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+
+            <!-- Navigation Buttons -->
+            <v-card-actions class="d-flex justify-space-between">
+              <v-btn color="primary" @click="router.push({ name: 'AddEducation' })">
+                <v-icon left>mdi-arrow-left</v-icon>
+                Previous
+              </v-btn>
+              <v-btn color="primary" @click="router.push({ name: 'AddProjects' })">
+                Next
+                <v-icon right>mdi-arrow-right</v-icon>
+              </v-btn>
+            </v-card-actions>
+
+          </v-card>
+        </v-col>
+      </v-row>
     </div>
 
-    <!-- List of Experiences -->
-    <div class="experience-list">
-      <h2>Your Experiences:</h2>
-      <ul>
-        <li v-for="experience in experiences" :key="experience.id" class="experience-item">
-          <div class="experience-details">
-            <strong>{{ experience.job_title }}</strong> at {{ experience.company }}
-            ({{ experience.start_date }} - 
-            {{ experience.currentlyWorking ? "Present" : experience.end_date }})
-          </div>
-          <div class="experience-details">
-              {{ experience.description }}
-              </div>
-
-          <div class="action-buttons">
-            <button @click="editExperience(experience)" class="btn-edit">Edit</button>
-            <button @click="deleteExperience(experience.experience_id)" class="btn-delete">Delete</button>
-          </div>
-        </li>
-      </ul>
-    </div>
+    <!-- Notifications -->
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
+      {{ snackbar.text }}
+      <template v-slot:actions>
+        <v-btn variant="text" @click="snackbar.show = false">Close</v-btn>
+      </template>
+    </v-snackbar>
 
     <!-- Success Message -->
     <div v-if="successMessage" class="alert-success">
@@ -104,8 +172,9 @@
 </template>
 
 <script>
-import ExperienceServices from '../services/ExperienceServices';
-import store from '../store/store';
+import { useRouter } from 'vue-router';
+import ExperienceServices from "../services/ExperienceServices";
+import store from "../store/store";
 
 export default {
   name: "Experience",
@@ -118,224 +187,121 @@ export default {
         start_date: "",
         end_date: "",
         currentlyWorking: false,
-        userId: store.getters.getLoginUserInfo?.user_id || null, // Safely handle missing user_id
+        userId: store.getters.getLoginUserInfo?.user_id || null,
       },
       experiences: [],
+      expandedPanel: null,
+      snackbar: {
+        show: false,
+        text: "",
+        color: "success",
+        timeout: 3000,
+      },
       successMessage: "",
+      router: useRouter(),  // Added router
     };
   },
   mounted() {
-    console.log("Mounted: Loading experiences...");
-    console.log("User ID on mount:", this.currentExperience.userId);
-
-    // Only load experiences if userId is available
-    if (this.currentExperience.userId) {
-      this.loadExperiences();
-    } else {
-      console.error("User ID is not available on mount.");
-    }
-  },
-  watch: {
-    // Watch for changes in userId and load experiences when it becomes available
-    'currentExperience.userId': function(newVal) {
-      if (newVal) {
-        console.log("User ID updated, loading experiences...");
-        this.loadExperiences();
-      }
-    }
+    this.loadExperiences();
   },
   methods: {
     async loadExperiences() {
-      if (!this.currentExperience.userId) {
-        console.error("User ID is not available.");
-        return;
-      }
-
       try {
-        console.log("Fetching experiences for user ID:", this.currentExperience.userId);
-        const response = await ExperienceServices.getExperiences(this.currentExperience.userId);
-
-        // Check the structure of the response
-        console.log("Response from loadExperiences:", response);
-
-        // Safely set experiences
+        const response = await ExperienceServices.getExperiencesForUser(
+          this.currentExperience.userId
+        );
         this.experiences = response.data || [];
-        console.log("Experiences fetched and set:", this.experiences);
       } catch (error) {
-        console.error("Error loading experiences:", error);
+        console.log(error)
+        this.showNotification("Failed to load experiences", "error");
       }
     },
-    async saveExperience() {
-      alert("Save button clicked!");
-      console.log("Save button clicked!");
-
-      // Input validation for start_date and end_date
-      if (!/^\d{4}$/.test(this.currentExperience.start_date)) {
-        alert("Start Year must be a four-digit number (e.g., 2020).");
-        return;
-      }
-      if (!this.currentExperience.currentlyWorking && !/^\d{4}$/.test(this.currentExperience.end_date)) {
-        alert("End Year must be a four-digit number (e.g., 2023).");
-        return;
-      }
-
+    async saveExperience(experience) {
       try {
-        console.log("Saving experience:", this.currentExperience);
-        const response = await ExperienceServices.createExperience(this.currentExperience);
-
-        console.log("Response from saveExperience:", response);
-
-        if (response.data.experience_id) {
-          this.successMessage = 'Your experience was saved successfully.';
-          console.log("Success Message Set:", this.successMessage);
-          this.loadExperiences();
-          this.resetForm();
-          setTimeout(() => {
-            this.successMessage = "";
-          }, 3000);
+        if (experience.experience_id) {
+          await ExperienceServices.updateExperience(experience.experience_id, experience);
         } else {
-          console.error("Failed to save experience. No experience_id in response.");
-          alert("Failed to save experience. Please try again.");
+          const response = await ExperienceServices.createExperience({
+            ...experience,
+            userId: this.currentExperience.userId,
+          });
+          experience.experience_id = response.data.experience_id;
         }
+        this.loadExperiences();
+        this.showNotification("Experience saved successfully", "success");
       } catch (error) {
-        console.error("Error saving experience:", error);
-        alert("Failed to save experience. Please try again.");
+        this.showNotification("Failed to save experience", "error");
       }
     },
-    editExperience(experience) {
-      this.currentExperience = { ...experience };
-    },
-    async deleteExperience(id) {
-      try {
-        const response = await ExperienceServices.deleteExperience(id);
-        if (response.data.success) {
-          this.successMessage = 'Experience deleted successfully.';
-          this.loadExperiences();
-          setTimeout(() => {
-            this.successMessage = "";
-          }, 3000);
-        }
-      } catch (error) {
-        console.error("Error deleting experience:", error);
-        alert("Failed to delete experience. Please try again.");
-      }
-    },
-    resetForm() {
-      this.currentExperience = {
+    addNewExperience() {
+      this.experiences.push({
         job_title: "",
         company: "",
         description: "",
         start_date: "",
         end_date: "",
         currentlyWorking: false,
-        userId: store.getters.getLoginUserInfo?.user_id || null, // Safely handle missing user_id
-      };
+        userId: this.currentExperience.userId,
+      });
+      this.expandedPanel = this.experiences.length - 1;
     },
-    goBack() {
-      this.$router.push({ name: 'previous-step' });
+    async deleteExperience(id) {
+      try {
+        await ExperienceServices.deleteExperience(id);
+        this.experiences = this.experiences.filter(
+          (experience) => experience.experience_id !== id
+        );
+        this.showNotification("Experience deleted successfully", "success");
+      } catch (error) {
+        this.showNotification("Failed to delete experience", "error");
+      }
     },
-    goNext() {
-      this.$router.push({ name: 'next-step' });
+    showNotification(text, color = "success") {
+      this.snackbar = { show: true, text, color };
     },
   },
 };
 </script>
 
-
 <style scoped>
-.experience-container {
+/* Consolidated styles */
+.experience-wrapper {
+  min-height: 100vh;
+  width: 100vw;
+  background-color: rgb(var(--v-theme-background));
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-top: 20px;
-  padding: 20px;
 }
 
-h1, h2, h3 {
-  text-align: center;
-}
-
-.form-box {
+.experience-container {
+  flex: 1;
   width: 100%;
-  max-width: 600px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 20px;
-  background-color: #f9f9f9;
+  height: 100%;
+  overflow-y: auto;
 }
 
-.form-group {
-  margin-bottom: 15px;
-}
-
-label {
-  font-weight: bold;
-  display: block;
-  margin-bottom: 5px;
-}
-
-input[type="text"], input[type="checkbox"] {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.checkbox-group {
+.experience-card {
+  min-height: 100vh;
+  border-radius: 0;
   display: flex;
-  align-items: center;
+  flex-direction: column;
 }
 
-.button-group {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
+.header-section {
+  padding-top: 4rem;
+  padding-bottom: 2rem;
 }
 
-button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn-back {
-  background-color: hsl(0, 61%, 41%);
-  color: #fff;
-}
-
-.btn-save {
-  background-color: hsl(0, 61%, 41%);
-  color: #fff;
-}
-
-.btn-next {
-  background-color: hsl(0, 61%, 41%);
-  color: #fff;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 10px;
-}
-
-.btn-edit {
-  background-color: #17a2b8;
-  color: #fff;
-}
-
-.btn-delete {
-  background-color: #dc3545;
-  color: #fff;
+.experience-content {
+  flex: 1;
 }
 
 .alert-success {
-  max-width: 600px;
-  margin-top: 20px;
+  max-width: 500px;
+  margin: 20px auto;
   padding: 10px;
   background-color: #dff0d8;
-  color: rgb(118, 60, 60);
+  color: #3c763d;
   border: 1px solid #d6e9c6;
   border-radius: 4px;
   text-align: center;
