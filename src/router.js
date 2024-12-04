@@ -15,6 +15,7 @@ import PersonalLinks from "./views/PersonalLinks.vue";
 import AddContact from "./views/AddContact.vue"; 
 import AddEducation from "./views/AddEducation.vue";
 import GenerateResume from "./views/GenerateResume.vue";
+import AdminPage from "./views/adminPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -99,10 +100,11 @@ const router = createRouter({
       props: true,
     },
     {
-      path: '/certifications',
-      name: 'enterCertifications',
-      component: CertificationsPage
+        path: '/admin',
+        name: 'admin',
+        component: AdminPage
     },
+
   ],
 });
 
