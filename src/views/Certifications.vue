@@ -59,36 +59,36 @@
 
             <!-- Display existing certifications -->
             <v-row v-if="certifications.length > 0">
-  <v-col cols="12" v-for="cert in certifications" :key="cert.certification_id" class="mb-6">
-    <v-card variant="outlined" class="mb-2">
-      <v-card-item>
-    <div class="d-flex justify-space-between align-center">
-      <div>
-        <v-card-title>{{ cert.award_name }}</v-card-title>
-        <v-card-subtitle>{{ cert.organization }}</v-card-subtitle>
-      </div>
-      <div>
-        <v-btn
-          icon="mdi-pencil"
-          variant="text"
-          density="comfortable"
-          @click="editCertification(cert)"
-          class="mr-2"
-        ></v-btn>
-        <v-btn
-          icon="mdi-delete"
-          variant="text"
-          color="error"
-          density="comfortable"
-          @click="deleteCertification(cert)"
-        ></v-btn>
-      </div>
-    </div>
-  </v-card-item>
-    </v-card>
-  </v-col>
-</v-row>
-</v-card-text>
+              <v-col cols="12" v-for="cert in certifications" :key="cert.id" class="mb-6">
+                <v-card variant="outlined" class="mb-2">
+                  <v-card-item>
+                    <div class="d-flex justify-space-between align-center">
+                      <div>
+                        <v-card-title>{{ cert.award_name }}</v-card-title>
+                        <v-card-subtitle>{{ cert.organization }}</v-card-subtitle>
+                      </div>
+                      <div>
+                        <v-btn
+                          icon="mdi-pencil"
+                          variant="text"
+                          density="comfortable"
+                          @click="editCertification(cert)"
+                          class="mr-2"
+                        ></v-btn>
+                        <v-btn
+                          icon="mdi-delete"
+                          variant="text"
+                          color="error"
+                          density="comfortable"
+                          @click="deleteCertification(cert.id)"
+                        ></v-btn>
+                      </div>
+                    </div>
+                  </v-card-item>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-card-text>
 
           <!-- Navigation Buttons -->
           <v-card-actions class="px-4 pt-2 pb-4 d-flex justify-space-between">
@@ -119,109 +119,69 @@ const user = store.getters.getLoginUserInfo;
 const userId = user.user_id;
 
 const certificationForm = ref({
-  award_id: null,
   award_name: '',
   organization: '',
-  user_id: null
+  userId: userId
 });
+
+const fetchCertifications = async () => {
+  try {
+    const response = await certificationServices.getCertification(userId);
+    certifications.value = response.data;
+  } catch (error) {
+    lastApiError.value = error.response?.data?.message || error.message;
+  }
+};
 
 onMounted(() => {
   fetchCertifications();
 });
 
-
 const saveCertification = async () => {
   try {
-    certificationForm.value.user_id = userId;
-    
+    let response;
     if (editMode.value) {
-      await certificationServices.updateCertificationById(
-        certificationForm.value.award_id,
-        {
-          award_name: certificationForm.value.award_name,
-          organization: certificationForm.value.organization,
-          user_id: certificationForm.value.user_id
-        }
-      );
+      response = await certificationServices.updateCertificationById(certificationForm.value.id, certificationForm.value);
     } else {
-      await certificationServices.createCertification(certificationForm.value);
+      response = await certificationServices.createCertification(certificationForm.value);
+      certifications.value.push(response.data);
     }
-    
-    await fetchCertifications();
-    console.log('Certification saved successfully');
     showNotification('Certification saved successfully', 'success');
     resetForm();
   } catch (error) {
-    console.error('Save Error:', error);
     lastApiError.value = error.response?.data?.message || error.message;
     showNotification('Failed to save certification', 'error');
   }
 };
 
-const fetchCertifications = async () => {
+const deleteCertification = async (id) => {
   try {
-    console.log('Fetching certifications for userId:', userId);
-    const response = await certificationServices.getCertification(userId);
-    console.log('Fetch response:', response);
-    
-    // Backend always returns an array for findAllForUser
-    certifications.value = response.data;
-  } catch (error) {
-    console.error('Fetch Error:', error);
-    lastApiError.value = error.response?.data?.message || error.message;
-    certifications.value = [];
-  }
-};
-
-const deleteCertification = async (cert) => {
-  try {
-    console.log('Attempting to delete certification:', cert);
-    
-    if (!cert.award_id) {
-      throw new Error('Invalid certification: missing award_id');
-    }
-
-    const response = await certificationServices.deleteCertificationById(cert.award_id);
-    console.log('Delete response:', response);
-    
-    await fetchCertifications();
+    await certificationServices.deleteCertificationById(id);
+    certifications.value = certifications.value.filter(cert => cert.id !== id);
     showNotification('Certification deleted successfully', 'success');
   } catch (error) {
-    console.error('Delete Error:', error);
-    console.error('Error response:', error.response?.data);
-    lastApiError.value = error.response?.data?.message || error.message;
     showNotification('Failed to delete certification', 'error');
   }
 };
 
-
-
-const resetForm = () => {
-  certificationForm.value = {
-    award_id: null,
-    award_name: '',
-    organization: '',
-    user_id: userId
-  };
-  editMode.value = false;
-};
 const editCertification = (cert) => {
-  certificationForm.value = {
-    award_id: cert.award_id,
-    award_name: cert.award_name,
-    organization: cert.organization,
-    user_id: cert.user_id
-  };
+  certificationForm.value = { ...cert };
   editMode.value = true;
 };
 
+const resetForm = () => {
+  certificationForm.value = { title: '', organization: '', userId };
+  editMode.value = false;
+};
 
 const showNotification = (text, color) => {
   snackbar.value = { show: true, text, color };
 };
 
-const goBack = () => router.push('/skills');
-const goNext = () => router.push('/interest');
+
+const goBack = () => router.push('./personalInterests');
+const goNext = () => router.push('/next-route');
+
 </script>
 
 <style scoped>

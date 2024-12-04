@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-
 import Login from "./views/Login.vue";
 import home from "./views/home.vue";
 import AddResume from "./views/AddResume.vue";
@@ -17,6 +16,8 @@ import AddEducation from "./views/AddEducation.vue";
 import GenerateResume from "./views/GenerateResume.vue";
 import AdminPage from "./views/adminPage.vue";
 
+
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -27,7 +28,7 @@ const router = createRouter({
       component: Login,
     },
     {
-      path: '/',
+      path: '/home',
       name: 'home',
       component: home,
     },
@@ -55,16 +56,13 @@ const router = createRouter({
       props: true,
     },
     {
+
       path: '/interest',
       name: 'enterInterests',
       component: personalInterests,
     },
-    {
-      path: "/edit/:id",
-      name: "edit",
-      component: EditResume,
-      props: true,
-    },
+
+  
     {
       path: "/experience",
       name: "Experience",
@@ -87,8 +85,10 @@ const router = createRouter({
       name: "GenerateResume",
       component: GenerateResume,
     },
+  
+
     {
-      path: "/view/:id",
+      path: "/view/:id",  // View resume path with dynamic id
       name: "view",
       component: ViewResume,
       props: true,
@@ -99,10 +99,26 @@ const router = createRouter({
       component: AddEducation,
       props: true,
     },
+
+    {
+      path: "/EditResume/", // Path for editing a resume
+      name: "EditResume",
+      component: EditResume,
+      props: true,
+    },
+
     {
         path: '/admin',
         name: 'admin',
         component: AdminPage
+    },
+
+    {
+      path: "/Experiences",  // Path for adding education
+      name: "Experiences",
+      component: Experience,  // Component for adding a new education entry
+      props: true,
+
     },
 
   ],
