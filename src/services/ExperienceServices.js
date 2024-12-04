@@ -3,6 +3,19 @@ import apiClient from './services.js';
 export default {
     // Create a new experience
     createExperience(data) {
+
+        return apiClient.post('/experiences', data);
+    },
+
+    // Get all experiences for a specific resume
+    getExperiences(userId) {
+        return apiClient.get(`/experiences/${userId}`);
+    },
+
+    // Get a single experience
+    getExperienceById(userId, id) {
+        return apiClient.get(`user/${userId}/experiences/${id}`);
+
         return apiClient.post('/experience/', data);
     },
 
@@ -15,9 +28,6 @@ export default {
         return apiClient.get(`/experience/user/${userId}`);
     },
 
-    // Get a single experience
-    getExperienceById(id) {
-        return apiClient.get(`/experience/${id}`);
     },
 
     // Update an experience
@@ -32,6 +42,8 @@ export default {
 
     // Delete all experiences for a resume
     deleteAllExperiences(resumeId) {
-        return apiClient.delete(`/experience/resume/${resumeId}`);
+
+        return apiClient.delete(`/experiences/resume/${resumeId}`);
+
     },
 }

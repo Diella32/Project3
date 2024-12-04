@@ -9,7 +9,7 @@ import SocialLogin from "../components/SocialLogin.vue";
         <v-card class="login-card elevation-12">
           <v-card-item class="text-center pb-0">
             <v-img
-              src="public/oc-logo-white.png"  
+              src="oc-logo-white.png"  
               class="mx-auto mb-4"
               max-width="200"
               contain

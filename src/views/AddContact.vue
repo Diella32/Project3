@@ -3,6 +3,9 @@ import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router"; // Import the router for navigation
 import ContactServices from "../services/ContactServices";
 import store from '../store/store';
+import { useRouter, useRoute } from 'vue-router';
+
+
 
 const router = useRouter(); // Initialize the router
 const contacts = ref([]);
@@ -11,6 +14,8 @@ const isValidating = ref(false);
 const contactForms = ref([]);
 const user = store.getters.getLoginUserInfo;
 const userId = user.user_id;
+const router = useRouter();
+
 
 // Snackbar state
 const snackbar = ref({
@@ -93,6 +98,7 @@ const saveContact = async (index) => {
       const response = await ContactServices.createContact(contact);
       contact.id = response.data.id;
     } else {
+      console.log("contact");
       // Existing contact: Update on backend
       await ContactServices.updateContact(contact.contact_id, contact);
     }
@@ -198,6 +204,15 @@ const showNotification = (text, color = "success", timeout = 3000) => {
         </v-col>
       </v-row>
     </div>
+
+  
+    <!-- Navigation Buttons -->
+    <v-card-actions class="d-flex justify-space-between">
+      <v-btn color="primary" @click="router.push({ name: 'home' })">
+        <v-icon left>mdi-arrow-left</v-icon>
+        Previous
+      </v-btn>
+      <v-btn color="primary" @click="router.push({ name: 'PersonalLinks' })">
 
     <!-- Navigation Buttons -->
    
