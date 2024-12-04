@@ -17,17 +17,14 @@ export default {
   },
 
   // Update an education entry by ID
-  updateEducation(userId, educationId,data) {
+  updateEducation(educationId,data) {
     return apiClient.put(`/education/${educationId}`, data);
   },
 
   // Delete a specific education entry by ID
   deleteEducation(userId,educationId) {
+    console.log(educationId);
     return apiClient.delete(`/education/${educationId}`);
   },
 
-  // Delete all education entries
-  deleteAllEducation() {
-    return apiClient.delete("/education");
-  }
 };

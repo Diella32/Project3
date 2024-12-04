@@ -5,7 +5,6 @@ import AddResume from "./views/AddResume.vue";
 import ResumeList from "./views/ResumeList.vue";
 import EditResume from "./views/EditResume.vue";
 import ViewResume from "./views/ViewResume.vue";
-import Experience from "./views/Experience.vue";
 import Skill from "./views/Skill.vue";
 import CertificationsPage from "../src/views/Certifications.vue"
 import personalInterests from "./views/personalInterests.vue";
@@ -14,7 +13,7 @@ import PersonalLinks from "./views/PersonalLinks.vue";
 import AddContact from "./views/AddContact.vue"; 
 import AddEducation from "./views/AddEducation.vue";  // To add a new education entry
 import GenerateResume from "./views/GenerateResume.vue"; // This is the component where you generate PDF
-//import Experience from "./views/Experience.vue";
+import Experience from "./views/Experience.vue";
 import template1 from "./views/template1.vue";
 
 
@@ -23,12 +22,12 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      alias: "/login",
+      //alias: "/login",
       name: "login",
       component: Login,
     },
     {
-      path: '/',
+      path: '/home',
       name: 'home',
       component: home,
     },
@@ -63,8 +62,7 @@ const router = createRouter({
     },
 
     {
-      path: "/edit",  // Edit resume path with dynamic id
-     // path: "/edit/:id",
+      path: "/edit/:id",
       name: "edit",
       component: EditResume,
       props: true,

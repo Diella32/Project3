@@ -2,6 +2,8 @@
 import { ref, onMounted, computed } from "vue";
 import EducationServices from '../services/ EducationServices'
 import store from '../store/store';
+import { useRouter, useRoute } from 'vue-router';
+
 
 const user = store.getters.getLoginUserInfo;
 const educations = ref([]);
@@ -9,6 +11,8 @@ const expandedPanel = ref(null);
 const isValidating = ref(false);
 const educationForms = ref([]);
 const userId = store.getters.getLoginUserInfo.user_id;
+const router = useRouter();
+
 
 // Snackbar state
 const snackbar = ref({
@@ -32,8 +36,8 @@ const newEducationTemplate = {
   degree: "",
   FieldOfStudy: "",
   institution: "",
-  startDate: "",
-  endDate: "",
+  start_date: "",
+  end_date: "",
   gpa: null,
   userId: user.user_id,
   //valid: false,
@@ -71,8 +75,10 @@ const deleteEducation = async (id) => {
     showNotification("Failed to delete education", "error");
   } finally {
     isValidating.value = false;
+    fetchEducations();
   }
 };
+
 
 const saveEducation = async (index) => {
   isValidating.value = true;
@@ -173,7 +179,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
 
                             <!-- Start Date -->
                             <v-text-field
-                              v-model="education.startDate"
+                              v-model="education.start_date"
                               label="Start Date"
                               type="date"
                               :rules="[rules.required]"
@@ -184,7 +190,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
 
                             <!-- End Date -->
                             <v-text-field
-                              v-model="education.endDate"
+                              v-model="education.end_date"
                               label="End Date"
                               type="date"
                               :rules="[rules.required]"
@@ -210,7 +216,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
                                 <v-btn 
                                   color="error" 
                                   block 
-                                  @click="deleteEducation(education.id)"
+                                  @click="deleteEducation(education.education_id)"
                                   :disabled="isValidating"
                                 >
                                   Delete Education
@@ -239,6 +245,19 @@ const showNotification = (text, color = "success", timeout = 3000) => {
         </v-col>
       </v-row>
     </div>
+
+    
+       <!-- Navigation Buttons -->
+       <v-card-actions class="d-flex justify-space-between">
+      <v-btn color="primary" @click="router.push({ name: 'PersonalLinks' })">
+        <v-icon left>mdi-arrow-left</v-icon>
+        Previous
+      </v-btn>
+      <v-btn color="primary" @click="router.push({ name: 'Experience' })">
+        Next
+        <v-icon right>mdi-arrow-right</v-icon>
+      </v-btn>
+    </v-card-actions>
 
     <!-- Notifications -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
