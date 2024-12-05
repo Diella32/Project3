@@ -218,6 +218,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
         <v-icon right>mdi-arrow-right</v-icon>
       </v-btn>
     </v-card-actions>
+    
 
 
     <!-- Notifications -->
