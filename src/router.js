@@ -14,6 +14,8 @@ import PersonalLinks from "./views/PersonalLinks.vue";
 import AddContact from "./views/AddContact.vue"; 
 import AddEducation from "./views/AddEducation.vue";  // To add a new education entry
 import GenerateResume from "./views/GenerateResume.vue"; // This is the component where you generate PDF
+import AiPage from "./views/AiPage.vue";  // Add this import
+
 
 
 const router = createRouter({
@@ -67,6 +69,12 @@ const router = createRouter({
       name: 'enterInterests',
       component: personalInterests,
     },
+    {
+      path: '/ai',
+      name: 'ai',
+      component: AiPage  // Define the route for the AI page
+    },
+
     {
       path: "/edit/:id",  // Edit resume path with dynamic id
       name: "edit",
