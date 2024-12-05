@@ -13,7 +13,6 @@ import AddProjects from "./views/AddProjects.vue";
 import PersonalLinks from "./views/PersonalLinks.vue";
 import AddContact from "./views/AddContact.vue"; 
 import Experience from "./views/Experience.vue";
-import AdminPage from "./views/adminPage.vue";
 import AddEducation from "./views/AddEducation.vue";
 import GenerateResume from "./views/GenerateResume.vue";
 import AdminUserManager from "./views/adminUserManager.vue";
@@ -72,12 +71,12 @@ const router = createRouter({
       component: CertificationsPage,
     },
 
-    {
+    // {
 
-      path: '/ai',
-      name: 'ai',
-      component: AiPage  // Define the route for the AI page
-    },
+    //   path: '/ai',
+    //   name: 'ai',
+    //   component: AiPage  // Define the route for the AI page
+    // },
 
     {
       path: "/edit/:id",  // Edit resume path with dynamic id
@@ -116,24 +115,14 @@ const router = createRouter({
       props: true,
     },
 
-    {
-      path: "/edit/:id",  // View resume path with dynamic id
-      name: "edit",
-      component: EditResume,
-      props: true,
-    },
+  
     {
       path: "/Education",
       name: "AddEducation",
       component: AddEducation,
       props: true,
     },
-    {
-      path: "/EditResume/", // Path for editing a resume
-      name: "EditResume",
-      component: EditResume,
-      props: true,
-    },
+  
 
     {
         path: '/adminUserManager',
