@@ -2,10 +2,10 @@
 import { ref, onMounted, computed } from "vue";
 import EducationServices from '../services/ EducationServices'
 import store from '../store/store';
-import { useRouter, useRoute } from 'vue-router';
+//import { useRouter, useRoute } from 'vue-router';
 
 import { useRouter } from "vue-router"; 
-const router = useRouter(); // Get router instance
+//const router = useRouter(); // Get router instance
 
 
 const user = store.getters.getLoginUserInfo;
