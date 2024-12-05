@@ -12,6 +12,8 @@ import personalInterests from "./views/personalInterests.vue";
 import AddProjects from "./views/AddProjects.vue";
 import PersonalLinks from "./views/PersonalLinks.vue";
 import AddContact from "./views/AddContact.vue"; 
+import Experience from "./views/Experience.vue";
+import AdminPage from "./views/adminPage.vue";
 import AddEducation from "./views/AddEducation.vue";
 import GenerateResume from "./views/GenerateResume.vue";
 import AdminUserManager from "./views/adminUserManager.vue";
@@ -23,7 +25,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/login",
+      path: "/",
       name: "login",
       component: Login,
     },
@@ -63,6 +65,11 @@ const router = createRouter({
       path: '/interest',
       name: 'enterInterests',
       component: personalInterests,
+    },
+    {
+      path: '/certifications',
+      name: 'enterCertifications',
+      component: CertificationsPage,
     },
 
     {
@@ -108,6 +115,13 @@ const router = createRouter({
       component: ViewResume,
       props: true,
     },
+
+    {
+      path: "/edit/:id",  // View resume path with dynamic id
+      name: "edit",
+      component: EditResume,
+      props: true,
+    },
     {
       path: "/Education",
       name: "AddEducation",
@@ -147,6 +161,7 @@ const router = createRouter({
 
     }
    
+
 
   ],
 });
