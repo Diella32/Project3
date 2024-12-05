@@ -26,7 +26,6 @@ export default {
         return apiClient.get(`/experience/user/${userId}`);
     },
 
-    },
 
     // Update an experience
     updateExperience(id, data) {
