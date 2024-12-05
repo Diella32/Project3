@@ -1,3 +1,136 @@
+
+
+   <!-- <template>
+  <div class="interests">
+    <h1 class="title">My Personal Interests</h1>
+    
+    <div class="interest-list">
+      <ul>
+        <li v-for="(interest, index) in interests" :key="index" class="interest-item">
+          {{ interest }}
+        </li>
+      </ul>
+    </div>
+
+    
+    <div class="add-interest">
+      <input 
+        v-model="newInterest" 
+        type="text" 
+        placeholder="Add a new interest" 
+        @keyup.enter="addInterest"
+        class="input-field"
+      />
+      <button @click="addInterest" class="add-button">+ Add</button>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      // Initially empty array for user to add interests dynamically
+      interests: [],
+      // New interest text
+      newInterest: ''
+    };
+  },
+  methods: {
+    // Method to add a new interest
+    addInterest() {
+      if (this.newInterest.trim()) {
+        this.interests.push(this.newInterest.trim()); // Add new interest
+        this.newInterest = ''; // Clear input field after adding
+      }
+    }
+  }
+};
+</script>
+// here for change
+
+<style scoped>
+/* General style for the interests section */
+.interests {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: #f9f9f9; /* Light gray background */
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Title style */
+.title {
+  font-size: 36px;
+  color: #6d2727; /* Dark gray color */
+  font-weight: 600;
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+/* Interest list styling */
+.interest-list {
+  margin-top: 20px;
+}
+
+.interest-item {
+  font-size: 18px;
+  color: #555555; /* Medium gray */
+  margin-bottom: 12px;
+  padding: 10px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+/* Hover effect for each list item */
+.interest-item:hover {
+  transform: scale(1.05);
+  background-color: #e8e8e8; /* Subtle gray background on hover */
+}
+
+/* Add interest input and button styling */
+.add-interest {
+  margin-top: 30px;
+}
+
+.input-field {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  outline: none;
+  width: 240px;
+  transition: border-color 0.3s ease;
+}
+
+.input-field:focus {
+  border-color: #aaa; /* Slightly darker border on focus */
+}
+
+.add-button {
+  padding: 10px 18px;
+  font-size: 16px;
+  background-color: #591b1b; /* Green background */
+  color: white;
+  border: none;
+  border-radius: 25px;
+  margin-left: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-button:hover {
+  background-color: #672f2f; /* Slightly darker green on hover */
+  transform: scale(1.05);
+}
+</style> -->
+
+
+
 <template>
   <div class="interests-wrapper">
     <div class="interests-container">
