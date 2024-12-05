@@ -2,30 +2,30 @@ import apiClient from './services';
 
 export default {
   getAll() {
-    return apiClient.get("/"); // Update to match baseURL path
+    return apiClient.get("/resumes"); // Fetch all resumes
   },
   
   getAllForUser(userId) {
-    return apiClient.get(`/userResumes/${userId}`);
+    return apiClient.get(`/resumes/user/${userId}`); // Fetch all resumes for a specific user
   },
   
-  get(id) {
-    return apiClient.get(`/${id}`);
+  getResume(userId, resumeId) {
+    return apiClient.get(`/resumes/${resumeId}`); // Fetch a specific resume by ID
   },
   
   create(data) {
-    return apiClient.post("/", data); // Match baseURL path
+    return apiClient.post("/resumes", data); // Create a new resume
   },
   
-  update(id, data) {
-    return apiClient.put(`/${id}`, data);
+  update(userId, resumeId,data) {
+    return apiClient.put(`/resumes/${resumeId}`, data); // Update a resume by ID
   },
   
-  delete(id) {
-    return apiClient.delete(`/${id}`);
+  delete(resumeId) {
+    return apiClient.delete(`/resumes/${resumeId}`); // Delete a resume by ID
   },
   
   deleteAll() {
-    return apiClient.delete("/");
+    return apiClient.delete("/resume/resumes"); // Delete all resumes
   }
 };

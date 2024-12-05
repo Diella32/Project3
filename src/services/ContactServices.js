@@ -14,7 +14,7 @@ export default {
     return apiClient.post('/contactInfo', data); 
   },
 
-  updateContact(userId,contactInfoId, data) {
+  updateContact(contactInfoId, data) {
     return apiClient.put(`/contactInfo/${contactInfoId}`, data);  // Use the correct URL
   },
 
