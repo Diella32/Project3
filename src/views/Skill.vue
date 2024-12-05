@@ -99,7 +99,7 @@
 
     <!-- Navigation Buttons -->
     <v-card-actions class="d-flex justify-space-between">
-      <v-btn color="primary" @click="router.push({ name: 'AddProjects' })">
+      <v-btn color="primary" @click= "navigateToAddProjects()">
         <v-icon left>mdi-arrow-left</v-icon>
         Previous
       </v-btn>
@@ -124,7 +124,8 @@ import { ref, onMounted, computed } from "vue";
 import SkillServices from "../services/SkillServices";
 import store from "../store/store";
 import { useRouter, useRoute } from 'vue-router';
-const router = useRouter();
+
+
 
 
 export default {
@@ -134,6 +135,7 @@ export default {
     const skills = ref([]);
     const expandedPanel = ref(null);
     const isValidating = ref(false);
+    const router = useRouter();
 
     // Snackbar state
     const snackbar = ref({
@@ -166,6 +168,8 @@ export default {
       fetchSkills();
     });
 
+    const navigateToAddProjects = () => {router.push({ name: 'AddProjects' })};
+
     // Methods
     const addNewSkill = () => {
       skills.value.push({
@@ -190,6 +194,7 @@ export default {
         isValidating.value = false;
       }
     };
+    
 
     const validateSkill = async (index) => {
       isValidating.value = true;
@@ -227,6 +232,7 @@ export default {
     };
 
     return {
+      router,
       skills,
       expandedPanel,
       isValidating,
@@ -237,8 +243,7 @@ export default {
       deleteSkill,
       validateSkill,
       showNotification,
-      goBack,
-      goNext,
+      navigateToAddProjects,
     };
   },
 };
