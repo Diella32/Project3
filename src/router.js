@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import Utils from '../src/config/utils'; 
 import Login from "./views/Login.vue";
 import home from "./views/home.vue";
 import AddResume from "./views/AddResume.vue";
@@ -11,11 +12,13 @@ import personalInterests from "./views/personalInterests.vue";
 import AddProjects from "./views/AddProjects.vue";
 import PersonalLinks from "./views/PersonalLinks.vue";
 import AddContact from "./views/AddContact.vue"; 
-import AddEducation from "./views/AddEducation.vue";  // To add a new education entry
-import GenerateResume from "./views/GenerateResume.vue"; // This is the component where you generate PDF
 import Experience from "./views/Experience.vue";
 import AdminPage from "./views/adminPage.vue";
-
+import AddEducation from "./views/AddEducation.vue";
+import GenerateResume from "./views/GenerateResume.vue";
+import AdminUserManager from "./views/adminUserManager.vue";
+import AdminRequests from "./views/adminRequests.vue";
+import AddComment from "./views/AddComment.vue";
 
 
 const router = createRouter({
@@ -30,12 +33,15 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: home,
+      meta: { requiresAuth: true }
     },
+    
     {
       path: "/add",
       name: "add",
       component: AddResume,
     },
+  
     {
       path: "/resumes",
       name: "resumes",
@@ -66,16 +72,28 @@ const router = createRouter({
       component: CertificationsPage,
     },
 
+    {
+
+      path: '/ai',
+      name: 'ai',
+      component: AiPage  // Define the route for the AI page
+    },
 
     {
-      path: "/experience",
-      name: "Experience",
-      component: Experience,
+      path: "/edit/:id",  // Edit resume path with dynamic id
+      name: "edit",
+      component: EditResume
     },
     {
       path: "/AddContact",
       name: "AddContact",
       component: AddContact,
+      props: true,
+    },
+    {
+      path: '/certification',
+      name: 'Certifications',
+      component: CertificationsPage,
       props: true,
     },
     {
@@ -110,7 +128,6 @@ const router = createRouter({
       component: AddEducation,
       props: true,
     },
-
     {
       path: "/EditResume/", // Path for editing a resume
       name: "EditResume",
@@ -119,13 +136,53 @@ const router = createRouter({
     },
 
     {
-        path: '/admin',
-        name: 'admin',
-        component: AdminPage
+        path: '/adminUserManager',
+        name: 'adminUserManager',
+        component: AdminUserManager,
+        meta: { requiresAuth: true, requiresAdmin: true }
     },
+    {
+      path: '/adminRequests',
+      name: 'adminRequests',
+      component: AdminRequests,
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/add-comment/:id',
+      name: 'AddComment',
+      component: AddComment
+    },
+
+    {
+      path: "/Experiences",  // Path for adding education
+      name: "Experiences",
+      component: Experience,  // Component for adding a new education entry
+      props: true,
+
+    }
+   
 
 
   ],
+});
+
+// Navigation guard
+router.beforeEach((to, from, next) => {
+  const user = Utils.getStore("user");
+  
+  // If route requires auth and user is not logged in
+  if (to.meta.requiresAuth && !user) {
+    next({ name: 'login' });
+    return;
+  }
+  
+  // If trying to access admin routes without admin role
+  if (to.meta.requiresAdmin && user?.role !== 'admin') {
+    next({ name: 'home' });
+    return;
+  }
+  
+  next();
 });
 
 export default router;

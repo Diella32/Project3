@@ -15,8 +15,6 @@ export default {
     // Get a single experience
     getExperienceById(userId, id) {
         return apiClient.get(`user/${userId}/experiences/${id}`);
-
-        return apiClient.post('/experiences/', data);
     },
 
     // Get all experiences for a specific resume
@@ -25,8 +23,10 @@ export default {
     },
 
     getExperiencesForUser(userId) {
-        return apiClient.get(`/experiences/user/${userId}`);
+
+        return apiClient.get(`/experience/user/${userId}`);
     },
+
 
     
     // Update an experience
