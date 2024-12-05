@@ -1,8 +1,26 @@
 <template>
   <v-container class="resume-view">
-    <v-card class="mx-auto" max-width="900">
+    <v-card class="mx-auto" max-width="1000">
       <!-- Back Button
       <v-btn icon="mdi-arrow-left" variant="text" class="mb-4" @click="router.back()"></v-btn> -->
+
+      <v-divider class="mb-6"></v-divider>
+
+      <div class="max-w-[8.5in] mx-auto p-8 bg-white">
+      <!-- Header/Contact Information -->
+      <div class="text-center mb-6">
+      <h1 class="text-2xl font-bold mb-2">
+        {{ selectedContacts?.fName }} {{ selectedContacts?.lName }}
+      </h1>
+      <div class="text-sm">
+        <span>{{ selectedContacts?.address }}</span>
+        <span class="mx-2">|</span>
+        <span>{{ selectedContacts?.phone_number }}</span>
+        <span class="mx-2">|</span>
+        <span>{{selectedContacts?.email }}</span>
+      </div>
+      </div>
+
 
       <!-- Resume Header -->
       <div class="d-flex align-center justify-space-between flex-wrap">
@@ -11,111 +29,99 @@
       </div>
       <p class="text-body-1 mb-6">{{ introduction }}</p>
 
-      <v-divider class="mb-6"></v-divider>
 
-      <!-- Contact Information -->
-      <section class="mb-6">
-        <h3 class="text-h5 font-weight-bold mb-4">Contact Information</h3>
-        <div v-for="contact in selectedContact" :key="contact.contact_id">
-          <v-card variant="outlined" class="pa-4 mb-4">
-            <div class="d-flex align-center mb-2">
-              <v-icon color="primary" class="mr-2">mdi-account</v-icon>
-              <span>{{ contact?.fName }} {{ contact?.lName }}</span>
-            </div>
-            <div class="d-flex align-center mb-2">
-              <v-icon color="primary" class="mr-2">mdi-email</v-icon>
-              <span>{{ contact?.email }}</span>
-            </div>
-            <div class="d-flex align-center mb-2">
-              <v-icon color="primary" class="mr-2">mdi-phone</v-icon>
-              <span>{{ contact?.phone_number }}</span>
-            </div>
-            <div class="d-flex align-center">
-              <v-icon color="primary" class="mr-2">mdi-map-marker</v-icon>
-              <span>{{ contact?.address }}</span>
-            </div>
-          </v-card>
-        </div>
-      </section>
+    <!-- Description
+    <div class="mb-4">
+      <h2 class="text-lg font-bold border-b border-gray-400 mb-2">DESCRIPTION</h2>
+      <p class="text-sm">{{ introduction }}</p>
+    </div> -->
 
-      <!-- Education -->
-      <section class="mb-6">
-        <h3 class="text-h5 font-weight-bold mb-4">Education</h3>
-        <v-card v-for="edu in selectedEducations" :key="edu.education_id" variant="outlined" class="mb-3 pa-4">
-          <div class="d-flex justify-space-between align-center mb-2">
-            <h4 class="text-h6 font-weight-bold">{{ edu.institution }}</h4>
-            <span class="text-caption">{{ edu.startDate }} - {{ edu.endDate }}</span>
+    <!-- Education -->
+    <div class="mb-4">
+      <h2 class="text-lg font-bold border-b border-gray-400 mb-2">EDUCATION</h2>
+      <div v-for="(edu, index) in selectedEducations" :key="index" class="mb-2">
+        <div class="flex justify-between">
+          <div>
+            <span class="font-bold">{{ edu.institution }}</span>
           </div>
-          <div class="font-weight-medium">{{ edu.degree }} in {{ edu.FieldOfStudy }}</div>
-          <div v-if="edu.gpa" class="text-caption mt-2">GPA: {{ edu.gpa }}</div>
-        </v-card>
-      </section>
+          <span>{{ edu.start_date }} - {{ edu.end_date }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="italic">{{ edu.degree }}</span>
+          <span v-if="edu.gpa">GPA : {{ edu.gpa }}</span>
+        </div>
+      </div>
+    </div>
 
-      <!-- Projects -->
-      <section class="mb-6">
-        <h3 class="text-h5 font-weight-bold mb-4">Projects</h3>
-        <v-card v-for="project in selectedProjects" :key="project.project_id" variant="outlined" class="mb-3 pa-4">
-          <h4 class="text-h6 font-weight-bold mb-2">{{ project.project_name }}</h4>
-          <p class="mb-3">{{ project.description }}</p>
-          <v-chip-group>
-            <v-chip v-for="tech in project.technologies_used.split(',')" :key="tech" size="small" color="primary" variant="outlined">
-              {{ tech.trim() }}
-            </v-chip>
-          </v-chip-group>
-          <v-btn v-if="project.project_link" :href="project.project_link" target="_blank" variant="text" color="primary" class="mt-2" prepend-icon="mdi-link">
-            View Project
-          </v-btn>
-        </v-card>
-      </section>
+    <!-- Projects -->
+    <div class="mb-4">
+      <h2 class="text-lg font-bold border-b border-gray-400 mb-2">PROJECTS</h2>
+      <div v-for="(project, index) in selectedProjects" :key="index" class="mb-2">
+        <div class="flex justify-between">
+          <span class="font-bold">{{ project.project_name }}</span>
+          <span>{{ project.project_link }}</span>
+        </div>
+        <ul class="list-disc ml-4 text-sm">
+          <li>{{ project.description }}</li>
+          <li>Technologies used: {{ project.technologies_used }}</li>
+        </ul>
+      </div>
+    </div>
 
-      <!-- Skills -->
-      <section class="mb-6">
-        <h3 class="text-h5 font-weight-bold mb-4">Skills</h3>
-        <v-chip v-for="skill in selectedSkills" :key="skill.skill_id" size="small" color="primary" variant="outlined" class="mr-2">
-          {{ skill.skill_name }}
-        </v-chip>
-      </section>
+    <!-- Experiences -->
+    <div class="mb-4">
+      <h2 class="text-lg font-bold border-b border-gray-400 mb-2">EXPERIENCE</h2>
+      <div v-for="(exp, index) in selectedExperiences" :key="index" class="mb-2">
+        <div class="flex justify-between">
+          <span class="font-bold">{{ exp.company }}</span>
+          <span>{{ exp.start_date }} - {{ exp.end_date }}</span>
+        </div>
+        <div class="italic mb-1">{{ exp.title }}</div>
+        <ul class="list-disc ml-4 text-sm">
+          <li v-for="(resp, idx) in exp.description" :key="idx">
+            {{ resp }}
+          </li>
+        </ul>
+      </div>
+    </div>
 
-      <!-- Experiences -->
-      <section class="mb-6">
-        <h3 class="text-h5 font-weight-bold mb-4">Experiences</h3>
-        <v-card v-for="experience in selectedExperiences" :key="experience.experience_id" variant="outlined" class="mb-3 pa-4">
-          <h4 class="text-h6 font-weight-bold">{{ experience.title }}</h4>
-          <p>{{ experience.description }}</p>
-          <div class="text-caption">{{ experience.startDate }} - {{ experience.endDate }}</div>
-        </v-card>
-      </section>
+           <!-- Skills -->
+             <div class="mb-4">
+             <h2 class="text-lg font-bold border-b border-gray-400 mb-2">SKILLS</h2>
+              <div v-for="(skill, index) in selectedSkills" :key="index" class="mb-1">
+                <span class="font-bold">{{ skill.skill_name }}</span>
+            </div>
+            </div>
 
-      <!-- Interests -->
-      <section class="mb-6">
-        <h3 class="text-h5 font-weight-bold mb-4">Interests</h3>
-        <v-chip v-for="interest in selectedInterests" :key="interest.interest_id" size="small" color="primary" variant="outlined" class="mr-2">
-          {{ interest.name }}
-        </v-chip>
-      </section>
+            <!-- Interests -->
+            <div class="mb-4">
+              <h2 class="text-lg font-bold border-b border-gray-400 mb-2">INTERESTS</h2>
+              <div v-for="(interest, index) in selectedInterests" :key="index" class="mb-1">
+                <span class="font-bold">{{ interest.interest }}</span>
+              </div>
+            </div>
+            
 
-      <!-- Awards -->
-      <section class="mb-6">
-        <h3 class="text-h5 font-weight-bold mb-4">Awards & Certifications</h3>
-        <v-card v-for="award in awardCertifications" :key="award.award_id" variant="outlined" class="mb-3 pa-4">
-          <h4 class="text-h6 font-weight-bold">{{ award.title }}</h4>
-          <p class="text-caption">{{ award.year }}</p>
-        </v-card>
-      </section>
+    <!-- Awards & Certifications -->
+    <div class="mb-4">
+      <h2 class="text-lg font-bold border-b border-gray-400 mb-2">AWARDS & CERTIFICATIONS</h2>
+      <div v-for="award  in awardCertifications" :key="award.id" class="flex justify-between mb-1 text-sm">
+        <span>{{ award.award_name }}</span>
+        <span>{{ award.organization }}</span>
+      </div>
+    </div>
 
-      <!-- Personal Links -->
-      <section class="mb-6">
-        <h3 class="text-h5 font-weight-bold mb-4">Personal Links</h3>
-        <v-card variant="outlined" class="pa-4">
-          <v-list>
-            <v-list-item v-for="link in selectedLinks" :key="link.personal_link_id" :href="link.url" target="_blank" prepend-icon="mdi-link">
-              <v-list-item-title>{{ link.url }}</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-card>
-      </section>
-    </v-card>
+    <!-- Personal Links -->
+    <div class="mb-4">
+      <h2 class="text-lg font-bold border-b border-gray-400 mb-2">PERSONAL LINKS</h2>
+      <div v-for="(links, index) in selectedLinks" :key="index" class="text-sm mb-1">
+        <span>{{ links.url }}</span>
+      </div>
+    </div>
+  </div>
+  </v-card>
   </v-container>
+  
 </template>
 
 <script setup>
@@ -131,7 +137,7 @@ const userId = user.user_id;
 const resumeTitle = ref('');
 const introduction = ref('');
 const status = ref('');
-const selectedContact = ref([]);
+const selectedContacts = ref([]);
 const selectedEducations = ref([]);
 const selectedProjects = ref([]);
 const selectedLinks = ref([]);
@@ -166,6 +172,7 @@ const fetchResumeDetails = async () => {
     const response = await ResumeServices.getResume(userId, resumeId);
     const data = response.data;
     console.log(data);
+    //console.log(selectedEducations.value);
 
     // Set main details
     resumeTitle.value = data.title || "";
@@ -173,11 +180,12 @@ const fetchResumeDetails = async () => {
     status.value = data.status || "";
 
     // Set related data
-    selectedContact.value = data.ContactInfo || [];
+    selectedContacts.value = data.contactinfo || [];
+    console.log('Selected Contacts:', selectedContacts.value);
     selectedEducations.value = data.education || [];
     selectedProjects.value = data.projects || [];
     selectedSkills.value = data.skills || [];
-    selectedLinks.value = data.personalLinks || [];
+    selectedLinks.value = data.personallinks || [];
     selectedExperiences.value = data.experiences || [];
     selectedInterests.value = data.interests || [];
     awardCertifications.value = data.awards || [];
@@ -193,5 +201,10 @@ onMounted(fetchResumeDetails);
 .resume-view {
   padding-top: 2rem;
   padding-bottom: 2rem;
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  
 }
 </style>

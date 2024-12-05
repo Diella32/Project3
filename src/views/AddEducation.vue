@@ -2,8 +2,10 @@
 import { ref, onMounted, computed } from "vue";
 import EducationServices from '../services/ EducationServices'
 import store from '../store/store';
+//import { useRouter, useRoute } from 'vue-router';
+
 import { useRouter } from "vue-router"; 
-const router = useRouter(); // Get router instance
+//const router = useRouter(); // Get router instance
 
 
 const user = store.getters.getLoginUserInfo;
@@ -12,6 +14,8 @@ const expandedPanel = ref(null);
 const isValidating = ref(false);
 const educationForms = ref([]);
 const userId = store.getters.getLoginUserInfo.user_id;
+const router = useRouter();
+
 
 // Snackbar state
 const snackbar = ref({
@@ -34,8 +38,8 @@ const newEducationTemplate = {
   degree: "",
   FieldOfStudy: "",
   institution: "",
-  startDate: "",
-  endDate: "",
+  start_date: "",
+  end_date: "",
   gpa: null,
   userId: user.user_id,
 };
@@ -73,9 +77,11 @@ const deleteEducation = async (id) => {
     console.error("Error deleting education:", error); // Log error
     showNotification("Failed to delete education", "error"); // Notify user of failure
   } finally {
-    isValidating.value = false; // End validation
+    isValidating.value = false;
+    fetchEducations();
   }
 };
+
 
 const saveEducation = async (index) => {
   isValidating.value = true;
@@ -175,7 +181,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
 
                             <!-- Start Date -->
                             <v-text-field
-                              v-model="education.startDate"
+                              v-model="education.start_date"
                               label="Start Date"
                               type="date"
                               :rules="[rules.required]"
@@ -186,7 +192,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
 
                             <!-- End Date -->
                             <v-text-field
-                              v-model="education.endDate"
+                              v-model="education.end_date"
                               label="End Date"
                               type="date"
                               :rules="[rules.required]"
@@ -212,7 +218,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
                                 <v-btn 
                                   color="error" 
                                   block 
-                                  @click="deleteEducation(education.id)"
+                                  @click="deleteEducation(education.education_id)"
                                   :disabled="isValidating"
                                 >
                                   Delete Education
@@ -242,6 +248,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
       </v-row>
     </div>
 
+
     <!-- Navigation Buttons -->
     <v-card-actions class="d-flex justify-space-between">
       <v-btn color="primary" @click="router.push({ name: 'AddContact' })">
@@ -249,6 +256,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
         Previous
       </v-btn>
       <v-btn color="primary" @click="router.push({ name: 'PersonalLinks' })">
+
         Next
         <v-icon right>mdi-arrow-right</v-icon>
       </v-btn>

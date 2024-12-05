@@ -17,12 +17,12 @@ export default {
     return apiClient.post("/resumes", data); // Create a new resume
   },
   
-  update(userId, resume_id,data) {
-    return apiClient.put(`/resumes/${resume_id}`, data); // Update a resume by ID
+  update(userId, resumeId,data) {
+    return apiClient.put(`/resumes/${resumeId}`, data); // Update a resume by ID
   },
   
-  delete(resume_id) {
-    return apiClient.delete(`/resumes/${resume_id}`); // Delete a resume by ID
+  delete(resumeId) {
+    return apiClient.delete(`/resumes/${resumeId}`); // Delete a resume by ID
   },
   
   deleteAll() {

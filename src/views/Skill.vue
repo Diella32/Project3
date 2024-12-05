@@ -99,11 +99,11 @@
 
     <!-- Navigation Buttons -->
     <v-card-actions class="d-flex justify-space-between">
-      <v-btn color="primary" @click="goBack">
+      <v-btn color="primary" @click="router.push({ name: 'AddProjects' })">
         <v-icon left>mdi-arrow-left</v-icon>
         Previous
       </v-btn>
-      <v-btn color="primary" @click="goNext">
+      <v-btn color="primary" @click="router.push({ name: 'enterCertifications' })">
         Next
         <v-icon right>mdi-arrow-right</v-icon>
       </v-btn>
@@ -124,6 +124,9 @@ import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";  // Import useRouter from vue-router
 import SkillServices from "../services/SkillServices";
 import store from "../store/store";
+import { useRouter, useRoute } from 'vue-router';
+const router = useRouter();
+
 
 export default {
   name: "Skills",
