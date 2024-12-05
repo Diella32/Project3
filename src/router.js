@@ -6,7 +6,6 @@ import AddResume from "./views/AddResume.vue";
 import ResumeList from "./views/ResumeList.vue";
 import EditResume from "./views/EditResume.vue";
 import ViewResume from "./views/ViewResume.vue";
-import Experience from "./views/Experience.vue";
 import Skill from "./views/Skill.vue";
 import CertificationsPage from "../src/views/Certifications.vue"
 import personalInterests from "./views/personalInterests.vue";
@@ -18,6 +17,7 @@ import GenerateResume from "./views/GenerateResume.vue";
 import AdminUserManager from "./views/adminUserManager.vue";
 import AdminRequests from "./views/adminRequests.vue";
 import AddComment from "./views/AddComment.vue";
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -65,11 +65,17 @@ const router = createRouter({
       component: personalInterests,
     },
 
-  
     {
-      path: "/experience",
-      name: "Experience",
-      component: Experience,
+
+      path: '/ai',
+      name: 'ai',
+      component: AiPage  // Define the route for the AI page
+    },
+
+    {
+      path: "/edit/:id",  // Edit resume path with dynamic id
+      name: "edit",
+      component: EditResume
     },
     {
       path: "/AddContact",
@@ -139,8 +145,7 @@ const router = createRouter({
       component: Experience,  // Component for adding a new education entry
       props: true,
 
-    },
-
+    }
    
 
   ],

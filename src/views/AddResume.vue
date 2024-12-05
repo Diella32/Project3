@@ -118,7 +118,7 @@ const sections = [
     title: 'Skills',
     subtitle: 'Technical and professional skills',
     icon: 'mdi-hammer-wrench',
-    route: 'enterSkills'
+    route: 'Skill'
   },
   {
     title: 'Awards/Certification',
