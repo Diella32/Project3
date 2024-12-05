@@ -6,6 +6,7 @@
         <textarea v-model="jobDescription" placeholder="Paste the job description here..." rows="8"></textarea>
         <button type="submit">Analyze</button>
       </form>
+      <!-- AI -->
       <div v-if="output" class="output">
         <pre>{{ output }}</pre>
       </div>
@@ -95,4 +96,5 @@
     border-radius: 4px;
   }
   </style>
+  
   
