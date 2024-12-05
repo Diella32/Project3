@@ -73,6 +73,20 @@
         </v-col>
       </v-row>
     </div>
+    
+              <!-- Navigation Buttons -->
+              <v-card-actions class="d-flex justify-space-between">
+
+    <v-btn color="primary" @click="router.push({ name: 'enterCertifications' })">
+
+      <v-icon left>mdi-arrow-left</v-icon>
+      Previous
+    </v-btn>
+    <v-btn color="primary" @click="router.push({ name: 'GenerateResume' })">
+      Done
+      <v-icon right>mdi-arrow-right</v-icon>
+    </v-btn>
+    </v-card-actions>
   </div>
 </template>
 
@@ -80,6 +94,8 @@
 import { ref, onMounted } from 'vue';
 import interestServices from '../services/interestServices';
 import store from '../store/store';
+import { useRouter } from 'vue-router';
+
 
 export default {
   props: {
@@ -89,6 +105,7 @@ export default {
     },
   },
   setup() {
+    const router = useRouter();
     const interests = ref([]);
     const interestName = ref('');
     const expandedPanel = ref(null);
@@ -136,6 +153,7 @@ export default {
     });
 
     return {
+      router,
       interests,
       interestName,
       expandedPanel,

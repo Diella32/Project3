@@ -4,9 +4,6 @@ import EducationServices from '../services/ EducationServices'
 import store from '../store/store';
 import { useRouter, useRoute } from 'vue-router';
 
-import { useRouter } from "vue-router"; 
-const router = useRouter(); // Get router instance
-
 
 const user = store.getters.getLoginUserInfo;
 const educations = ref([]);
@@ -251,11 +248,11 @@ const showNotification = (text, color = "success", timeout = 3000) => {
 
     <!-- Navigation Buttons -->
     <v-card-actions class="d-flex justify-space-between">
-      <v-btn color="primary" @click="router.push({ name: 'AddContact' })">
+      <v-btn color="primary" @click="router.push({ name: 'PersonalLinks' })">
         <v-icon left>mdi-arrow-left</v-icon>
         Previous
       </v-btn>
-      <v-btn color="primary" @click="router.push({ name: 'PersonalLinks' })">
+      <v-btn color="primary" @click="router.push({ name: 'Experience' })">
 
         Next
         <v-icon right>mdi-arrow-right</v-icon>

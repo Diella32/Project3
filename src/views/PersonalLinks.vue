@@ -75,6 +75,7 @@ const deleteLink = async (id) => {
   } finally {
     isValidating.value = false;
   }
+  fetchLinks();
 };
 
 const saveLink = async (index) => {
