@@ -46,6 +46,7 @@ export default {
   }
 };
 </script>
+// here for change
 
 <style scoped>
 /* General style for the interests section */
