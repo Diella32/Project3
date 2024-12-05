@@ -48,7 +48,7 @@
                         </v-expansion-panel-title>
 
                         <v-expansion-panel-text>
-                          <v-form @submit.prevent="saveExperience">
+                          <form @submit.prevent="saveExperience(experience)">
                             <!-- Job Title -->
                             <v-text-field
                               v-model="experience.job_title"
@@ -124,13 +124,13 @@
                                 <v-btn
                                   color="success"
                                   block
-                                  @click="saveExperience(experience)"
+                                  type="submit"
                                 >
                                   Save
                                 </v-btn>
                               </v-col>
                             </v-row>
-                          </v-form>
+                          </form>
                         </v-expansion-panel-text>
                       </v-expansion-panel>
                     </v-expansion-panels>
@@ -138,6 +138,19 @@
                 </v-row>
               </v-container>
             </v-card-text>
+
+            <!-- Navigation Buttons -->
+            <v-card-actions class="d-flex justify-space-between">
+              <v-btn color="primary" @click="router.push({ name: 'AddEducation' })">
+                <v-icon left>mdi-arrow-left</v-icon>
+                Previous
+              </v-btn>
+              <v-btn color="primary" @click="router.push({ name: 'AddProjects' })">
+                Next
+                <v-icon right>mdi-arrow-right</v-icon>
+              </v-btn>
+            </v-card-actions>
+
           </v-card>
         </v-col>
       </v-row>
@@ -150,10 +163,16 @@
         <v-btn variant="text" @click="snackbar.show = false">Close</v-btn>
       </template>
     </v-snackbar>
+
+    <!-- Success Message -->
+    <div v-if="successMessage" class="alert-success">
+      {{ successMessage }}
+    </div>
   </div>
 </template>
 
 <script>
+import { useRouter } from 'vue-router';
 import ExperienceServices from "../services/ExperienceServices";
 import store from "../store/store";
 
@@ -178,6 +197,8 @@ export default {
         color: "success",
         timeout: 3000,
       },
+      successMessage: "",
+      router: useRouter(),  // Added router
     };
   },
   mounted() {
@@ -186,11 +207,12 @@ export default {
   methods: {
     async loadExperiences() {
       try {
-        const response = await ExperienceServices.getExperiences(
+        const response = await ExperienceServices.getExperiencesForUser(
           this.currentExperience.userId
         );
         this.experiences = response.data || [];
       } catch (error) {
+        console.log(error)
         this.showNotification("Failed to load experiences", "error");
       }
     },
@@ -242,6 +264,7 @@ export default {
 </script>
 
 <style scoped>
+/* Consolidated styles */
 .experience-wrapper {
   min-height: 100vh;
   width: 100vw;
@@ -273,11 +296,14 @@ export default {
   flex: 1;
 }
 
-.d-flex {
-  display: flex;
-}
-
-.justify-space-between {
-  justify-content: space-between;
+.alert-success {
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 10px;
+  background-color: #dff0d8;
+  color: #3c763d;
+  border: 1px solid #d6e9c6;
+  border-radius: 4px;
+  text-align: center;
 }
 </style>

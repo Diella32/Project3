@@ -18,7 +18,7 @@ import GenerateResume from "./views/GenerateResume.vue";
 import AdminUserManager from "./views/adminUserManager.vue";
 import AdminRequests from "./views/adminRequests.vue";
 import AddComment from "./views/AddComment.vue";
-import AdminHome from "./views/AdminHome.vue";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -28,8 +28,8 @@ const router = createRouter({
       component: Login,
     },
     {
-      path: "/",
-      name: "home",
+      path: '/home',
+      name: 'home',
       component: home,
       meta: { requiresAuth: true }
     },
@@ -59,16 +59,13 @@ const router = createRouter({
       props: true,
     },
     {
+
       path: '/interest',
       name: 'enterInterests',
       component: personalInterests,
     },
-    {
-      path: "/edit/:id",
-      name: "edit",
-      component: EditResume,
-      props: true,
-    },
+
+  
     {
       path: "/experience",
       name: "Experience",
@@ -97,8 +94,10 @@ const router = createRouter({
       name: "GenerateResume",
       component: GenerateResume,
     },
+  
+
     {
-      path: "/view/:id",
+      path: "/view/:id",  // View resume path with dynamic id
       name: "view",
       component: ViewResume,
       props: true,
@@ -109,6 +108,13 @@ const router = createRouter({
       component: AddEducation,
       props: true,
     },
+    {
+      path: "/EditResume/", // Path for editing a resume
+      name: "EditResume",
+      component: EditResume,
+      props: true,
+    },
+
     {
         path: '/adminUserManager',
         name: 'adminUserManager',
@@ -126,6 +132,16 @@ const router = createRouter({
       name: 'AddComment',
       component: AddComment
     },
+
+    {
+      path: "/Experiences",  // Path for adding education
+      name: "Experiences",
+      component: Experience,  // Component for adding a new education entry
+      props: true,
+
+    },
+
+   
 
   ],
 });
