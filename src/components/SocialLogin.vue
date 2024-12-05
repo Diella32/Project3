@@ -29,20 +29,36 @@ const loginWithGoogle = () => {
 };
 
 const handleCredentialResponse = async (response) => {
-  try{
-  let token = {
-    credential: response.credential,
-  };
-      const loginresponse = await AuthServices.loginUser(token)
-      user.value = loginresponse.data;
-      Utils.setStore("user", user.value);
-      fName.value = user.value.fName;
-      lName.value = user.value.lName;
+  try {
+    let token = {
+      credential: response.credential,
+    };
+    const loginResponse = await AuthServices.loginUser(token);
+    
+    // Store complete user data including role and isAdmin
+    user.value = {
+      ...loginResponse.data,
+      role: loginResponse.data.role || 'student',
+      isAdmin: loginResponse.data.isAdmin || false
+    };
+
+    Utils.setStore("user", user.value);
+    fName.value = user.value.fName;
+    lName.value = user.value.lName;
+
+    console.log("Login successful:", user.value);
+
+    // Redirect based on role
+    if (user.value.role === 'admin' || user.value.isAdmin) {
+      console.log('Admin user detected, redirecting to home');
+      router.push({ name: "home" });
+    } else {
+      console.log('Regular user detected, redirecting to home');
       router.push({ name: "home" });
     }
-    catch(error){
-      console.log("error", error);
-    };
+  } catch (error) {
+    console.log("error", error);
+  }
 };
 
 onMounted(() => {

@@ -1,26 +1,12 @@
-<!-- src/views/AdminPage.vue -->
 <script setup>
 import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import AdminServices from '../services/adminServices';
 
-const router = useRouter();
 const users = ref([]);
 const loading = ref(false);
 const errorMessage = ref('');
 
-const checkAdminAccess = () => {
-  const user = JSON.parse(localStorage.getItem('user'));
-  if (!user || user.role !== 'admin') {
-    router.push('/');
-    return false;
-  }
-  return true;
-};
-
 const fetchUsers = async () => {
-  if (!checkAdminAccess()) return;
-  
   loading.value = true;
   try {
     const response = await AdminServices.getAllUsers();
@@ -33,10 +19,21 @@ const fetchUsers = async () => {
   }
 };
 
-onMounted(() => {
-  if (checkAdminAccess()) {
-    fetchUsers();
+const deleteUser = async (userId) => {
+  loading.value = true;
+  try {
+    await AdminServices.deleteUser(userId);
+    await fetchUsers();
+  } catch (error) {
+    errorMessage.value = 'Error deleting user: ' + error.message;
+    console.error('Error:', error);
+  } finally {
+    loading.value = false;
   }
+};
+
+onMounted(() => {
+  fetchUsers();
 });
 </script>
 
@@ -44,7 +41,7 @@ onMounted(() => {
   <v-container>
     <v-row>
       <v-col>
-        <h1 class="text-h4 mb-4">Admin Dashboard</h1>
+        <h1 class="text-h4 mb-4">User Management</h1>
       </v-col>
     </v-row>
 
@@ -60,13 +57,13 @@ onMounted(() => {
       <v-col>
         <v-card>
           <v-card-title class="d-flex justify-space-between align-center">
-            Users Management
+            Users
             <v-btn
               color="primary"
               @click="fetchUsers"
               :loading="loading"
             >
-              Refresh Users
+              Refresh
             </v-btn>
           </v-card-title>
           
@@ -74,24 +71,24 @@ onMounted(() => {
             <v-table>
               <thead>
                 <tr>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Resumes</th>
-                  <th>Actions</th>
+                  <th class="text-left">ID</th>
+                  <th class="text-left">Name</th>
+                  <th class="text-left">Email</th>
+                  <th class="text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="user in users" :key="user._id">
+                <tr v-for="user in users" :key="user.id">
+                  <td>{{ user.id }}</td>
                   <td>{{ user.fName }} {{ user.lName }}</td>
                   <td>{{ user.email }}</td>
-                  <td>{{ user.role || 'User' }}</td>
-                  <td>
+                  <td class="text-center">
                     <v-btn
                       size="small"
                       color="error"
                       variant="text"
-                      @click="deleteUser(user._id)"
                       :loading="loading"
+                      @click="deleteUser(user.id)"
                     >
                       Delete
                     </v-btn>
