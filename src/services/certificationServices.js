@@ -3,12 +3,12 @@ import apiClient from '../services/services';
 export default {
   // Create a new AwardCertifications
   createCertification(data) {
-    return apiClient.post(`/AwardCertificatios/${id}`, data);
+    return apiClient.post(`/AwardCertifications`, data);
   },
 
   // Get all AwardCertificationss for a specific resume
   getCertification(userId) {
-    return apiClient.get(`/AwardCertifications/${userId}`);
+    return apiClient.get(`/AwardCertifications/user/${userId}`);
   },
 
   // Get a single AwardCertifications by ID
@@ -22,12 +22,12 @@ export default {
   },
 
   // Delete an AwardCertifications by ID
-  deleteCertificationById(id) {
+  deleteCertificationById(userId, id) {
     return apiClient.delete(`/AwardCertifications/${id}`);
   },
 
   // Delete all AwardCertificationss for a specific resume
   deleteAllCertifications(resumeId) {
-    return apiClient.delete(`/resume/AwardCertifications/resume/${resumeId}`);
+    return apiClient.delete(`/AwardCertifications/resume/${resumeId}`);
   },
 };

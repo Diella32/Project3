@@ -34,7 +34,7 @@ const saveResume = async () => {
 }
 
 const cancelEdit = () => {
-  router.push({ name: 'resumeList' })
+  router.push({ name: 'resumes' })
 }
 
 onMounted(fetchResume)

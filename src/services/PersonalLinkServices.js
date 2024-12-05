@@ -18,7 +18,7 @@ export default {
   },
 
   // Update an existing PersonalLinks by ID for a specific resume
-  updatePersonalLinks(userId, PersonalLinksId, data) {
+  updatePersonalLinks(PersonalLinksId, data) {
     return apiClient.put(`/PersonalLinks/${PersonalLinksId}`, data);
   },
 
