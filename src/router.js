@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import Utils from './config/utils';
 
 import Login from "./views/Login.vue";
 import home from "./views/home.vue";
@@ -16,27 +17,35 @@ import AddContact from "./views/AddContact.vue";
 import AddEducation from "./views/AddEducation.vue";
 import GenerateResume from "./views/GenerateResume.vue";
 import AdminUserManager from "./views/adminUserManager.vue";
-import AdminRequests from "../src/views/adminRequests.vue";
-
+import AdminRequests from "./views/adminRequests.vue";
+import AddComment from "./views/AddComment.vue";
+import AdminHome from "./views/AdminHome.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/",
-      alias: "/login",
+      path: "/login",
       name: "login",
       component: Login,
     },
     {
-      path: '/',
-      name: 'home',
+      path: "/",
+      name: "home",
       component: home,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: "/admin",
+      name: "adminHome",
+      component: AdminHome,
+      meta: { requiresAuth: true, requiresAdmin: true }
     },
     {
       path: "/add",
       name: "add",
       component: AddResume,
     },
+  
     {
       path: "/resumes",
       name: "resumes",
@@ -78,6 +87,12 @@ const router = createRouter({
       props: true,
     },
     {
+      path: '/certification',
+      name: 'Certifications',
+      component: CertificationsPage,
+      props: true,
+    },
+    {
       path: "/skills",
       name: "Skill",
       component: Skill,
@@ -101,12 +116,43 @@ const router = createRouter({
       props: true,
     },
     {
-        path: '/admin',
-        name: 'admin',
-        component: AdminPage
+        path: '/adminUserManager',
+        name: 'adminUserManager',
+        component: AdminUserManager,
+        meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/adminRequests',
+      name: 'adminRequests',
+      component: AdminRequests,
+      meta: { requiresAuth: true, requiresAdmin: true }
+    },
+    {
+      path: '/add-comment/:id',
+      name: 'AddComment',
+      component: AddComment
     },
 
   ],
+});
+
+// Navigation guard
+router.beforeEach((to, from, next) => {
+  const user = Utils.getStore("user");
+  
+  // If route requires auth and user is not logged in
+  if (to.meta.requiresAuth && !user) {
+    next({ name: 'login' });
+    return;
+  }
+  
+  // If trying to access admin routes without admin role
+  if (to.meta.requiresAdmin && user?.role !== 'admin') {
+    next({ name: 'home' });
+    return;
+  }
+  
+  next();
 });
 
 export default router;

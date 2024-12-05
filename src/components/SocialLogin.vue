@@ -5,8 +5,7 @@ import Utils from "../config/utils.js";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-const fName = ref("");
-const lName = ref("");
+const role = ref("");
 const user = ref({});
 
 const loginWithGoogle = () => {
@@ -29,20 +28,33 @@ const loginWithGoogle = () => {
 };
 
 const handleCredentialResponse = async (response) => {
-  try{
-  let token = {
-    credential: response.credential,
-  };
-      const loginresponse = await AuthServices.loginUser(token)
-      user.value = loginresponse.data;
-      Utils.setStore("user", user.value);
-      fName.value = user.value.fName;
-      lName.value = user.value.lName;
-      router.push({ name: "home" });
+  try {
+    const loginResponse = await AuthServices.loginUser({
+      credential: response.credential
+    });
+    
+    if (!loginResponse?.data) {
+      throw new Error("Invalid response from server");
     }
-    catch(error){
-      console.log("error", error);
-    };
+    
+    const userData = loginResponse.data;
+    console.log("Login response data:", userData);
+    
+    // Store user data
+    Utils.setStore("user", userData);
+    user.value = userData;
+
+    // Check admin status and redirect
+    if (userData.role === 'admin' || userData.isAdmin) {
+      console.log('Admin user detected, redirecting to admin dashboard');
+      router.push({ name: 'adminHome' });
+    } else {
+      console.log('Regular user detected, redirecting to home');
+      router.push({ name: 'home' });
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+  }
 };
 
 onMounted(() => {

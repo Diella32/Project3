@@ -1,6 +1,6 @@
 <script setup>
 import ocLogo from "/oc-logo-white.png";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import Utils from "../config/utils";
 import AuthServices from "../services/authServices";
 import { useRouter } from "vue-router";
@@ -12,6 +12,10 @@ const title = ref("ResumeApp");
 const initials = ref("");
 const name = ref("");
 const logoURL = ref("");
+
+// Add computed properties for role checks
+const isAdmin = computed(() => user.value?.role === 'admin');
+const isStudent = computed(() => user.value?.role === 'student');
 
 const resetMenu = () => {
   user.value = null;
@@ -73,9 +77,18 @@ onMounted(() => {
       </v-toolbar-title>
       <v-spacer></v-spacer>
       <div v-if="user">
+        <!-- Show to all logged in users -->
         <v-btn class="mx-2" :to="{ name: 'home' }"> Home </v-btn>
-        <v-btn class="mx-2" :to="{ name: 'resumes' }"> My Resumes </v-btn>
-        <v-btn class="mx-2" :to="{ name: 'admin' }"> Admin <v-menu activator="parent" open-on-hover>
+        
+        <!-- Show only to students -->
+        <v-btn v-if="isStudent" class="mx-2" :to="{ name: 'resumes' }"> 
+          My Resumes 
+        </v-btn>
+        
+        <!-- Show only to admins -->
+        <v-btn v-if="isAdmin" class="mx-2" :to="{ name: 'admin' }"> 
+          Admin 
+          <v-menu activator="parent" open-on-hover>
             <v-list>
               <v-list-item
                 v-for="(item, index) in adminActions"

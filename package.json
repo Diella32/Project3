@@ -20,6 +20,7 @@
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.10.2",
     "jspdf": "^2.5.2",
+    "moment": "^2.30.1",
     "vite-plugin-vuetify": "^1.0.0",
     "vue": "^3.2.47",
     "vue-router": "^4.1.6",
