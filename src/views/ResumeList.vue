@@ -166,7 +166,7 @@ const getStatusColor = (status) => {
 const viewResume = (index) => {
   const resume = resumes.value[index];
   if (resume && resume.resume_id) {
-    router.push({ name: 'view', params: { userId, id: resume.resume_id } });
+    router.push({ name: 'view', params: { id: resume.resume_id } });
   } else {
     console.error('Resume ID is undefined or resume not found');
   }

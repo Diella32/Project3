@@ -146,6 +146,7 @@ const selectedLinks = ref([]);
 const selectedSkills = ref([]);
 const selectedExperiences = ref([]);
 const selectedInterests = ref([]);
+const selectedAwards = ref([]);
 const awardCertifications = ref([]);
 
 // Fetch resume details
@@ -160,7 +161,7 @@ const fetchResumeDetails = async () => {
     }
 
     // Fetch resume details
-    const response = await ResumeServices.getResume(userId, resumeId);
+    const response = await ResumeServices.getResume(resumeId);
     const data = response.data;
 
     // Set main details
@@ -175,7 +176,7 @@ const fetchResumeDetails = async () => {
     selectedLinks.value = data.personallinks || [];
     selectedExperiences.value = data.experiences || [];
     selectedInterests.value = data.interests || [];
-    awardCertifications.value = data.awards || [];
+    selectedAwards.value = data.awards || [];
 
   } catch (error) {
     console.error("Error fetching resume details:", error);
