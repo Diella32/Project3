@@ -54,7 +54,7 @@ const newContactTemplate = {
 // Fetch all contacts
 const fetchContacts = async () => {
   try {
-    const response = await ContactServices.getAllContacts(user.user_id);
+    const response = await ContactServices.getAllContacts(userId);
     contacts.value = response.data;
   } catch (error) {
     console.error("Error fetching contacts:", error);
