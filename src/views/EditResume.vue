@@ -30,106 +30,85 @@
                 class="mb-6"
                 required
               ></v-textarea>
-              <v-select
-                v-model="selectedTemplate"
-                :items="['Template 1', 'Template 2', 'Template 3', 'Template 4']"
-                label="Select a Template"
-                class="mb-6"
-              ></v-select>
 
               <!-- Contact Information -->
-              <v-select
-                v-model="selectedContacts"
-                :items="contacts"
-                item-title="fName"
-                item-value="id"
-                label="Select Contact Information"
-                class="mb-6"
-                return-object
-              ></v-select>
+              <section v-if="selectedContact.length" class="mb-6">
+                <h3 class="text-h5 font-weight-bold mb-4">Contact Information</h3>
+                <v-card v-for="(contact, index) in selectedContact" :key="index" class="mb-3 pa-4">
+                  <v-text-field v-model="contact.fName" label="First Name" outlined dense />
+                  <v-text-field v-model="contact.lName" label="Last Name" outlined dense />
+                  <v-text-field v-model="contact.email" label="Email" outlined dense />
+                  <v-text-field v-model="contact.phone_number" label="Phone" outlined dense />
+                  <v-textarea v-model="contact.address" label="Address" outlined dense />
+                </v-card>
+              </section>
 
-              <!--Education-->
-              <v-select
-                v-model="selectedEducations"
-                :items="educations"
-                item-title="degree"
-                multiple
-                chips
-                label="Select Education Entries"
-                class="mb-6"
-                return-object
-              ></v-select>
-              <!--Projects-->
-              <v-select
-                v-model="selectedProjects"
-                :items="projects"
-                item-title="project_name"
-                multiple
-                chips
-                label="Select Projects"
-                class="mb-6"
-                return-object
-              ></v-select>
-              <!--Personal Links-->
-              <v-select
-                v-model="selectedLinks"
-                :items="links"
-                item-title="url"
-                multiple
-                chips
-                label="Select Personal Links"
-                class="mb-6"
-                return-object
-              ></v-select>
+              <!-- Education -->
+              <section v-if="selectedEducations.length" class="mb-6">
+                <h3 class="text-h5 font-weight-bold mb-4">Education</h3>
+                <v-card v-for="(edu, index) in selectedEducations" :key="index" class="mb-3 pa-4">
+                  <v-text-field v-model="edu.institution" label="Institution" outlined dense />
+                  <v-text-field v-model="edu.degree" label="Degree" outlined dense />
+                  <v-text-field v-model="edu.FieldOfStudy" label="Field of Study" outlined dense />
+                  <v-text-field v-model="edu.startDate" label="Start Date" outlined dense />
+                  <v-text-field v-model="edu.endDate" label="End Date" outlined dense />
+                </v-card>
+              </section>
 
-              <!--Experiences-->
-              <v-select
-                v-model="selectedExperiences"
-                :items="experiences"
-                item-title="job_title"
-                multiple
-                chips
-                label="Select Experiences"
-                class="mb-6"
-                return-object
-              ></v-select>
+              <!-- Projects -->
+              <section v-if="selectedProjects.length" class="mb-6">
+                <h3 class="text-h5 font-weight-bold mb-4">Projects</h3>
+                <v-card v-for="(project, index) in selectedProjects" :key="index" class="mb-3 pa-4">
+                  <v-text-field v-model="project.project_name" label="Project Name" outlined dense />
+                  <v-textarea v-model="project.description" label="Description" outlined dense />
+                  <v-text-field v-model="project.technologies_used" label="Technologies Used" outlined dense />
+                  <v-text-field v-model="project.project_link" label="Project Link" outlined dense />
+                </v-card>
+              </section>
 
-              <!--Interests-->
-              <v-select
-                v-model="selectedInterests"
-                :items="interests"
-                item-title="interest"
-                multiple
-                chips
-                label="Select Interests"
-                class="mb-6"
-                return-object
-              ></v-select>
-
-              
               <!-- Skills -->
-              <v-select
-                v-model="selectedSkills"
-                :items="skills"
-                item-title="skill_name"
-                multiple
-                chips
-                label="Select Skills"
-                class="mb-6"
-                return-object
-              ></v-select>
+              <section v-if="selectedSkills.length" class="mb-6">
+                <h3 class="text-h5 font-weight-bold mb-4">Skills</h3>
+                <v-card v-for="(skill, index) in selectedSkills" :key="index" class="mb-3 pa-4">
+                  <v-text-field v-model="skill.skill_name" label="Skill Name" outlined dense />
+                </v-card>
+              </section>
 
-              <!-- Awards and Certifications -->
-              <v-select
-                v-model="selectedAwards"
-                :items="awards"
-                item-title="award_name"
-                multiple
-                chips
-                label="Select Awards and Certifications"
-                class="mb-6"
-                return-object
-              ></v-select>
+              <!-- Experiences -->
+              <section v-if="selectedExperiences.length" class="mb-6">
+                <h3 class="text-h5 font-weight-bold mb-4">Experiences</h3>
+                <v-card v-for="(experience, index) in selectedExperiences" :key="index" class="mb-3 pa-4">
+                  <v-text-field v-model="experience.title" label="Title" outlined dense />
+                  <v-textarea v-model="experience.description" label="Description" outlined dense />
+                  <v-text-field v-model="experience.startDate" label="Start Date" outlined dense />
+                  <v-text-field v-model="experience.endDate" label="End Date" outlined dense />
+                </v-card>
+              </section>
+
+              <!-- Interests -->
+              <section v-if="selectedInterests.length" class="mb-6">
+                <h3 class="text-h5 font-weight-bold mb-4">Interests</h3>
+                <v-card v-for="(interest, index) in selectedInterests" :key="index" class="mb-3 pa-4">
+                  <v-text-field v-model="interest.name" label="Interest Name" outlined dense />
+                </v-card>
+              </section>
+
+              <!-- Awards -->
+              <section v-if="awardCertifications.length" class="mb-6">
+                <h3 class="text-h5 font-weight-bold mb-4">Awards & Certifications</h3>
+                <v-card v-for="(award, index) in awardCertifications" :key="index" class="mb-3 pa-4">
+                  <v-text-field v-model="award.title" label="Award Title" outlined dense />
+                  <v-text-field v-model="award.year" label="Year" outlined dense />
+                </v-card>
+              </section>
+
+              <!-- Personal Links -->
+              <section v-if="selectedLinks.length" class="mb-6">
+                <h3 class="text-h5 font-weight-bold mb-4">Personal Links</h3>
+                <v-card v-for="(link, index) in selectedLinks" :key="index" class="mb-3 pa-4">
+                  <v-text-field v-model="link.url" label="URL" outlined dense />
+                </v-card>
+              </section>
 
               <!-- Save and Cancel Buttons -->
               <v-btn
@@ -167,16 +146,16 @@
             <v-card-text class="py-6">
               <div class="max-w-[8.5in] mx-auto p-8 bg-white">
                 <!-- Header/Contact Information -->
-                <div class="text-center mb-6" v-if="selectedContacts">
+                <div class="text-center mb-6" v-if="selectedContact">
                   <h1 class="text-2xl font-bold mb-2">
-                    {{ selectedContacts?.fName }} {{ selectedContacts?.lName }}
+                    {{ selectedContact[0]?.fName }} {{ selectedContact[0]?.lName }}
                   </h1>
                   <div class="text-sm">
-                    <span>{{ selectedContacts?.address }}</span>
+                    <span>{{ selectedContact[0]?.address }}</span>
                     <span class="mx-2">|</span>
-                    <span>{{ selectedContacts?.phone_number }}</span>
+                    <span>{{ selectedContact[0]?.phone_number }}</span>
                     <span class="mx-2">|</span>
-                    <span>{{ selectedContacts?.email }}</span>
+                    <span>{{ selectedContact[0]?.email }}</span>
                   </div>
                 </div>
 
@@ -192,10 +171,9 @@
                   <div v-for="(edu, index) in selectedEducations" :key="index" class="mb-2">
                     <div class="flex justify-between">
                       <span class="font-bold">{{ edu.institution }}</span>
-                      <span>{{ edu.start_date }} - {{ edu.end_date }}</span>
+                      <span>{{ edu.startDate }} - {{ edu.endDate }}</span>
                     </div>
                     <div class="italic">{{ edu.degree }}</div>
-                    <div v-if="edu.gpa">GPA : {{ edu.gpa }}</div>
                   </div>
                 </div>
 
@@ -217,15 +195,14 @@
                   <h2 class="text-lg font-bold border-b border-gray-400 mb-2">SKILLS</h2>
                   <div v-for="(skill, index) in selectedSkills" :key="index" class="mb-1">
                     <p class="text-sm">{{ skill.skill_name }}</p>
-                    <p class="test-sm">{{ skill.category }}</p>
                   </div>
                 </div>
 
                 <!-- Awards -->
-                <div class="mb-4" v-if="selectedAwards?.length">
+                <div class="mb-4" v-if="awardCertifications?.length">
                   <h2 class="text-lg font-bold border-b border-gray-400 mb-2">AWARDS</h2>
-                  <div v-for="(award, index) in selectedAwards" :key="index" class="mb-1">
-                    <span class="font-bold">{{ award.award_name }}</span>
+                  <div v-for="(award, index) in awardCertifications" :key="index" class="mb-1">
+                    <span class="font-bold">{{ award.title }}</span>
                   </div>
                 </div>
               </div>
@@ -237,25 +214,18 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import ResumeServices from '../services/ResumeServices';
-import store from '../store/store';
 
-const user = store.getters.getLoginUserInfo;
-const userId = user.user_id;
-
-const router = useRouter();
 const route = useRoute();
-const resumeContent = ref(route.query.fileContent || '');
+const router = useRouter();
 
-
-// Reactive variables for resume details and items
 const resumeTitle = ref('');
 const introduction = ref('');
-const selectedContacts = ref([]);
+const status = ref('');
+const selectedContact = ref([]);
 const selectedEducations = ref([]);
 const selectedProjects = ref([]);
 const selectedLinks = ref([]);
@@ -263,96 +233,51 @@ const selectedSkills = ref([]);
 const selectedExperiences = ref([]);
 const selectedInterests = ref([]);
 const awardCertifications = ref([]);
+const isSaving = ref(false);
 
-// To track which item is selected for editing
-const selectedContact = ref(null);
-const selectedEducation = ref(null);
-const selectedProject = ref(null);
-const selectedLink = ref(null);
-const selectedExperience = ref(null);
-const selectedSkill = ref(null);
-const selectedInterest = ref(null);
-const selectedAward = ref(null);
+const getStatusColor = (status) => {
+  const colors = {
+    Draft: 'grey',
+    'In Progress': 'orange',
+    Complete: 'green',
+    Published: 'blue',
+  };
+  return colors[status] || 'grey';
+};
 
-// Fetching the resume details
-const fetchResume = async () => {
+const fetchResumeDetails = async () => {
   try {
-    const resumeId = route.params.id || window.location.pathname.split('/').pop();
-    if (!resumeId) {
-      console.error("Resume ID is undefined");
-      return;
-    }
-
-    // Fetch resume details
-    const response = await ResumeServices.getResume(userId, resumeId);
+    const resumeId = route.params.id;
+    const response = await ResumeServices.getResume(resumeId);
     const data = response.data;
 
-    // Set main details
     resumeTitle.value = data.title || '';
     introduction.value = data.introduction || '';
-    
-    // Set related data (contacts, education, etc.)
-    selectedContacts.value = data.contactinfo || [];
-    selectedEducations.value = data.education || [];
+    status.value = data.status || '';
+    selectedContact.value = data.contacts || [];
+    selectedEducations.value = data.educations || [];
     selectedProjects.value = data.projects || [];
+    selectedLinks.value = data.personalLinks || [];
     selectedSkills.value = data.skills || [];
-    selectedLinks.value = data.personallinks || [];
     selectedExperiences.value = data.experiences || [];
     selectedInterests.value = data.interests || [];
     awardCertifications.value = data.awards || [];
-
   } catch (error) {
-    console.error("Error fetching resume details:", error);
+    console.error('Error fetching resume details:', error);
   }
 };
 
-// Handle item selection for editing (e.g., select a contact to edit)
-const selectItemForEdit = (type, item) => {
-  switch (type) {
-    case 'contact':
-      selectedContact.value = item;
-      break;
-    case 'education':
-      selectedEducation.value = item;
-      break;
-    case 'project':
-      selectedProject.value = item;
-      break;
-    case 'link':
-      selectedLink.value = item;
-      break;
-    case 'experience':
-      selectedExperience.value = item;
-      break;
-    case 'skill':
-      selectedSkill.value = item;
-      break;
-    case 'interest':
-      selectedInterest.value = item;
-      break;
-    case 'award':
-      selectedAward.value = item;
-      break;
-    default:
-      console.error("Unknown item type");
-  }
-};
-
-// Save the resume after editing
 const saveResume = async () => {
   try {
-    // Check if any required field is missing
-    if (!resumeTitle.value || !selectedContacts.value.length) {
-      console.error("Please complete all required fields.");
-      return;
-    }
+    isSaving.value = true;
+    const resumeId = route.params.id;
 
-    // Prepare the data to send for saving
-    const resumeData = {
+    const updatedData = {
       title: resumeTitle.value,
       introduction: introduction.value,
-      contactinfo: selectedContacts.value,
-      education: selectedEducations.value,
+      status: status.value,
+      contacts: selectedContact.value,
+      educations: selectedEducations.value,
       projects: selectedProjects.value,
       skills: selectedSkills.value,
       personalLinks: selectedLinks.value,
@@ -361,26 +286,17 @@ const saveResume = async () => {
       awards: awardCertifications.value,
     };
 
-    // Send the updated resume data to the backend
-    const response = await ResumeServices.update(route.params.id, resumeData);
-    console.log("Resume updated successfully", response);
-    router.push({ name: "resumes" });
+    await ResumeServices.update(resumeId, updatedData);
+    router.push('/resumes');
   } catch (error) {
-    console.error("Error saving resume", error);
+    console.error('Error saving resume:', error);
+  } finally {
+    isSaving.value = false;
   }
 };
 
-// Cancel the edit and return to the resume list
-const cancelEdit = () => {
-  router.push({ name: "resumes" });
-};
-
-// Fetch resume details when the page is mounted
-onMounted(() => {
-  fetchResume();
-});
+onMounted(fetchResumeDetails);
 </script>
-
 
 <style scoped>
 .resume-wrapper {
