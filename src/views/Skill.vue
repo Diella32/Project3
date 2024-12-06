@@ -103,7 +103,7 @@
         <v-icon left>mdi-arrow-left</v-icon>
         Previous
       </v-btn>
-      <v-btn color="primary" @click="router.push({ name: 'enterCertifications' })">
+      <v-btn color="primary" @click="router.push({ name: 'Certifications' })">
         Next
         <v-icon right>mdi-arrow-right</v-icon>
       </v-btn>
@@ -221,14 +221,6 @@ export default {
 
     const showNotification = (text, color = "success", timeout = 3000) => {
       snackbar.value = { show: true, text, color, timeout };
-    };
-
-    const goBack = () => {
-      // Navigate to the previous step
-    };
-
-    const goNext = () => {
-      // Navigate to the next step
     };
 
     return {
