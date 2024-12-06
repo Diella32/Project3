@@ -12,18 +12,20 @@ import personalInterests from "./views/personalInterests.vue";
 import AddProjects from "./views/AddProjects.vue";
 import PersonalLinks from "./views/PersonalLinks.vue";
 import AddContact from "./views/AddContact.vue"; 
+import Experience from "./views/Experience.vue";
 import AddEducation from "./views/AddEducation.vue";
 import GenerateResume from "./views/GenerateResume.vue";
 import AdminUserManager from "./views/adminUserManager.vue";
 import AdminRequests from "./views/adminRequests.vue";
 import AddComment from "./views/AddComment.vue";
+import AiPage from "./views/AiPage.vue";
 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: "/login",
+      path: "/",
       name: "login",
       component: Login,
     },
@@ -64,12 +66,17 @@ const router = createRouter({
       name: 'enterInterests',
       component: personalInterests,
     },
+    {
+      path: '/certifications',
+      name: 'enterCertifications',
+      component: CertificationsPage,
+    },
 
     {
 
       path: '/ai',
       name: 'ai',
-      component: AiPage  // Define the route for the AI page
+     component: AiPage  // Define the route for the AI page
     },
 
     {
@@ -108,18 +115,15 @@ const router = createRouter({
       component: ViewResume,
       props: true,
     },
+
+  
     {
       path: "/Education",
       name: "AddEducation",
       component: AddEducation,
       props: true,
     },
-    {
-      path: "/EditResume/", // Path for editing a resume
-      name: "EditResume",
-      component: EditResume,
-      props: true,
-    },
+  
 
     {
         path: '/adminUserManager',
@@ -147,6 +151,7 @@ const router = createRouter({
 
     }
    
+
 
   ],
 });

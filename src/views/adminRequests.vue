@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import AdminRequestServices from "../services/adminRequestServices.js";
+import AdminRequestServices from "../services/AdminRequestServices.js";
 import moment from "moment";
 import CloseModal from "../components/CloseModal.vue";
 import router from "../router";

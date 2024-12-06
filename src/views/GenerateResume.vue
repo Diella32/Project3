@@ -38,7 +38,7 @@
                 class="mb-6"
               ></v-select>
 
-              <!-- Contact, Education, Projects, Links Selections -->
+              <!-- Contact Information -->
               <v-select
                 v-model="selectedContacts"
                 :items="contacts"
@@ -48,6 +48,8 @@
                 class="mb-6"
                 return-object
               ></v-select>
+
+              <!--Education-->
               <v-select
                 v-model="selectedEducations"
                 :items="educations"
@@ -58,6 +60,7 @@
                 class="mb-6"
                 return-object
               ></v-select>
+              <!--Projects-->
               <v-select
                 v-model="selectedProjects"
                 :items="projects"
@@ -68,6 +71,7 @@
                 class="mb-6"
                 return-object
               ></v-select>
+              <!--Personal Links-->
               <v-select
                 v-model="selectedLinks"
                 :items="links"
@@ -78,6 +82,20 @@
                 class="mb-6"
                 return-object
               ></v-select>
+
+              <!--Experiences-->
+              <v-select
+                v-model="selectedExperiences"
+                :items="experiences"
+                item-title="job_title"
+                multiple
+                chips
+                label="Select Experiences"
+                class="mb-6"
+                return-object
+              ></v-select>
+
+              <!--Interests-->
               <v-select
                 v-model="selectedInterests"
                 :items="interests"
@@ -173,18 +191,19 @@
                   <p class="text-sm">{{ introduction }}</p>
                 </div>
 
-                <!-- Education -->
-                <div class="mb-4">
-                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">EDUCATION</h2>
-                  <div v-for="(edu, index) in selectedEducations" :key="index" class="mb-2">
-                    <div class="flex justify-between">
-                      <span class="font-bold">{{ edu.institution }}</span>
-                      <span>{{ edu.start_date }} - {{ edu.end_date }}</span>
-                    </div>
-                    <div class="italic">{{ edu.degree }}</div>
-                    <div v-if="edu.gpa">GPA: {{ edu.gpa }}</div>
+               <!-- Education -->
+              <div class="mb-4">
+                <h2 class="text-lg font-bold border-b border-gray-400 mb-2">EDUCATION</h2>
+                <div v-for="(edu, index) in selectedEducations" :key="index" class="mb-2">
+                  <div class="flex justify-between items-baseline">
+                    <span class="font-bold">{{ edu.institution }}</span>
+                    <span class="text-right">{{ edu.start_date }} - {{ edu.end_date }}</span>
                   </div>
+                  <div class="italic">{{ edu.degree }}</div>
+                  <div v-if="edu.gpa">GPA: {{ edu.gpa }}</div>
                 </div>
+              </div>
+
 
                 <!-- Personal Links -->
                 <div class="mb-4">
@@ -212,6 +231,25 @@
                   <h2 class="text-lg font-bold border-b border-gray-400 mb-2">SKILLS</h2>
                   <div v-for="(skill, index) in selectedSkills" :key="index" class="mb-1">
                     <span class="font-bold">{{ skill.skill_name }}</span>
+                  </div>
+                </div>
+
+                <!--Experiences-->
+                <div class="mb-4">
+                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">EXPERIENCES</h2>
+                  <div v-for="(experience, index) in selectedExperiences" :key="index" class="mb-1">
+                    <span class="font-bold">{{ experience.job_title }}</span>
+                    <div>{{ experience.company }}</div>
+                    <div>{{ experience.start_date }} - {{ experience.end_date }}</div>
+                    <div>{{ experience.description }}</div>
+                  </div>
+                </div>
+
+                <!-- Interests -->
+                <div class="mb-4">
+                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">INTERESTS</h2>
+                  <div v-for="(interest, index) in selectedInterests" :key="index" class="mb-1">
+                    <span class="font-bold">{{ interest.interest }}</span>
                   </div>
                 </div>
 
@@ -288,12 +326,12 @@ const fetchAllData = async () => {
       EducationServices.getAllEducations(userId),
       ProjectServices.getAllProjects(userId),
       PersonalLinkServices.getAllPersonalLinks(userId),
-      ExperienceServices.getExperiences(userId),
+      ExperienceServices.getExperiencesForUser(userId),
       SkillServices.getSkills(userId),
       interestServices.getAllInterests(userId),
       certificationServices.getCertification(userId),
     ]);
-    console.log(linksRes);
+    console.log(experiencesRes);
 
     // Populate reactive variables with fetched data
     contacts.value = contactsRes.data;
@@ -376,6 +414,7 @@ const saveResume = async () => {
     // Save the resume to the backend
     await ResumeServices.create(resumeData);
     showNotification("Resume saved successfully");
+    fetchResume();
   } catch (error) {
     console.error("Error saving resume:", error);
     showNotification("Failed to save resume", "error");
@@ -407,7 +446,7 @@ const generateAndSavePDF = async () => {
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
     doc.text(`Address: ${selectedContacts.value.address}`, 105, yPos, { align: "center" });
-    yPos += 7;
+    yPos += 10;
     doc.text(`Phone: ${selectedContacts.value.phone_number}`, 105, yPos, { align: "center" });
     yPos += 7;
     doc.text(`Email: ${selectedContacts.value.email}`, 105, yPos, { align: "center" });
@@ -425,7 +464,7 @@ const generateAndSavePDF = async () => {
 
     // Education Section
     if (selectedEducations.value.length > 0) {
-      yPos += 20;
+      yPos += 25;
       doc.setFontSize(14);
       doc.setFont("helvetica", "bold");
       doc.text("EDUCATION", 20, yPos);
@@ -448,7 +487,7 @@ const generateAndSavePDF = async () => {
 
     // Projects Section
     if (selectedProjects.value.length > 0) {
-      yPos += 20;
+      yPos += 10;
       doc.setFontSize(14);
       doc.setFont("helvetica", "bold");
       doc.text("PROJECTS", 20, yPos);
@@ -460,10 +499,10 @@ const generateAndSavePDF = async () => {
         doc.text(`${project.project_name}`, 20, yPos);
         yPos += 7;
         doc.text(doc.splitTextToSize(`Description: ${project.description}`, 170), 20, yPos);
-        yPos += 10;
+        yPos += 20;
         doc.text(`Technologies: ${project.technologies_used}`, 20, yPos);
         if (project.project_link) {
-          yPos += 7;
+          yPos += 10;
           doc.text(`Link: ${project.project_link}`, 20, yPos);
         }
       });
@@ -484,41 +523,47 @@ const generateAndSavePDF = async () => {
         doc.text(`${exp.start_date} - ${exp.end_date}`, 170, yPos, { align: "right" });
 
         yPos += 7;
-        doc.text(`${exp.title}`, 20, yPos);
+        doc.text(`${exp.job_title}`, 20, yPos);
         yPos += 7;
-        doc.text(doc.splitTextToSize(exp.description.join(", "), 170), 20, yPos);
+        doc.text(`experience: ${exp.description}`, 20, yPos);
       });
     }
 
-    // Skills Section
-    if (selectedSkills.value.length > 0) {
-      yPos += 20;
-      doc.setFontSize(14);
-      doc.setFont("helvetica", "bold");
-      doc.text("SKILLS", 20, yPos);
+          // Skills Section
+      if (selectedSkills.value.length > 0) {
+        yPos += 10;
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text("SKILLS", 20, yPos);
 
-      yPos += 10;
-      doc.setFontSize(12);
-      doc.setFont("helvetica", "normal");
-      doc.text(selectedSkills.value.join(" • "), 20, yPos);
-    }
+        selectedSkills.value.forEach((skill) => {
+          yPos += 10;
+          doc.setFontSize(12);
+          doc.setFont("helvetica", "italic");
+          doc.text(skill.skill_name, 20, yPos); // Access the `name` property
 
-    // Interests Section
-    if (selectedInterests.value.length > 0) {
-      yPos += 20;
-      doc.setFontSize(14);
-      doc.setFont("helvetica", "bold");
-      doc.text("INTERESTS", 20, yPos);
+        });
+      }
 
-      yPos += 10;
-      doc.setFontSize(12);
-      doc.setFont("helvetica", "normal");
-      doc.text(selectedInterests.value.join(" • "), 20, yPos);
-    }
+      // Interests Section
+      if (selectedInterests.value.length > 0) {
+        yPos += 10;
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text("INTERESTS", 20, yPos);
+
+        selectedInterests.value.forEach((interest) => {
+          yPos += 10;
+          doc.setFontSize(12);
+          doc.setFont("helvetica", "italic");
+          doc.text(interest.interest, 20, yPos); // Access the `interest` property
+
+       });
+      }
 
     // Awards Section
     if (selectedAwards.value.length > 0) {
-      yPos += 20;
+      yPos += 10;
       doc.setFontSize(14);
       doc.setFont("helvetica", "bold");
       doc.text("AWARDS & CERTIFICATIONS", 20, yPos);
@@ -527,14 +572,15 @@ const generateAndSavePDF = async () => {
         yPos += 10;
         doc.setFontSize(12);
         doc.setFont("helvetica", "normal");
-        doc.text(`${award.title}`, 20, yPos);
-        yPos += 7;
-        doc.text(`${award.year}`, 170, yPos, { align: "right" });
+        doc.text(`${award.award_name}`, 20, yPos);
+        doc.text(`${award.organization}`, 170, yPos, { align: "right" });
+
+       
       });
     }
 
     // Save the PDF
-    doc.save(`${selectedContacts.value.fName}_${selectedContacts.value.lName}_Resume.pdf`);
+    doc.save(`${selectedContacts.value.fName}_Resume.pdf`);
 
     // Prepare data for backend saving
     const resumeData = {
@@ -557,7 +603,7 @@ const generateAndSavePDF = async () => {
 
 
 const deleteResume = () => {
-  selectedContact.value = null;
+  selectedContacts.value = null;
   selectedEducations.value = [];
   selectedProjects.value = [];
   selectedLinks.value = [];
