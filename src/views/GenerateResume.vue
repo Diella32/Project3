@@ -1,3 +1,5 @@
+
+
 <template>
   <div class="resume-wrapper">
     <!-- Header -->
@@ -38,7 +40,7 @@
                 class="mb-6"
               ></v-select>
 
-              <!-- Contact, Education, Projects, Links Selections -->
+              <!-- Contact Information -->
               <v-select
                 v-model="selectedContacts"
                 :items="contacts"
@@ -48,6 +50,8 @@
                 class="mb-6"
                 return-object
               ></v-select>
+
+              <!--Education-->
               <v-select
                 v-model="selectedEducations"
                 :items="educations"
@@ -58,6 +62,7 @@
                 class="mb-6"
                 return-object
               ></v-select>
+              <!--Projects-->
               <v-select
                 v-model="selectedProjects"
                 :items="projects"
@@ -68,6 +73,7 @@
                 class="mb-6"
                 return-object
               ></v-select>
+              <!--Personal Links-->
               <v-select
                 v-model="selectedLinks"
                 :items="links"
@@ -78,6 +84,20 @@
                 class="mb-6"
                 return-object
               ></v-select>
+
+              <!--Experiences-->
+              <v-select
+                v-model="selectedExperiences"
+                :items="experiences"
+                item-title="job_title"
+                multiple
+                chips
+                label="Select Experiences"
+                class="mb-6"
+                return-object
+              ></v-select>
+
+              <!--Interests-->
               <v-select
                 v-model="selectedInterests"
                 :items="interests"
@@ -154,7 +174,8 @@
             <v-card-text class="py-6">
               <div class="max-w-[8.5in] mx-auto p-8 bg-white">
                 <!-- Header/Contact Information -->
-                <div class="text-center mb-6">
+                <div v-if="selectedTemplate === 'Template 1'">
+                 <!-- <div class="text-center mb-6"> -->
                   <h1 class="text-2xl font-bold mb-2">
                     {{ selectedContacts?.fName }} {{ selectedContacts?.lName }}
                   </h1>
@@ -165,17 +186,17 @@
                     <span class="mx-2">|</span>
                     <span>{{ selectedContacts?.email }}</span>
                   </div>
-                </div>
+                <!-- </div> -->
 
                 <!-- Description -->
                 <div class="mb-4">
-                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">DESCRIPTION</h2>
-                  <p class="text-sm">{{ introduction }}</p>
+                  <h2 class="Times new roman">PROFESSIONAL SUMMARY</h2>
+                  <p class="text-lg">{{ introduction }}</p>
                 </div>
 
                 <!-- Education -->
                 <div class="mb-4">
-                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">EDUCATION</h2>
+                  <h2 class="text-lg italic border-b border-gray-400 mb-2">EDUCATION</h2>
                   <div v-for="(edu, index) in selectedEducations" :key="index" class="mb-2">
                     <div class="flex justify-between">
                       <span class="font-bold">{{ edu.institution }}</span>
@@ -188,7 +209,7 @@
 
                 <!-- Personal Links -->
                 <div class="mb-4">
-                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">PERSONAL LINKS</h2>
+                  <h2 class="text-lg italic border-b border-gray-400 mb-2">PERSONAL LINKS</h2>
                   <div v-for="(link, index) in selectedLinks" :key="index" class="mb-1">
                     <span class="font-bold">{{ link.url }}</span>
                   </div>
@@ -196,7 +217,7 @@
 
                 <!-- Projects -->
                 <div class="mb-4">
-                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">PROJECTS</h2>
+                  <h2 class="text-lg italic border-b border-gray-400 mb-2">PROJECTS</h2>
                   <div v-for="(project, index) in selectedProjects" :key="index" class="mb-2">
                     <span class="font-bold">{{ project.project_name }}</span>
                     <div>{{ project.description }}</div>
@@ -209,7 +230,7 @@
 
                 <!-- Skills -->
                 <div class="mb-4">
-                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">SKILLS</h2>
+                  <h2 class="text-lg italic border-b border-gray-400 mb-2">SKILLS</h2>
                   <div v-for="(skill, index) in selectedSkills" :key="index" class="mb-1">
                     <span class="font-bold">{{ skill.skill_name }}</span>
                   </div>
@@ -217,12 +238,60 @@
 
                 <!-- Awards -->
                 <div class="mb-4">
-                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">AWARDS</h2>
+                  <h2 class="text-lg italic border-b border-gray-400 mb-2">AWARDS</h2>
                   <div v-for="(award, index) in selectedAwards" :key="index" class="mb-1">
                     <span class="font-bold">{{ award.award_name }}</span>
                   </div>
                 </div>
               </div>
+              </div>
+              <div v-if="selectedTemplate === 'Template 2'" class="template-2">
+  <!-- Contact Info -->
+  <div class="contact-info">
+    <h1>{{ selectedContacts?.fName }} {{ selectedContacts?.lName }}</h1>
+    <p>{{ selectedContacts?.address }}</p>
+    <p>{{ selectedContacts?.phone_number }}</p>
+    <p>{{ selectedContacts?.email }}</p>
+  </div>
+
+  <!-- Professional Summary -->
+  <div class="summary">
+    <h2>About Me</h2>
+    <p>{{ introduction }}</p>
+  </div>
+
+  <!-- Education -->
+  <div class="education">
+    <h2>Education</h2>
+    <div v-for="(edu, index) in selectedEducations" :key="index">
+      <p>{{ edu.institution }} - {{ edu.degree }} ({{ edu.start_date }} to {{ edu.end_date }})</p>
+      <p v-if="edu.gpa">GPA: {{ edu.gpa }}</p>
+    </div>
+  </div>
+
+  <!-- Skills -->
+  <div class="skills">
+    <h2>Skills</h2>
+    <ul>
+      <li v-for="(skill, index) in selectedSkills" :key="index">{{ skill.skill_name }}</li>
+    </ul>
+  </div>
+
+  <!-- Projects -->
+  <div class="projects">
+    <h2>Projects</h2>
+    <div v-for="(project, index) in selectedProjects" :key="index">
+      <p><strong>{{ project.project_name }}</strong></p>
+      <p>{{ project.description }}</p>
+      <p v-if="project.project_link">
+        Link: <a :href="project.project_link">{{ project.project_link }}</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+
+
 
             </v-card-text>
           </v-card>
@@ -288,12 +357,12 @@ const fetchAllData = async () => {
       EducationServices.getAllEducations(userId),
       ProjectServices.getAllProjects(userId),
       PersonalLinkServices.getAllPersonalLinks(userId),
-      ExperienceServices.getExperiences(userId),
+      ExperienceServices.getExperiencesForUser(userId),
       SkillServices.getSkills(userId),
       interestServices.getAllInterests(userId),
       certificationServices.getCertification(userId),
     ]);
-    console.log(linksRes);
+    console.log(experiencesRes);
 
     // Populate reactive variables with fetched data
     contacts.value = contactsRes.data;
@@ -376,6 +445,7 @@ const saveResume = async () => {
     // Save the resume to the backend
     await ResumeServices.create(resumeData);
     showNotification("Resume saved successfully");
+    fetchResume();
   } catch (error) {
     console.error("Error saving resume:", error);
     showNotification("Failed to save resume", "error");
@@ -407,7 +477,7 @@ const generateAndSavePDF = async () => {
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
     doc.text(`Address: ${selectedContacts.value.address}`, 105, yPos, { align: "center" });
-    yPos += 7;
+    yPos += 10;
     doc.text(`Phone: ${selectedContacts.value.phone_number}`, 105, yPos, { align: "center" });
     yPos += 7;
     doc.text(`Email: ${selectedContacts.value.email}`, 105, yPos, { align: "center" });
@@ -425,7 +495,7 @@ const generateAndSavePDF = async () => {
 
     // Education Section
     if (selectedEducations.value.length > 0) {
-      yPos += 20;
+      yPos += 25;
       doc.setFontSize(14);
       doc.setFont("helvetica", "bold");
       doc.text("EDUCATION", 20, yPos);
@@ -448,7 +518,7 @@ const generateAndSavePDF = async () => {
 
     // Projects Section
     if (selectedProjects.value.length > 0) {
-      yPos += 20;
+      yPos += 10;
       doc.setFontSize(14);
       doc.setFont("helvetica", "bold");
       doc.text("PROJECTS", 20, yPos);
@@ -460,10 +530,10 @@ const generateAndSavePDF = async () => {
         doc.text(`${project.project_name}`, 20, yPos);
         yPos += 7;
         doc.text(doc.splitTextToSize(`Description: ${project.description}`, 170), 20, yPos);
-        yPos += 10;
+        yPos += 20;
         doc.text(`Technologies: ${project.technologies_used}`, 20, yPos);
         if (project.project_link) {
-          yPos += 7;
+          yPos += 10;
           doc.text(`Link: ${project.project_link}`, 20, yPos);
         }
       });
@@ -484,41 +554,47 @@ const generateAndSavePDF = async () => {
         doc.text(`${exp.start_date} - ${exp.end_date}`, 170, yPos, { align: "right" });
 
         yPos += 7;
-        doc.text(`${exp.title}`, 20, yPos);
+        doc.text(`${exp.job_title}`, 20, yPos);
         yPos += 7;
-        doc.text(doc.splitTextToSize(exp.description.join(", "), 170), 20, yPos);
+        doc.text(`experience: ${exp.description}`, 20, yPos);
       });
     }
 
-    // Skills Section
-    if (selectedSkills.value.length > 0) {
-      yPos += 20;
-      doc.setFontSize(14);
-      doc.setFont("helvetica", "bold");
-      doc.text("SKILLS", 20, yPos);
+          // Skills Section
+      if (selectedSkills.value.length > 0) {
+        yPos += 10;
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text("SKILLS", 20, yPos);
 
-      yPos += 10;
-      doc.setFontSize(12);
-      doc.setFont("helvetica", "normal");
-      doc.text(selectedSkills.value.join(" • "), 20, yPos);
-    }
+        selectedSkills.value.forEach((skill) => {
+          yPos += 10;
+          doc.setFontSize(12);
+          doc.setFont("helvetica", "italic");
+          doc.text(skill.skill_name, 20, yPos); // Access the `name` property
 
-    // Interests Section
-    if (selectedInterests.value.length > 0) {
-      yPos += 20;
-      doc.setFontSize(14);
-      doc.setFont("helvetica", "bold");
-      doc.text("INTERESTS", 20, yPos);
+        });
+      }
 
-      yPos += 10;
-      doc.setFontSize(12);
-      doc.setFont("helvetica", "normal");
-      doc.text(selectedInterests.value.join(" • "), 20, yPos);
-    }
+      // Interests Section
+      if (selectedInterests.value.length > 0) {
+        yPos += 10;
+        doc.setFontSize(14);
+        doc.setFont("helvetica", "bold");
+        doc.text("INTERESTS", 20, yPos);
+
+        selectedInterests.value.forEach((interest) => {
+          yPos += 10;
+          doc.setFontSize(12);
+          doc.setFont("helvetica", "italic");
+          doc.text(interest.interest, 20, yPos); // Access the `interest` property
+
+       });
+      }
 
     // Awards Section
     if (selectedAwards.value.length > 0) {
-      yPos += 20;
+      yPos += 10;
       doc.setFontSize(14);
       doc.setFont("helvetica", "bold");
       doc.text("AWARDS & CERTIFICATIONS", 20, yPos);
@@ -527,14 +603,15 @@ const generateAndSavePDF = async () => {
         yPos += 10;
         doc.setFontSize(12);
         doc.setFont("helvetica", "normal");
-        doc.text(`${award.title}`, 20, yPos);
-        yPos += 7;
-        doc.text(`${award.year}`, 170, yPos, { align: "right" });
+        doc.text(`${award.award_name}`, 20, yPos);
+        doc.text(`${award.organization}`, 170, yPos, { align: "right" });
+
+       
       });
     }
 
     // Save the PDF
-    doc.save(`${selectedContacts.value.fName}_${selectedContacts.value.lName}_Resume.pdf`);
+    doc.save(`${selectedContacts.value.fName}_Resume.pdf`);
 
     // Prepare data for backend saving
     const resumeData = {
@@ -545,6 +622,7 @@ const generateAndSavePDF = async () => {
     };
 
     await ResumeServices.create(resumeData);
+    //console.log(resumeData);
 
     showNotification("Resume PDF generated and saved successfully");
   } catch (error) {
@@ -556,13 +634,6 @@ const generateAndSavePDF = async () => {
 };
 
 
-const deleteResume = () => {
-  selectedContact.value = null;
-  selectedEducations.value = [];
-  selectedProjects.value = [];
-  selectedLinks.value = [];
-  showNotification("Resume deleted", "success");
-};
 
 
 const showNotification = (text, color = "success", timeout = 3000) => {
@@ -575,6 +646,25 @@ onMounted(() => {
 </script>
 
 <style scoped>
+ .template-2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Horizontally centers content */
+    text-align: center;  /* Ensures text is also centered */
+    margin: 0 auto;      /* Centers the entire section on the page */
+    padding: 20px;
+  }
+
+  .contact-info, .summary, .education, .skills, .projects {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 80%;          /* Sets a consistent width */
+    max-width: 600px;    /* Limits the maximum width */
+    background-color: #f9f9f9;
+  }
+
 .resume-wrapper {
   min-height: 100vh;
   display: flex;
