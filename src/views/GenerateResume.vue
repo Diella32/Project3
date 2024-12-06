@@ -41,7 +41,7 @@
               <!-- Contact Information -->
               <v-select
                 v-model="selectedContacts"
-                :items="contacts"
+                :items="contactinfo"
                 item-title="fName"
                 item-value="id"
                 label="Select Contact Information"
@@ -52,7 +52,7 @@
               <!--Education-->
               <v-select
                 v-model="selectedEducations"
-                :items="educations"
+                :items="education"
                 item-title="degree"
                 multiple
                 chips
