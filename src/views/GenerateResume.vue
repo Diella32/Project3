@@ -421,7 +421,11 @@ const saveResume = async () => {
     // Save the resume to the backend
     await ResumeServices.create(resumeData);
     showNotification("Resume saved successfully");
-    fetchResume();
+
+    await fetchAllData();
+
+    // Redirect to the resumes page
+    router.push({ name: "resumes" }); 
   } catch (error) {
     console.error("Error saving resume:", error);
     showNotification("Failed to save resume", "error");
@@ -581,6 +585,7 @@ const generateAndSavePDF = async () => {
         doc.setFont("helvetica", "normal");
         doc.text(`${award.award_name}`, 20, yPos);
         doc.text(`${award.organization}`, 170, yPos, { align: "right" });
+        yPos += 10;
 
        
       });
@@ -609,7 +614,9 @@ const generateAndSavePDF = async () => {
   }
 };
 
-
+onMounted(() => {
+  fetchAllData();
+});
 
 
 const showNotification = (text, color = "success", timeout = 3000) => {

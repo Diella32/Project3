@@ -4,6 +4,7 @@ import AdminRequestServices from "../services/AdminRequestServices.js";
 import moment from "moment";
 import CloseModal from "../components/CloseModal.vue";
 import router from "../router";
+import ResumeServices from '../services/ResumeServices';
 
 // Holds all open requests with their associated Student
 const openRequests = ref([]);
@@ -17,9 +18,11 @@ const showFilterMenu = ref(false);
 
 const userNameFilter = ref(null);
 let requestData = ref(null);
+const reviewRequests = ref([]);
 
 onMounted(async () => {
   await loadRequests();
+  fetchReviewRequests();
 });
 
 const loadRequests = async () => {
@@ -103,6 +106,15 @@ const closeRequest = (request) => {
     });
   selectedRequest.value = null;
   closeModal.value = false;
+};
+
+const fetchReviewRequests = async () => {
+  try {
+    const response = await ResumeServices.getReviewRequests();
+    reviewRequests.value = response.data;
+  } catch (error) {
+    console.error('Error fetching review requests:', error);
+  }
 };
 </script>
 
