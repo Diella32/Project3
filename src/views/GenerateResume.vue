@@ -246,7 +246,7 @@
               </div>
               </div>
               <div v-if="selectedTemplate === 'Template 2'" class="template-2">
-  <!-- Contact Info -->
+  <!-- Contact Information -->
   <div class="contact-info">
     <h1>{{ selectedContacts?.fName }} {{ selectedContacts?.lName }}</h1>
     <p>{{ selectedContacts?.address }}</p>
