@@ -12,7 +12,8 @@ const expandedPanel = ref(null);
 const isValidating = ref(false);
 const contactForms = ref([]);
 const user = store.getters.getLoginUserInfo;
-const userId = user.user_id;
+const userId = store.getters.getLoginUserInfo?.user_id;
+
 const router = useRouter();
 
 
@@ -47,7 +48,7 @@ const newContactTemplate = {
   email: "",
   phone_number: "",
   address: "",
-  userId: user.user_id,
+  userId: store.getters.getLoginUserInfo?.user_id,
 };
 
 // Fetch all contacts
