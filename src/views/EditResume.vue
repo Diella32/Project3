@@ -282,14 +282,15 @@ const fetchResumeDetails = async () => {
     resumeTitle.value = data.title || '';
     introduction.value = data.introduction || '';
     status.value = data.status || '';
-    selectedContact.value = data.contacts || [];
-    selectedEducations.value = data.educations || [];
+    selectedContact.value = data.contactinfo || [];
+    selectedEducations.value = data.education || [];
     selectedProjects.value = data.projects || [];
-    selectedLinks.value = data.personalLinks || [];
+    selectedLinks.value = data.personallinks || [];
     selectedSkills.value = data.skills || [];
     selectedExperiences.value = data.experiences || [];
     selectedInterests.value = data.interests || [];
     awardCertifications.value = data.awards || [];
+    console.log(data)
   } catch (error) {
     console.error('Error fetching resume details:', error);
   }
