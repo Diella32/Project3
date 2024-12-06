@@ -4,7 +4,7 @@ import Login from "./views/Login.vue";
 import home from "./views/home.vue";
 import AddResume from "./views/AddResume.vue";
 import ResumeList from "./views/ResumeList.vue";
-import EditResume from "./views/EditResume.vue";
+//import EditResume from "./views/EditResume.vue";
 import ViewResume from "./views/ViewResume.vue";
 import Skill from "./views/Skill.vue";
 import CertificationsPage from "../src/views/Certifications.vue"
@@ -79,11 +79,11 @@ const router = createRouter({
       component: AiPage  // Define the route for the AI page
     },
 
-    {
-      path: "/edit/:id",  // Edit resume path with dynamic id
-      name: "edit",
-      component: EditResume
-    },
+    // {
+    //   path: "/edit/:id",  // Edit resume path with dynamic id
+    //   name: "edit",
+    //   component: EditResume
+    // },
     {
       path: "/AddContact",
       name: "AddContact",
