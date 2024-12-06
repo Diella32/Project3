@@ -231,6 +231,7 @@
 
                 <!-- Projects -->
                 <div class="mb-4">
+
                   <h2 class="text-lg italic border-b border-gray-400 mb-2">PROJECTS</h2>
                   <div v-for="(project, index) in selectedProjects" :key="index" class="mb-2">
                     <span class="font-bold">{{ project.project_name }}</span>
@@ -239,7 +240,24 @@
                     <div v-if="project.technologies_used">
                       Technologies: {{ project.technologies_used }}
                     </div>
+
+                <h2 class="text-lg font-bold border-b border-gray-400 mb-2">PROJECTS</h2>
+                <div v-for="(project, index) in selectedProjects" :key="index" class="mb-2">
+                  <span class="font-bold">{{ project.project_name }}</span>
+                  <div>{{ project.description }}</div>
+                  <div v-if="project.project_link">
+                    Link: 
+                    <a :href="project.project_link" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">
+                      {{ project.project_link }}
+                    </a>
+
                   </div>
+                  <div v-if="project.technologies_used">
+                    Technologies: {{ project.technologies_used }}
+                  </div>
+              </div>
+
+
                 </div>
 
                 <!-- Skills -->

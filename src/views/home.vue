@@ -189,6 +189,35 @@
             </v-dialog>
           </v-card-text>
 
+           <div class="d-flex align-center justify-center" style="min-height: 60vh;">
+  <v-col cols="12" md="5" class="px-8">
+    <v-hover>
+      <template v-slot:default="{ isHovering, props }">
+        <v-card
+          class="option-card text-center pa-8"
+          v-bind="props"
+          :elevation="isHovering ? 4 : 1"
+          :class="{ 'on-hover': isHovering }"
+          @click="goTo('ai')"
+        >
+          <v-icon icon="mdi-robot" size="72" color="secondary" class="mb-6"></v-icon>
+          <h3 class="text-h4 mb-4">AI Page</h3>
+          <p class="text-h6 mb-6">Explore the AI features</p>
+          <v-btn
+            color="secondary"
+            variant="elevated"
+            size="x-large"
+            block
+            @click="goTo('ai')"
+          >
+            Visit AI Page
+          </v-btn>
+        </v-card>
+      </template>
+    </v-hover>
+  </v-col>
+</div>
+
           <!-- Features Section -->
           <v-divider class="mb-12"></v-divider>
 
@@ -231,6 +260,7 @@
                 </v-hover>
               </v-col>
 
+<
               <!-- <v-col cols="12" md="5" class="px-8">
                 <v-hover>
                   <template v-slot:default="{ isHovering, props }">
@@ -257,6 +287,7 @@
                   </template>
                 </v-hover>
               </v-col> -->
+
 
 
               <v-col cols="12" md="4">

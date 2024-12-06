@@ -124,6 +124,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import ResumeServices from '../services/ResumeServices';
+import RequestServices from '../services/RequestServices';
 import store from '../store/store';
 
 const router = useRouter();
@@ -182,7 +183,7 @@ const requestReview = async (resumeId) => {
     const resume = resumes.value.find((r) => r.resume_id === resumeId);
     if (resume) {
       resume.isLoading = true; // Show loading state
-      await ResumeServices.requestReview(resumeId);
+      await RequestServices.create({ resume_id: resumeId });
       resume.status = 'Under Review'; // Update status locally
       message.value = 'Review request sent successfully.';
     }
