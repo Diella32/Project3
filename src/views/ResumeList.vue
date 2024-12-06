@@ -31,7 +31,7 @@
     <!-- List of resumes -->
     <v-row v-else>
       <v-col v-for="(resume, index) in resumes" :key="resume.resume_id" cols="12" sm="6" lg="4">
-        <v-card class="resume-card" :loading="resume.isLoading">
+        <v-card class="resume-card" style="min-height: 250px; width: 100%;" :loading="resume.isLoading">
           <v-card-item>
             <v-card-title class="text-h6 mb-2">{{ resume.title }}</v-card-title>
             <v-card-subtitle>
@@ -59,12 +59,31 @@
               <v-icon start>mdi-eye</v-icon>
               View
             </v-btn>
-            <v-btn variant="text" color="warning" @click="editResume(resume.resume_id)" :disabled="resume.isLoading">
+            <v-btn
+              variant="text"
+              color="warning"
+              @click="editResume(resume.resume_id)"
+              :disabled="resume.isLoading"
+            >
               <v-icon start>mdi-pencil</v-icon>
               Edit
             </v-btn>
+            <v-btn
+              variant="text"
+              color="success"
+              @click="requestReview(resume.resume_id)"
+              :disabled="resume.isLoading || resume.status === 'Under Review'"
+            >
+              <v-icon start>mdi-account-check-outline</v-icon>
+               Review
+            </v-btn>
             <v-spacer></v-spacer>
-            <v-btn variant="text" color="error" @click="openDeleteDialog(resume)" :disabled="resume.isLoading">
+            <v-btn
+              variant="text"
+              color="error"
+              @click="openDeleteDialog(resume)"
+              :disabled="resume.isLoading"
+            >
               <v-icon start>mdi-delete</v-icon>
               Delete
             </v-btn>
@@ -148,13 +167,32 @@ const viewResume = (index) => {
   if (resume && resume.resume_id) {
     router.push({ name: 'view', params: { userId, id: resume.resume_id } });
   } else {
-    console.error("Resume ID is undefined or resume not found");
+    console.error('Resume ID is undefined or resume not found');
   }
 };
 
 // Function to edit a selected resume
 const editResume = (resumeId) => {
-  router.push({ name: 'edit', params: { id: resumeId } });
+  router.push({ name: 'editResume', params: { id: resumeId } });
+};
+
+// Function to request review for a resume
+const requestReview = async (resumeId) => {
+  try {
+    const resume = resumes.value.find((r) => r.resume_id === resumeId);
+    if (resume) {
+      resume.isLoading = true; // Show loading state
+      await ResumeServices.requestReview(resumeId);
+      resume.status = 'Under Review'; // Update status locally
+      message.value = 'Review request sent successfully.';
+    }
+  } catch (error) {
+    message.value = 'Failed to send review request.';
+    console.error('Error requesting review:', error);
+  } finally {
+    const resume = resumes.value.find((r) => r.resume_id === resumeId);
+    if (resume) resume.isLoading = false; // Reset loading state
+  }
 };
 
 // Function to open the delete dialog
@@ -167,7 +205,6 @@ const openDeleteDialog = (resume) => {
 const deleteResume = async (resumeId) => {
   try {
     isDeleting.value = true;
-    console.log(resumeId);
     await ResumeServices.delete(resumeId);
     resumes.value = resumes.value.filter((resume) => resume.resume_id !== resumeId);
     message.value = 'Resume deleted successfully.';
