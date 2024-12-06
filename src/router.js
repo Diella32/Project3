@@ -68,7 +68,7 @@ const router = createRouter({
     },
     {
       path: '/certifications',
-      name: 'enterCertifications',
+      name: 'Certifications',
       component: CertificationsPage,
     },
 
@@ -76,7 +76,8 @@ const router = createRouter({
 
       path: '/ai',
       name: 'ai',
-     component: AiPage  // Define the route for the AI page
+      component: AiPage  // Define the route for the AI page
+
     },
 
     {

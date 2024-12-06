@@ -17,6 +17,7 @@ export default {
         return apiClient.get(`user/${userId}/experiences/${id}`);
     },
 
+
     // Get all experiences for a specific resume
     getExperiencesForResume(resumeId) {
         return apiClient.get(`/experiences/resume/${resumeId}`);
@@ -24,7 +25,7 @@ export default {
 
     getExperiencesForUser(userId) {
 
-        return apiClient.get(`/experience/user/${userId}`);
+        return apiClient.get(`/experiences/user/${userId}`);
     },
 
 

@@ -22,14 +22,14 @@
               <v-card-text class="py-6">
                 <div class="text-center mb-6">
                   <h1 class="text-2xl font-bold mb-2">
-                    {{ selectedContacts?.fName }} {{ selectedContacts?.lName }}
+                    {{ selectedContacts[0]?.fName }} {{ selectedContacts[0]?.lName }}
                   </h1>
                   <div class="text-sm">
-                    <span>{{ selectedContacts?.address }}</span>
+                    <span>{{ selectedContacts[0]?.address }}</span>
                     <span class="mx-2">|</span>
-                    <span>{{ selectedContacts?.phone_number }}</span>
+                    <span>{{ selectedContacts[0]?.phone_number }}</span>
                     <span class="mx-2">|</span>
-                    <span>{{ selectedContacts?.email }}</span>
+                    <span>{{ selectedContacts[0]?.email }}</span>
                   </div>
                 </div>
               </v-card-text>
