@@ -591,6 +591,7 @@ const generateAndSavePDF = async () => {
     };
 
     await ResumeServices.create(resumeData);
+    //console.log(resumeData);
 
     showNotification("Resume PDF generated and saved successfully");
   } catch (error) {
@@ -602,13 +603,6 @@ const generateAndSavePDF = async () => {
 };
 
 
-const deleteResume = () => {
-  selectedContacts.value = null;
-  selectedEducations.value = [];
-  selectedProjects.value = [];
-  selectedLinks.value = [];
-  showNotification("Resume deleted", "success");
-};
 
 
 const showNotification = (text, color = "success", timeout = 3000) => {

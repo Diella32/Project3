@@ -251,7 +251,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
         <v-icon left>mdi-arrow-left</v-icon>
         Previous
       </v-btn>
-      <v-btn color="primary" @click="router.push({ name: 'Experience' })">
+      <v-btn color="primary" @click="router.push({ name: 'Experiences' })">
 
         Next
         <v-icon right>mdi-arrow-right</v-icon>
