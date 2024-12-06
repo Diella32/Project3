@@ -1,135 +1,169 @@
 <template>
-  <div class="certifications-container">
-    <v-row class="fill-height ma-0" align="start" justify="center">
-      <v-col cols="12" sm="10" md="8" lg="6" class="pa-4">
-        <v-card class="certifications-card" elevation="3">
-          <v-card-item class="text-center pb-4">
-            <v-icon icon="mdi-certificate" size="64" color="primary" class="mb-4"></v-icon>
-            <v-card-title class="text-h3 font-weight-bold mb-2">
-              Awards & Certifications
-            </v-card-title>
-            <v-card-subtitle class="text-h6">
-              Add your professional certifications and achievements
-            </v-card-subtitle>
-          </v-card-item>
-          
+  <div class="certifications-wrapper">
+    <div class="certifications-container">
+      <v-row class="fill-height ma-0" align="start" justify="center">
+        <v-col cols="12" class="pa-0">
+          <v-card class="certifications-card" elevation="0">
+            <!-- Header -->
+            <v-card-item class="text-center header-section">
+              <v-icon icon="mdi-certificate" size="72" color="primary" class="mb-6"></v-icon>
+              <v-card-title class="text-h2 font-weight-bold mb-4">Awards & Certifications</v-card-title>
+              <v-card-subtitle class="text-h5 mb-6">Add your certifications and achievements</v-card-subtitle>
+            </v-card-item>
 
-          <v-divider></v-divider>
+            <v-divider></v-divider>
 
-          <v-card-text v-if="lastApiError" class="error--text my-2">
-            API Error: {{ lastApiError }}
-          </v-card-text>
+            <!-- Certifications List -->
+            <v-card-text class="certifications-content py-6">
+              <v-container>
+                <!-- Add New Certification Button -->
+                <v-row justify="center" class="mb-6">
+                  <v-col cols="12" md="8">
+                    <v-btn color="primary" block @click="addNewCertification" size="large" prepend-icon="mdi-plus">
+                      Add New Certification
+                    </v-btn>
+                  </v-col>
+                </v-row>
 
-          <!-- Certifications Form -->
-          <v-card-text class="py-6">
-            <v-form v-model="isValid" @submit.prevent="saveCertification">
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="certificationForm.award_name"
-                    label="Award/Certification Title"
-                    :rules="[v => !!v || 'Title is required']"
-                    variant="outlined"
-                    density="comfortable"
-                    class="mb-4"
-                  ></v-text-field>
-                </v-col>
+                <!-- Certifications List -->
+                <v-row justify="center">
+                  <v-col cols="12" md="8">
+                    <v-expansion-panels v-model="expandedPanel">
+                      <v-expansion-panel v-for="(cert, index) in certifications" :key="cert.id || index" :disabled="isValidating">
+                        <v-expansion-panel-title>
+                          <span class="text-h6">{{ cert.award_name || 'New Certification' }}</span>
+                        </v-expansion-panel-title>
 
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="certificationForm.organization"
-                    label="Issuing Organization"
-                    variant="outlined"
-                    density="comfortable"
-                    class="mb-4"
-                  ></v-text-field>
-                </v-col>
-              </v-row>
+                        <v-expansion-panel-text>
+                          <v-form v-model="cert.valid">
+                            <!-- Award/Certification Title -->
+                            <v-text-field
+                              v-model="cert.award_name"
+                              label="Award/Certification Title"
+                              :rules="[rules.required]"
+                              variant="outlined"
+                              density="comfortable"
+                              class="mb-4"
+                            ></v-text-field>
 
-              <v-card-actions class="px-4 pb-4 d-flex justify-space-between">
-                <v-btn variant="outlined" color="primary" @click="resetForm">
-                  Clear
-                </v-btn>
-                <v-spacer></v-spacer>
-                <v-btn color="primary" :disabled="!isValid" type="submit">
-                  {{ editMode ? 'Update' : 'Save' }}
-                </v-btn>
-              </v-card-actions>
-            </v-form>
+                            <!-- Issuing Organization -->
+                            <v-text-field
+                              v-model="cert.organization"
+                              label="Issuing Organization"
+                              variant="outlined"
+                              density="comfortable"
+                              class="mb-4"
+                            ></v-text-field>
 
-            <!-- Display existing certifications -->
-            <v-row v-if="certifications.length > 0">
-              <v-col cols="12" v-for="cert in certifications" :key="cert.id" class="mb-6">
-                <v-card variant="outlined" class="mb-2">
-                  <v-card-item>
-                    <div class="d-flex justify-space-between align-center">
-                      <div>
-                        <v-card-title>{{ cert.award_name }}</v-card-title>
-                        <v-card-subtitle>{{ cert.organization }}</v-card-subtitle>
-                      </div>
-                      <div>
-                        <v-btn
-                          icon="mdi-pencil"
-                          variant="text"
-                          density="comfortable"
-                          @click="editCertification(cert)"
-                          class="mr-2"
-                        ></v-btn>
-                        <v-btn
-                          icon="mdi-delete"
-                          variant="text"
-                          color="error"
-                          density="comfortable"
-                          @click="deleteCertification(cert.id)"
-                        ></v-btn>
-                      </div>
-                    </div>
-                  </v-card-item>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-card-text>
+                            <!-- Action Buttons -->
+                            <v-row class="mt-4">
+                              <v-col cols="6">
+                                <v-btn
+                                  color="error"
+                                  block
+                                  @click="deleteCertification(cert.id)"
+                                  :disabled="isValidating"
+                                >
+                                  Delete
+                                </v-btn>
+                              </v-col>
+                              <v-col cols="6">
+                                <v-btn
+                                  color="success"
+                                  block
+                                  @click="validateCertification(index)"
+                                  :loading="isValidating"
+                                >
+                                  Save
+                                </v-btn>
+                              </v-col>
+                            </v-row>
+                          </v-form>
+                        </v-expansion-panel-text>
+                      </v-expansion-panel>
+                    </v-expansion-panels>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
+    </div>
 
           <!-- Navigation Buttons -->
-          <v-card-actions class="px-4 pt-2 pb-4 d-flex justify-space-between">
-            <v-btn icon="mdi-arrow-left" color="primary" @click="goBack">Back</v-btn>
-            <v-spacer></v-spacer>
-            <v-btn icon="mdi-arrow-right" color="primary" @click="goNext">Next</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+          <v-card-actions class="d-flex justify-space-between">
+
+      <v-btn color="primary" @click="router.push({ name: 'Skill' })">
+
+        <v-icon left>mdi-arrow-left</v-icon>
+        Previous
+      </v-btn>
+      <v-btn color="primary" @click="router.push({ name: 'enterInterests' })">
+        Next
+        <v-icon right>mdi-arrow-right</v-icon>
+      </v-btn>
+      </v-card-actions>
+
+    <!-- Notifications -->
+    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
+      {{ snackbar.text }}
+      <template v-slot:actions>
+        <v-btn variant="text" @click="snackbar.show = false">Close</v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
+
+
+
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import certificationServices from '../services/certificationServices';
 import store from '../store/store';
 
 const router = useRouter();
-const isValid = ref(false);
-const editMode = ref(false);
-const certifications = ref([]);
-const lastApiError = ref(null);
-const snackbar = ref({ show: false, text: '', color: '' });
-
 const user = store.getters.getLoginUserInfo;
-const userId = user.user_id;
 
-const certificationForm = ref({
-  award_name: '',
-  organization: '',
-  userId: userId
+// State variables
+const certifications = ref([]);
+const expandedPanel = ref(null);
+const isValidating = ref(false);
+
+// Snackbar state
+const snackbar = ref({
+  show: false,
+  text: '',
+  color: 'success',
+  timeout: 3000,
 });
 
+// Validation rules
+const rules = {
+  required: v => !!v || 'Field is required',
+};
+
+// Computed property for overall validity
+const isValid = computed(() => certifications.value.every(cert => cert.valid));
+
+// New certification template
+const newCertificationTemplate = {
+  award_name: '',
+  organization: '',
+  userId: user.user_id,
+  valid: false,
+};
+
+// Fetch certifications
 const fetchCertifications = async () => {
   try {
-    const response = await certificationServices.getCertification(userId);
-    certifications.value = response.data;
+    const response = await certificationServices.getCertification(user.user_id);
+    certifications.value = response.data || [];
   } catch (error) {
-    lastApiError.value = error.response?.data?.message || error.message;
+    console.error('Error fetching certifications:', error);
+    showNotification('Failed to load certifications', 'error');
   }
 };
 
@@ -137,59 +171,92 @@ onMounted(() => {
   fetchCertifications();
 });
 
-const saveCertification = async () => {
+// Add a new certification
+const addNewCertification = () => {
+  certifications.value.push({ ...newCertificationTemplate });
+  expandedPanel.value = certifications.value.length - 1;
+};
+
+// Save a certification
+const validateCertification = async (index) => {
+  isValidating.value = true;
   try {
-    let response;
-    if (editMode.value) {
-      response = await certificationServices.updateCertificationById(certificationForm.value.id, certificationForm.value);
+    const cert = certifications.value[index];
+
+    if (!cert.award_id) {
+      // New certification: Create on backend
+      const response = await certificationServices.createCertification(cert);
+      cert.id = response.data.id;
     } else {
-      response = await certificationServices.createCertification(certificationForm.value);
-      certifications.value.push(response.data);
+      // Existing certification: Update on backend
+      await certificationServices.updateCertificationById(cert.id, cert);
     }
     showNotification('Certification saved successfully', 'success');
-    resetForm();
+    expandedPanel.value = null;
   } catch (error) {
-    lastApiError.value = error.response?.data?.message || error.message;
+    console.error('Error saving certification:', error);
     showNotification('Failed to save certification', 'error');
+  } finally {
+    isValidating.value = false;
   }
 };
 
+// Delete a certification
 const deleteCertification = async (id) => {
+  isValidating.value = true;
   try {
-    await certificationServices.deleteCertificationById(id);
+    await certificationServices.deleteCertificationById(userId, id);
     certifications.value = certifications.value.filter(cert => cert.id !== id);
-    showNotification('Certification deleted successfully', 'success');
+    showNotification('Certification deleted successfully');
   } catch (error) {
+    console.error('Error deleting certification:', error);
     showNotification('Failed to delete certification', 'error');
+  } finally {
+    isValidating.value = false;
   }
 };
 
-const editCertification = (cert) => {
-  certificationForm.value = { ...cert };
-  editMode.value = true;
+// Show notification
+const showNotification = (text, color = 'success', timeout = 3000) => {
+  snackbar.value = { show: true, text, color, timeout };
 };
-
-const resetForm = () => {
-  certificationForm.value = { title: '', organization: '', userId };
-  editMode.value = false;
-};
-
-const showNotification = (text, color) => {
-  snackbar.value = { show: true, text, color };
-};
-
-
-const goBack = () => router.push('./personalInterests');
-const goNext = () => router.push('/next-route');
-
 </script>
 
+
+
 <style scoped>
-.certifications-container {
-  background-color: #f5f5f5;
-  padding-top: 2rem;
+.certifications-wrapper {
+  min-height: 100vh;
+  width: 100vw;
+  background-color: rgb(var(--v-theme-background));
+  display: flex;
+  flex-direction: column;
 }
+
+.certifications-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+}
+
 .certifications-card {
-  border-radius: 8px;
+  min-height: 100vh;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.header-section {
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+}
+
+.certifications-content {
+  flex: 1;
+}
+
+.text-center {
+  text-align: center;
 }
 </style>

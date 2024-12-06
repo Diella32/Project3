@@ -331,18 +331,26 @@ const processUploadedFile = async () => {
   uploadStatus.error = null;
   
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulating processing
+    const fileReader = new FileReader();
+    fileReader.onload = (e) => {
+      const fileContent = e.target.result;
+      
+      const resumeId = 'example-id';
+      
+      router.push({ 
+        name: 'edit',
+        params: { 
+          id: resumeId
+        },
+        query: { 
+          fileContent: fileContent
+        }
+      });
+    };
+    fileReader.readAsText(uploadStatus.file);
     
     uploadStatus.success = true;
     uploadStatus.processing = false;
-    
-    router.push({ 
-      name: 'add-resume',
-      query: { 
-        mode: 'edit',
-        fileId: 'example-file-id'
-      }
-    });
   } catch (error) {
     uploadStatus.error = 'Error processing file. Please try again.';
     uploadStatus.processing = false;

@@ -194,6 +194,7 @@
                   <p class="text-lg">{{ introduction }}</p>
                 </div>
 
+
                 <!-- Education -->
                 <div class="mb-4">
                   <h2 class="text-lg italic border-b border-gray-400 mb-2">EDUCATION</h2>
@@ -204,8 +205,21 @@
                     </div>
                     <div class="italic">{{ edu.degree }}</div>
                     <div v-if="edu.gpa">GPA: {{ edu.gpa }}</div>
+
+               <!-- Education -->
+              <div class="mb-4">
+                <h2 class="text-lg font-bold border-b border-gray-400 mb-2">EDUCATION</h2>
+                <div v-for="(edu, index) in selectedEducations" :key="index" class="mb-2">
+                  <div class="flex justify-between items-baseline">
+                    <span class="font-bold">{{ edu.institution }}</span>
+                    <span class="text-right">{{ edu.start_date }} - {{ edu.end_date }}</span>
+
                   </div>
+                  <div class="italic">{{ edu.degree }}</div>
+                  <div v-if="edu.gpa">GPA: {{ edu.gpa }}</div>
                 </div>
+              </div>
+
 
                 <!-- Personal Links -->
                 <div class="mb-4">
@@ -233,6 +247,25 @@
                   <h2 class="text-lg italic border-b border-gray-400 mb-2">SKILLS</h2>
                   <div v-for="(skill, index) in selectedSkills" :key="index" class="mb-1">
                     <span class="font-bold">{{ skill.skill_name }}</span>
+                  </div>
+                </div>
+
+                <!--Experiences-->
+                <div class="mb-4">
+                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">EXPERIENCES</h2>
+                  <div v-for="(experience, index) in selectedExperiences" :key="index" class="mb-1">
+                    <span class="font-bold">{{ experience.job_title }}</span>
+                    <div>{{ experience.company }}</div>
+                    <div>{{ experience.start_date }} - {{ experience.end_date }}</div>
+                    <div>{{ experience.description }}</div>
+                  </div>
+                </div>
+
+                <!-- Interests -->
+                <div class="mb-4">
+                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">INTERESTS</h2>
+                  <div v-for="(interest, index) in selectedInterests" :key="index" class="mb-1">
+                    <span class="font-bold">{{ interest.interest }}</span>
                   </div>
                 </div>
 

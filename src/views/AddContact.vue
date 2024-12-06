@@ -3,11 +3,10 @@ import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router"; // Import the router for navigation
 import ContactServices from "../services/ContactServices";
 import store from '../store/store';
-import { useRouter, useRoute } from 'vue-router';
+//import { useRoute } from 'vue-router';
 
 
 
-const router = useRouter(); // Initialize the router
 const contacts = ref([]);
 const expandedPanel = ref(null);
 const isValidating = ref(false);
@@ -206,7 +205,6 @@ const showNotification = (text, color = "success", timeout = 3000) => {
     </div>
 
   
-  
     <!-- Navigation Buttons -->
     <v-card-actions class="d-flex justify-space-between">
       <v-btn color="primary" @click="router.push({ name: 'home' })">
@@ -220,6 +218,7 @@ const showNotification = (text, color = "success", timeout = 3000) => {
     </v-card-actions>
     
 
+   
 
     <!-- Notifications -->
     <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="snackbar.timeout">
