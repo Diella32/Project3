@@ -41,7 +41,7 @@
               <!-- Contact Information -->
               <v-select
                 v-model="selectedContacts"
-                :items="contactinfo"
+                :items="contacts"
                 item-title="fName"
                 item-value="id"
                 label="Select Contact Information"
@@ -52,7 +52,7 @@
               <!--Education-->
               <v-select
                 v-model="selectedEducations"
-                :items="education"
+                :items="educations"
                 item-title="degree"
                 multiple
                 chips
@@ -291,8 +291,8 @@ import certificationServices from "../services/certificationServices";
 import ResumeServices from "../services/ResumeServices";
 import store from '../store/store';
 
-const contactinfo = ref([]);
-const education = ref([]);
+const contacts = ref([]);
+const educations = ref([]);
 const projects = ref([]);
 const links = ref([]);
 const experiences= ref([]);
@@ -341,14 +341,16 @@ const fetchAllData = async () => {
     console.log(experiencesRes);
 
     // Populate reactive variables with fetched data
-    contactinfo.value = contactsRes.data;
-    education.value = educationsRes.data;
+    contacts.value = contactsRes.data;
+    educations.value = educationsRes.data;
     projects.value = projectsRes.data;
     links.value = linksRes.data;
     experiences.value = experiencesRes.data;
     skills.value = skillsRes.data;
     interests.value = interestsRes.data;
     awards.value=awardsRes.data;
+
+    console.log(contacts);
 
   } catch (error) {
     console.error("Error fetching data:", error);
