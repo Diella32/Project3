@@ -603,13 +603,6 @@ const generateAndSavePDF = async () => {
 };
 
 
-const deleteResume = () => {
-  selectedContacts.value = null;
-  selectedEducations.value = [];
-  selectedProjects.value = [];
-  selectedLinks.value = [];
-  showNotification("Resume deleted", "success");
-};
 
 
 const showNotification = (text, color = "success", timeout = 3000) => {
