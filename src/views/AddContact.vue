@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
-//import { useRouter } from "vue-router"; // Import the router for navigation
+import { useRouter } from "vue-router"; // Import the router for navigation
 import ContactServices from "../services/ContactServices";
 import store from '../store/store';
-import { useRoute } from 'vue-router';
+//import { useRoute } from 'vue-router';
 
 
 
@@ -13,7 +13,7 @@ const isValidating = ref(false);
 const contactForms = ref([]);
 const user = store.getters.getLoginUserInfo;
 const userId = user.user_id;
-//const router = useRouter();
+const router = useRouter();
 
 
 // Snackbar state

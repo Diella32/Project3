@@ -591,6 +591,7 @@ const generateAndSavePDF = async () => {
     };
 
     await ResumeServices.create(resumeData);
+    //console.log(resumeData);
 
     showNotification("Resume PDF generated and saved successfully");
   } catch (error) {

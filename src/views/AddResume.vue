@@ -106,7 +106,7 @@ const sections = [
     title: 'Experience',
     subtitle: 'Work history and professional experience',
     icon: 'mdi-briefcase',
-    route: 'Experience'
+    route: 'Experiences'
   },
   {
     title: 'Projects',
@@ -124,7 +124,7 @@ const sections = [
     title: 'Awards/Certification',
     subtitle: 'Professional certifications and achievements',
     icon: 'mdi-certificate',
-    route: 'CertificationsPage'
+    route: 'Certifications'
   },
   {
     title: 'Interests',

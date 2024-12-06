@@ -103,7 +103,7 @@
         <v-icon left>mdi-arrow-left</v-icon>
         Previous
       </v-btn>
-      <v-btn color="primary" @click="router.push({ name: 'enterCertifications' })">
+      <v-btn color="primary" @click="router.push({ name: 'Certifications' })">
         Next
         <v-icon right>mdi-arrow-right</v-icon>
       </v-btn>
