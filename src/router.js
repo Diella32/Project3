@@ -18,6 +18,7 @@ import GenerateResume from "./views/GenerateResume.vue";
 import AdminUserManager from "./views/adminUserManager.vue";
 import AdminRequests from "./views/adminRequests.vue";
 import AddComment from "./views/AddComment.vue";
+import AiPage from "./views/AiPage.vue";
 
 
 const router = createRouter({
@@ -71,12 +72,12 @@ const router = createRouter({
       component: CertificationsPage,
     },
 
-    // {
+    {
 
-    //   path: '/ai',
-    //   name: 'ai',
-    //   component: AiPage  // Define the route for the AI page
-    // },
+      path: '/ai',
+      name: 'ai',
+     component: AiPage  // Define the route for the AI page
+    },
 
     {
       path: "/edit/:id",  // Edit resume path with dynamic id
