@@ -174,7 +174,7 @@ const viewResume = (index) => {
 
 // Function to edit a selected resume
 const editResume = (resumeId) => {
-  router.push({ name: 'editResume', params: { id: resumeId } });
+  router.push({ name: 'edit', params: { id: resumeId } });
 };
 
 // Function to request review for a resume

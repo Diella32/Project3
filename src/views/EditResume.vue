@@ -50,8 +50,8 @@
                   <v-text-field v-model="edu.institution" label="Institution" outlined dense />
                   <v-text-field v-model="edu.degree" label="Degree" outlined dense />
                   <v-text-field v-model="edu.FieldOfStudy" label="Field of Study" outlined dense />
-                  <v-text-field v-model="edu.startDate" label="Start Date" outlined dense />
-                  <v-text-field v-model="edu.endDate" label="End Date" outlined dense />
+                  <v-text-field v-model="edu.start_date" label="Start Date" outlined dense />
+                  <v-text-field v-model="edu.end_date" label="End Date" outlined dense />
                 </v-card>
               </section>
 
@@ -78,10 +78,10 @@
               <section v-if="selectedExperiences.length" class="mb-6">
                 <h3 class="text-h5 font-weight-bold mb-4">Experiences</h3>
                 <v-card v-for="(experience, index) in selectedExperiences" :key="index" class="mb-3 pa-4">
-                  <v-text-field v-model="experience.title" label="Title" outlined dense />
+                  <v-text-field v-model="experience.job_title" label="Title" outlined dense />
                   <v-textarea v-model="experience.description" label="Description" outlined dense />
-                  <v-text-field v-model="experience.startDate" label="Start Date" outlined dense />
-                  <v-text-field v-model="experience.endDate" label="End Date" outlined dense />
+                  <v-text-field v-model="experience.start_date" label="Start Date" outlined dense />
+                  <v-text-field v-model="experience.end_date" label="End Date" outlined dense />
                 </v-card>
               </section>
 
@@ -89,7 +89,7 @@
               <section v-if="selectedInterests.length" class="mb-6">
                 <h3 class="text-h5 font-weight-bold mb-4">Interests</h3>
                 <v-card v-for="(interest, index) in selectedInterests" :key="index" class="mb-3 pa-4">
-                  <v-text-field v-model="interest.name" label="Interest Name" outlined dense />
+                  <v-text-field v-model="interest.interest" label="Interest Name" outlined dense />
                 </v-card>
               </section>
 
@@ -97,13 +97,13 @@
               <section v-if="awardCertifications.length" class="mb-6">
                 <h3 class="text-h5 font-weight-bold mb-4">Awards & Certifications</h3>
                 <v-card v-for="(award, index) in awardCertifications" :key="index" class="mb-3 pa-4">
-                  <v-text-field v-model="award.title" label="Award Title" outlined dense />
-                  <v-text-field v-model="award.year" label="Year" outlined dense />
+                  <v-text-field v-model="award.award_name" label="Award Title" outlined dense />
+                  <v-text-field v-model="award.organization" label="Year" outlined dense />
                 </v-card>
               </section>
 
               <!-- Personal Links -->
-              <section v-if="selectedLinks.length" class="mb-6">
+              <section v-if="selectedLinks?.length" class="mb-6">
                 <h3 class="text-h5 font-weight-bold mb-4">Personal Links</h3>
                 <v-card v-for="(link, index) in selectedLinks" :key="index" class="mb-3 pa-4">
                   <v-text-field v-model="link.url" label="URL" outlined dense />
@@ -146,7 +146,7 @@
             <v-card-text class="py-6">
               <div class="max-w-[8.5in] mx-auto p-8 bg-white">
                 <!-- Header/Contact Information -->
-                <div class="text-center mb-6" v-if="selectedContact">
+                <div class="text-center mb-6" v-if="selectedContact?.length > 0">
                   <h1 class="text-2xl font-bold mb-2">
                     {{ selectedContact[0]?.fName }} {{ selectedContact[0]?.lName }}
                   </h1>
@@ -171,11 +171,23 @@
                   <div v-for="(edu, index) in selectedEducations" :key="index" class="mb-2">
                     <div class="flex justify-between">
                       <span class="font-bold">{{ edu.institution }}</span>
-                      <span>{{ edu.startDate }} - {{ edu.endDate }}</span>
+                      <span>{{ edu.start_date }} - {{ edu.end_date }}</span>
                     </div>
                     <div class="italic">{{ edu.degree }}</div>
                   </div>
                 </div>
+
+                <!-- Experiences -->
+                <div class="mb-4" v-if="selectedExperiences?.length">
+                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">EXPERIENCES</h2>
+                  <div v-for="(experience, index) in selectedExperiences" :key="index" class="mb-2">
+                    <div class="flex justify-between">
+                      <span class="font-bold">{{ experience.job_title }}</span>
+                      <span>{{ experience.start_date }} - {{ experience.end_date }}</span>
+                    </div>
+                    <div>{{ experience.description }}</div>
+                  </div>
+                </div>  
 
                 <!-- Projects -->
                 <div class="mb-4" v-if="selectedProjects?.length">
@@ -190,6 +202,14 @@
                   </div>
                 </div>
 
+                <!-- Personal Links -->
+                <div class="mb-4" v-if="selectedLinks?.length">
+                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">PERSONAL LINKS</h2>
+                  <div v-for="(link, index) in selectedLinks" :key="index" class="mb-1">
+                    <p class="text-sm">{{ link.url }}</p>
+                  </div>
+                </div>
+
                 <!-- Skills -->
                 <div class="mb-4" v-if="selectedSkills?.length">
                   <h2 class="text-lg font-bold border-b border-gray-400 mb-2">SKILLS</h2>
@@ -198,11 +218,19 @@
                   </div>
                 </div>
 
+                <!-- Interests -->
+                <div class="mb-4" v-if="selectedInterests?.length">
+                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">INTERESTS</h2>
+                  <div v-for="(interest, index) in selectedInterests" :key="index" class="mb-1">
+                    <p class="text-sm">{{ interest.interest }}</p>
+                  </div>
+                </div>
+
                 <!-- Awards -->
                 <div class="mb-4" v-if="awardCertifications?.length">
                   <h2 class="text-lg font-bold border-b border-gray-400 mb-2">AWARDS</h2>
                   <div v-for="(award, index) in awardCertifications" :key="index" class="mb-1">
-                    <span class="font-bold">{{ award.title }}</span>
+                    <span class="font-bold">{{ award.award_name }}</span>
                   </div>
                 </div>
               </div>
@@ -293,6 +321,10 @@ const saveResume = async () => {
   } finally {
     isSaving.value = false;
   }
+};
+
+const cancelEdit = () => {
+  router.push('/resumes');
 };
 
 onMounted(fetchResumeDetails);
