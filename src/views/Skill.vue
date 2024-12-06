@@ -120,13 +120,10 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue"; // Removed 'computed' as it is unused
 import SkillServices from "../services/SkillServices";
 import store from "../store/store";
-import { useRouter, useRoute } from 'vue-router';
-
-
-
+import { useRouter } from "vue-router"; // Removed 'useRoute' as it is unused
 
 export default {
   name: "Skills",
@@ -135,7 +132,7 @@ export default {
     const skills = ref([]);
     const expandedPanel = ref(null);
     const isValidating = ref(false);
-    const router = useRouter();
+    const router = useRouter(); // Ensure it's declared only once
 
     // Snackbar state
     const snackbar = ref({
@@ -168,7 +165,9 @@ export default {
       fetchSkills();
     });
 
-    const navigateToAddProjects = () => {router.push({ name: 'AddProjects' })};
+    const navigateToAddProjects = () => {
+      router.push({ name: "AddProjects" });
+    };
 
     // Methods
     const addNewSkill = () => {
@@ -194,7 +193,6 @@ export default {
         isValidating.value = false;
       }
     };
-    
 
     const validateSkill = async (index) => {
       isValidating.value = true;
