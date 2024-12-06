@@ -103,7 +103,7 @@
         <v-icon left>mdi-arrow-left</v-icon>
         Previous
       </v-btn>
-      <v-btn color="primary" @click="router.push({ name: 'enterCertifications' })">
+      <v-btn color="primary" @click="router.push({ name: 'Certifications' })">
         Next
         <v-icon right>mdi-arrow-right</v-icon>
       </v-btn>
@@ -121,7 +121,6 @@
 
 <script>
 import { ref, onMounted, computed } from "vue";
-import { useRouter } from "vue-router";  // Import useRouter from vue-router
 import SkillServices from "../services/SkillServices";
 import store from "../store/store";
 import { useRouter, useRoute } from 'vue-router';
@@ -132,7 +131,6 @@ import { useRouter, useRoute } from 'vue-router';
 export default {
   name: "Skills",
   setup() {
-    const router = useRouter();  // Initialize the router
     const user = store.getters.getLoginUserInfo;
     const skills = ref([]);
     const expandedPanel = ref(null);
@@ -223,14 +221,6 @@ export default {
 
     const showNotification = (text, color = "success", timeout = 3000) => {
       snackbar.value = { show: true, text, color, timeout };
-    };
-
-    const goBack = () => {
-      router.push({ name: "AddProjects" });  // Navigate to AddProjects
-    };
-
-    const goNext = () => {
-      router.push({ name: "enterCertifications" });  // Navigate to enterCertifications
     };
 
     return {
