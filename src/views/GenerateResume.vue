@@ -291,8 +291,8 @@ import certificationServices from "../services/certificationServices";
 import ResumeServices from "../services/ResumeServices";
 import store from '../store/store';
 
-const contacts = ref([]);
-const educations = ref([]);
+const contactinfo = ref([]);
+const education = ref([]);
 const projects = ref([]);
 const links = ref([]);
 const experiences= ref([]);
@@ -341,8 +341,8 @@ const fetchAllData = async () => {
     console.log(experiencesRes);
 
     // Populate reactive variables with fetched data
-    contacts.value = contactsRes.data;
-    educations.value = educationsRes.data;
+    contactinfo.value = contactsRes.data;
+    education.value = educationsRes.data;
     projects.value = projectsRes.data;
     links.value = linksRes.data;
     experiences.value = experiencesRes.data;
