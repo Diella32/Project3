@@ -124,7 +124,7 @@ const sections = [
     title: 'Awards/Certification',
     subtitle: 'Professional certifications and achievements',
     icon: 'mdi-certificate',
-    route: 'enterCertifications'
+    route: 'Certifications'
   },
   {
     title: 'Interests',
