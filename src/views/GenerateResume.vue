@@ -171,7 +171,7 @@
               <v-card-title class="text-h2 font-weight-bold mb-4">Resume Preview</v-card-title>
               <v-divider></v-divider>
             </v-card-item>
-            <v-card-text class="py-6">
+             <v-card-text class="py-6">
               <div class="max-w-[8.5in] mx-auto p-8 bg-white">
                 <!-- Header/Contact Information -->
                 <div v-if="selectedTemplate === 'Template 1'">
@@ -207,7 +207,7 @@
                     <div v-if="edu.gpa">GPA: {{ edu.gpa }}</div>
 
                <!-- Education -->
-              <div class="mb-4">
+               <div class="mb-4">
                 <h2 class="text-lg font-bold border-b border-gray-400 mb-2">EDUCATION</h2>
                 <div v-for="(edu, index) in selectedEducations" :key="index" class="mb-2">
                   <div class="flex justify-between items-baseline">
@@ -218,7 +218,7 @@
                   <div class="italic">{{ edu.degree }}</div>
                   <div v-if="edu.gpa">GPA: {{ edu.gpa }}</div>
                 </div>
-              </div>
+               </div>
 
 
                 <!-- Personal Links -->
@@ -276,8 +276,11 @@
                     <span class="font-bold">{{ award.award_name }}</span>
                   </div>
                 </div>
+               </div>
+               </div>
+               </div>
               </div>
-              </div>
+
               <div v-if="selectedTemplate === 'Template 2'" class="template-2">
   <!-- Contact Information -->
   <div class="contact-info">
