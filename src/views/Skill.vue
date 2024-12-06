@@ -223,14 +223,6 @@ export default {
       snackbar.value = { show: true, text, color, timeout };
     };
 
-    const goBack = () => {
-      // Navigate to the previous step
-    };
-
-    const goNext = () => {
-      // Navigate to the next step
-    };
-
     return {
       router,
       skills,

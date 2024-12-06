@@ -6,6 +6,7 @@
         <textarea v-model="jobDescription" placeholder="Paste the job description here..." rows="8"></textarea>
         <button type="submit">Analyze</button>
       </form>
+      
       <div v-if="output" class="output">
         <pre>{{ output }}</pre>
       </div>
@@ -46,11 +47,11 @@
           });
   
           const data = await response.json();
-          if (data.generations && data.generations[0].text) {
-            this.output = data.generations[0].text;
-          } else {
-            this.output = "Failed to analyze. Please try again.";
-          }
+         // if (data.generations && data.generations[0].text) {
+            this.output = data.text;
+         // } else {
+          //  this.output = "Failed to analyze. Please try again.";
+          //}
         } catch (error) {
           this.output = `Error: ${error.message}`;
         }
@@ -61,6 +62,7 @@
   
   <style scoped>
   /* Add your CSS here */
+  
   .container {
     max-width: 600px;
     margin: auto;
@@ -77,7 +79,7 @@
     border-radius: 4px;
   }
   button {
-    background-color: #5c67f2;
+    background-color: #651313;
     color: white;
     padding: 10px;
     border: none;
@@ -85,14 +87,21 @@
     cursor: pointer;
   }
   button:hover {
-    background-color: #4856c7;
+    background-color: #651313;
   }
   .output {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #e8f7e9;
-    border: 1px solid #c2e2c5;
-    border-radius: 4px;
+   
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #e8f7e9;
+  border: 1px solid #c2e2c5;
+  border-radius: 4px;
+  max-height: 800px; /* Set a maximum height */
+  overflow-y: auto; /* Enable vertical scrolling */
+  word-wrap: break-word; /* Ensure long words or links wrap correctly */
+  white-space: pre-wrap; /* Preserve whitespace and wrap text */
+
   }
   </style>
-  
+
+

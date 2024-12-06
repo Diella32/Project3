@@ -8,10 +8,10 @@ export default{
     getOne(requestId){
         return apiClient.get(baseURL + `requestId/${requestId}`);
     },
-    getAllForStudent(studentId){
-        return apiClient.get(baseURL + `studentReq/${studentId}`);
+    getAllForUser(userId){
+        return apiClient.get(baseURL + `userReq/${userId}`);
     },
-    getAllForStatus(status, semesterId, studentId){
+    getAllForStatus(status, ){
         return apiClient.get(baseURL + `statusReq/${status}`);
     },
     create(data){

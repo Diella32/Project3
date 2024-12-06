@@ -77,6 +77,7 @@ const router = createRouter({
       path: '/ai',
       name: 'ai',
       component: AiPage  // Define the route for the AI page
+
     },
 
     {
