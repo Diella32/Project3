@@ -1,3 +1,5 @@
+
+
 <template>
   <div class="resume-wrapper">
     <!-- Header -->
@@ -169,10 +171,11 @@
               <v-card-title class="text-h2 font-weight-bold mb-4">Resume Preview</v-card-title>
               <v-divider></v-divider>
             </v-card-item>
-            <v-card-text class="py-6">
+             <v-card-text class="py-6">
               <div class="max-w-[8.5in] mx-auto p-8 bg-white">
                 <!-- Header/Contact Information -->
-                <div class="text-center mb-6">
+                <div v-if="selectedTemplate === 'Template 1'">
+                 <!-- <div class="text-center mb-6"> -->
                   <h1 class="text-2xl font-bold mb-2">
                     {{ selectedContacts?.fName }} {{ selectedContacts?.lName }}
                   </h1>
@@ -183,31 +186,44 @@
                     <span class="mx-2">|</span>
                     <span>{{ selectedContacts?.email }}</span>
                   </div>
-                </div>
+                <!-- </div> -->
 
                 <!-- Description -->
                 <div class="mb-4">
-                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">DESCRIPTION</h2>
-                  <p class="text-sm">{{ introduction }}</p>
+                  <h2 class="Times new roman">PROFESSIONAL SUMMARY</h2>
+                  <p class="text-lg">{{ introduction }}</p>
                 </div>
 
+
+                <!-- Education -->
+                <div class="mb-4">
+                  <h2 class="text-lg italic border-b border-gray-400 mb-2">EDUCATION</h2>
+                  <div v-for="(edu, index) in selectedEducations" :key="index" class="mb-2">
+                    <div class="flex justify-between">
+                      <span class="font-bold">{{ edu.institution }}</span>
+                      <span>{{ edu.start_date }} - {{ edu.end_date }}</span>
+                    </div>
+                    <div class="italic">{{ edu.degree }}</div>
+                    <div v-if="edu.gpa">GPA: {{ edu.gpa }}</div>
+
                <!-- Education -->
-              <div class="mb-4">
+               <div class="mb-4">
                 <h2 class="text-lg font-bold border-b border-gray-400 mb-2">EDUCATION</h2>
                 <div v-for="(edu, index) in selectedEducations" :key="index" class="mb-2">
                   <div class="flex justify-between items-baseline">
                     <span class="font-bold">{{ edu.institution }}</span>
                     <span class="text-right">{{ edu.start_date }} - {{ edu.end_date }}</span>
+
                   </div>
                   <div class="italic">{{ edu.degree }}</div>
                   <div v-if="edu.gpa">GPA: {{ edu.gpa }}</div>
                 </div>
-              </div>
+               </div>
 
 
                 <!-- Personal Links -->
                 <div class="mb-4">
-                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">PERSONAL LINKS</h2>
+                  <h2 class="text-lg italic border-b border-gray-400 mb-2">PERSONAL LINKS</h2>
                   <div v-for="(link, index) in selectedLinks" :key="index" class="mb-1">
                     <span class="font-bold">{{ link.url }}</span>
                   </div>
@@ -215,6 +231,16 @@
 
                 <!-- Projects -->
                 <div class="mb-4">
+
+                  <h2 class="text-lg italic border-b border-gray-400 mb-2">PROJECTS</h2>
+                  <div v-for="(project, index) in selectedProjects" :key="index" class="mb-2">
+                    <span class="font-bold">{{ project.project_name }}</span>
+                    <div>{{ project.description }}</div>
+                    <div v-if="project.project_link">Link: {{ project.project_link }}</div>
+                    <div v-if="project.technologies_used">
+                      Technologies: {{ project.technologies_used }}
+                    </div>
+
                 <h2 class="text-lg font-bold border-b border-gray-400 mb-2">PROJECTS</h2>
                 <div v-for="(project, index) in selectedProjects" :key="index" class="mb-2">
                   <span class="font-bold">{{ project.project_name }}</span>
@@ -224,6 +250,7 @@
                     <a :href="project.project_link" target="_blank" rel="noopener noreferrer" class="text-blue-500 underline">
                       {{ project.project_link }}
                     </a>
+
                   </div>
                   <div v-if="project.technologies_used">
                     Technologies: {{ project.technologies_used }}
@@ -235,7 +262,7 @@
 
                 <!-- Skills -->
                 <div class="mb-4">
-                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">SKILLS</h2>
+                  <h2 class="text-lg italic border-b border-gray-400 mb-2">SKILLS</h2>
                   <div v-for="(skill, index) in selectedSkills" :key="index" class="mb-1">
                     <span class="font-bold">{{ skill.skill_name }}</span>
                   </div>
@@ -262,12 +289,63 @@
 
                 <!-- Awards -->
                 <div class="mb-4">
-                  <h2 class="text-lg font-bold border-b border-gray-400 mb-2">AWARDS</h2>
+                  <h2 class="text-lg italic border-b border-gray-400 mb-2">AWARDS</h2>
                   <div v-for="(award, index) in selectedAwards" :key="index" class="mb-1">
                     <span class="font-bold">{{ award.award_name }}</span>
                   </div>
                 </div>
+               </div>
+               </div>
+               </div>
               </div>
+
+              <div v-if="selectedTemplate === 'Template 2'" class="template-2">
+  <!-- Contact Information -->
+  <div class="contact-info">
+    <h1>{{ selectedContacts?.fName }} {{ selectedContacts?.lName }}</h1>
+    <p>{{ selectedContacts?.address }}</p>
+    <p>{{ selectedContacts?.phone_number }}</p>
+    <p>{{ selectedContacts?.email }}</p>
+  </div>
+
+  <!-- Professional Summary -->
+  <div class="summary">
+    <h2>About Me</h2>
+    <p>{{ introduction }}</p>
+  </div>
+
+  <!-- Education -->
+  <div class="education">
+    <h2>Education</h2>
+    <div v-for="(edu, index) in selectedEducations" :key="index">
+      <p>{{ edu.institution }} - {{ edu.degree }} ({{ edu.start_date }} to {{ edu.end_date }})</p>
+      <p v-if="edu.gpa">GPA: {{ edu.gpa }}</p>
+    </div>
+  </div>
+
+  <!-- Skills -->
+  <div class="skills">
+    <h2>Skills</h2>
+    <ul>
+      <li v-for="(skill, index) in selectedSkills" :key="index">{{ skill.skill_name }}</li>
+    </ul>
+  </div>
+
+  <!-- Projects -->
+  <div class="projects">
+    <h2>Projects</h2>
+    <div v-for="(project, index) in selectedProjects" :key="index">
+      <p><strong>{{ project.project_name }}</strong></p>
+      <p>{{ project.description }}</p>
+      <p v-if="project.project_link">
+        Link: <a :href="project.project_link">{{ project.project_link }}</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+
+
 
             </v-card-text>
           </v-card>
@@ -631,6 +709,25 @@ onMounted(() => {
 </script>
 
 <style scoped>
+ .template-2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Horizontally centers content */
+    text-align: center;  /* Ensures text is also centered */
+    margin: 0 auto;      /* Centers the entire section on the page */
+    padding: 20px;
+  }
+
+  .contact-info, .summary, .education, .skills, .projects {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 80%;          /* Sets a consistent width */
+    max-width: 600px;    /* Limits the maximum width */
+    background-color: #f9f9f9;
+  }
+
 .resume-wrapper {
   min-height: 100vh;
   display: flex;
